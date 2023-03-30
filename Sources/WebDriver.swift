@@ -25,15 +25,13 @@ struct WebDriver {
         let task = URLSession.shared.dataTask(with: request) { (data, response, requestError) in
             if let requestError = requestError {
                 error = requestError
-            }
-            else if let data = data {
-                print("Response data: " + String(decoding: data, as: UTF8.self))
+            } else if let data = data {
+                print("Response data: \(String(decoding: data, as: UTF8.self))")
                 if let response: HTTPURLResponse = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         result = data
-                    }
-                    else {
-                        error = try? JSONDecoder().decode(WebDriverError.self, from: data)
+                    } else {
+                        error = try! JSONDecoder().decode(WebDriverError.self, from: data)
                     }
                 }
             }

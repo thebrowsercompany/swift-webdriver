@@ -1,15 +1,19 @@
 import Foundation
 
 class WinAppDriverProcess {
+    static let ip = "127.0.0.1"
+    static let port = 4723
+
     let process: Process
     let toStdinPipe: Pipe
 
     init() throws {
+        let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
+        
         toStdinPipe = Pipe()
-
         process = Process()
-        process.executableURL = URL(fileURLWithPath: "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe")
-        process.arguments = [ "127.0.0.1", "4723" ]
+        process.executableURL = URL(fileURLWithPath: path)
+        process.arguments = [ Self.ip, String(Self.port) ]
         process.standardInput = toStdinPipe.fileHandleForReading
         process.standardOutput = nil
         try process.run()
@@ -21,5 +25,5 @@ class WinAppDriverProcess {
         process.terminate()
     }
 
-    var url : URL { URL(string: "http://127.0.0.1:4723")! }
+    var url : URL { URL(string: "http://\(Self.ip):\(Self.port)")! }
 }
