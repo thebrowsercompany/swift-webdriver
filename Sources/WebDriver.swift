@@ -20,7 +20,7 @@ struct WebDriver {
             request.httpBody = jsonBody
         }
 
-        print("Request: \(request.url!) \(method) " + String(decoding: request.httpBody ?? Data(), as: UTF8.self))
+        print("Request: \(request.url!) \(method) \(String(decoding: request.httpBody ?? Data(), as: UTF8.self))")
 
         let task = URLSession.shared.dataTask(with: request) { (data, response, requestError) in
             if let requestError = requestError {
