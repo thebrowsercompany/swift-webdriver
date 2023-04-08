@@ -8,59 +8,71 @@ struct WebDriver {
         self.rootURL = url
     }
 
-    private func send(path: String, method: String, jsonBody: Data? = nil) throws -> Data {
-        var result: Data?
+    // Send a WebDriverRequest to the web driver local service 
+    // TODO: consider making this function async/awaitable
+    func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
         var error: Error?
-        let semaphore = DispatchSemaphore(value: 0)
+        var response: Request.Response?
 
-        var request = URLRequest(url: rootURL.appendingPathComponent(path))
-        request.httpMethod = method
-        if let jsonBody = jsonBody {
-            request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
-            request.httpBody = jsonBody
+        // Create urlRequest with proper Url and method
+        let url = WebDriver.self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = request.method.rawValue
+
+        // Add the body if the WebDriverRequest type defines one
+        if Request.self.Body != CodableNone.self {
+            urlRequest.addValue("content-encoding", forHTTPHeaderField: "json")
+            urlRequest.addValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
+            urlRequest.httpBody = try JSONEncoder().encode(request.body)
         }
 
-        print("Request: \(request.url!) \(method) \(String(decoding: request.httpBody ?? Data(), as: UTF8.self))")
-
-        let task = URLSession.shared.dataTask(with: request) { (data, response, requestError) in
-            if let requestError = requestError {
-                error = requestError
-            } else if let data = data {
-                print("Response data: \(String(decoding: data, as: UTF8.self))")
-                if let response: HTTPURLResponse = response as? HTTPURLResponse {
-                    if response.statusCode == 200 {
-                        result = data
-                    } else {
-                        error = try! JSONDecoder().decode(WebDriverError.self, from: data)
-                    }
-                }
+        // Send the request and decode result or error
+        let (status, responseData, networkError) = try urlRequest.send()
+        if let responseData: Data = responseData {
+            if (status == 200) {
+                response  = try JSONDecoder().decode(Request.Response.self, from: responseData)
             }
-
-            semaphore.signal()
+            else {
+                error = try JSONDecoder().decode(WebDriverError.self, from: responseData)
+            }
         }
-
-        task.resume()
-        semaphore.wait()
+        else if let networkError = networkError {
+            error = networkError
+        }
+        else {
+            fatalError("Everything is wrong!")
+        }
 
         if let error = error { throw error }
-        return result!
+        return response!
     }
 
-    func sendGet<ResponseValue>(path: String, args: [String: String] = [:]) throws -> WebDriverResponse<ResponseValue> where ResponseValue : Decodable {
-        let result = try send(path: path, method: "GET")
-        return try JSONDecoder().decode(WebDriverResponse<ResponseValue>.self, from: result)
-    }
-    
-    func sendPost(path: String) throws {
-        _ = try send(path: path, method: "POST")
-    }
+    // Utility function to build a URL from its parts
+    // Inpired by GPT4
+    private static func buildURL(base: URL, pathComponents: [String], query: [String: String] = [:]) -> URL {
+        var url = base
 
-    func sendPost<Request>(path: String, request: Request) throws -> Request.Response where Request : WebDriverRequest {
-        let result = try send(path: path, method: "POST", jsonBody: try JSONEncoder().encode(request))
-        return try JSONDecoder().decode(Request.Response.self, from: result)
-    }
+        // Append the path components
+        for pathComponent in pathComponents {
+            url.appendPathComponent(pathComponent)
+        }
 
-    func sendDelete(path: String) throws {
-        _ = try send(path: path, method: "DELETE")
+        // Get the URL components
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+        
+        // Convert dictionary to query items
+        let queryItems = query.map { key, value in
+            URLQueryItem(name: key, value: value)
+        }
+
+        // Append query items to URL components
+        urlComponents.queryItems = queryItems
+
+        // Get the final URL
+        guard let url = urlComponents.url else {
+            fatalError("Failed to construct URL")
+        }
+
+        return url
     }
 }

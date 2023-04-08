@@ -1,12 +1,15 @@
 struct ElementRequest : WebDriverRequest {
-    var using: String
-    var value: String
-    
+    let sessionId: String
+    var pathComponents: [String] { [ "session", sessionId, "element" ] }
+    var method: HTTPMethod { .get }
+    var body: Body
+
+    struct Body : Codable {
+        var using: String
+        var value: String
+    }
+
     struct ResponseValue : Decodable {
         var ELEMENT: String
     }
-}
-
-struct ElementTextRequest : WebDriverRequest {
-    typealias ResponseValue = String
 }
