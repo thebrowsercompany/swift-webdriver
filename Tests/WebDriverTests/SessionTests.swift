@@ -6,8 +6,8 @@ class SessionTests : XCTestCase {
         let winAppDriver = try! WinAppDriverProcess()
         let webDriver = WebDriver(url: winAppDriver.url)
 
-        var newSessionRequest = NewSessionRequest()
-        newSessionRequest.body.desiredCapabilities = .init(app: "C:\\Windows\\System32\\msinfo32.exe")
+        // TODO: consider simplifying NewSessionRequest initialization
+        let newSessionRequest = NewSessionRequest(body: .init(desiredCapabilities: .init(app: "C:\\Windows\\System32\\msinfo32.exe")))
         let sessionId = try! webDriver.send(newSessionRequest).sessionId;
 
         let sessionTitleRequest = SessionTitleRequest(sessionId: sessionId)

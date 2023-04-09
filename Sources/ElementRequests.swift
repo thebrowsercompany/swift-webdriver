@@ -4,7 +4,7 @@ struct ElementRequest : WebDriverRequest {
     var method: HTTPMethod { .get }
     var body: Body
 
-    struct Body : Codable {
+    struct Body : Encodable {
         var using: String
         var value: String
     }
