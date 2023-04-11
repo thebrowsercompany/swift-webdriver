@@ -12,7 +12,7 @@ struct WebDriver {
     // TODO: consider making this function async/awaitable
     func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
         // Create urlRequest with proper Url and method
-        let url = WebDriver.self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
+        let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
 
@@ -24,20 +24,15 @@ struct WebDriver {
         }
 
         // Send the request and decode result or error
-        let (status, responseData, networkError) = try urlRequest.send()
+        let (status, responseData) = try urlRequest.send()
         if let responseData: Data = responseData {
             if (status == 200) {
                 return try JSONDecoder().decode(Request.Response.self, from: responseData)
-            }
-            else {
+            } else {
                 throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
             }
-        }
-        else if let networkError = networkError {
-            throw networkError
-        }
-        else {
-            fatalError("Everything is wrong!")
+        } else {
+            fatalError("URLRequest.send returned no response data!")
         }
     }
 
