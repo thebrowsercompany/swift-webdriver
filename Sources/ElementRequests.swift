@@ -1,8 +1,8 @@
 struct ElementRequest : WebDriverRequest {
     let sessionId: String
     var pathComponents: [String] { [ "session", sessionId, "element" ] }
-    var method: HTTPMethod { .get }
-    var body: Body
+    let method: HTTPMethod = .get
+    let body: Body
 
     struct Body : Encodable {
         var using: String

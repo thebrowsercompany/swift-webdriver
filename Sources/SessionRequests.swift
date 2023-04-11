@@ -1,9 +1,9 @@
 struct NewSessionRequest : WebDriverRequest {
     typealias ResponseValue = WebDriverNoResponseValue
 
-    var pathComponents: [String] = ["session"]
-    var method: HTTPMethod = .post
-    var body: Body
+    let pathComponents: [String] = ["session"]
+    let method: HTTPMethod = .post
+    let body: Body = .init()
 
     struct RequiredCapabilities : Encodable {
     }
@@ -19,17 +19,19 @@ struct NewSessionRequest : WebDriverRequest {
 }
 
 struct SessionDeleteRequest : WebDriverRequest {
-    let sessionId: String
     typealias ResponseValue = WebDriverNoResponseValue
+
+    let sessionId: String
     var pathComponents: [String] { ["session", sessionId] }
-     var method: HTTPMethod = .delete
-    var body: Body = .init()
+    let method: HTTPMethod = .delete
+    let body: Body = .init()
 }
 
 struct SessionTitleRequest : WebDriverRequest {
-    let sessionId: String
     typealias ResponseValue = String
+
+    let sessionId: String
     var pathComponents: [String] { [ "session", sessionId, "title" ] }
-    var method: HTTPMethod { .get }
-    var body: Body = .init()
+    let method: HTTPMethod = .get
+    let body: Body = .init()
 }
