@@ -11,7 +11,9 @@ class SessionTests : XCTestCase {
         let title = session.Title()
         XCTAssertEqual(title, "System Information")
         
-        let element = session.FindElementByName("Minimize")
+        let element = session.FindElementByName("Maximize")
+        element.click()
+        element.click()
 
         webDriver.Delete(session: session)        
     }

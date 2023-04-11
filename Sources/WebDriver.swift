@@ -30,7 +30,9 @@ struct WebDriver {
         let (status, responseData, networkError) = try urlRequest.send()
         if let responseData: Data = responseData {
             if (status == 200) {
-                response  = try JSONDecoder().decode(Request.Response.self, from: responseData)
+                if Request.Response.self != CodableNone.self {
+                    response = try JSONDecoder().decode(Request.Response.self, from: responseData)
+                }
             }
             else {
                 error = try JSONDecoder().decode(WebDriverError.self, from: responseData)

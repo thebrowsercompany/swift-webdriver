@@ -33,6 +33,9 @@ struct WebDriverResponse<Value> : Decodable where Value : Decodable {
     var value: Value
 }
 
+struct WebDriverNoResponse : Decodable {
+}
+
 struct WebDriverNoResponseValue : Decodable {
     init(from decoder: Decoder) throws { }
 }

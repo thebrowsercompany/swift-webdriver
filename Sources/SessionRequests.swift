@@ -3,8 +3,7 @@
 extension WebDriver {
     func NewSession(app: String) -> Session {
         let newSessionRequest = NewSessionRequest(app: app)
-        let sessionId = try! send(newSessionRequest).sessionId;
-        return Session(self, sessionId)
+        return Session(in: self, id: try! send(newSessionRequest).sessionId)
     }
 
     struct NewSessionRequest : WebDriverRequest {
@@ -32,7 +31,7 @@ extension WebDriver {
     }
 
     func Delete(session: Session) {
-        let deleteSessionRequest = DeleteSessionRequest(sessionId: session.sessionId)
+        let deleteSessionRequest = DeleteSessionRequest(sessionId: session.id)
         let _ = try? send(deleteSessionRequest)
     }
 
@@ -47,11 +46,11 @@ extension WebDriver {
 
 class Session {
     let webDriver: WebDriver
-    let sessionId: String
+    let id: String
 
-    init(_ webDriver: WebDriver, _ sessionId: String){
+    init(in webDriver: WebDriver, id: String){
         self.webDriver = webDriver
-        self.sessionId = sessionId
+        self.id = id
     }
 
     func Title() -> String {
@@ -63,7 +62,7 @@ class Session {
         private let sessionId: String
 
         init(_ session: Session) {
-            sessionId = session.sessionId
+            sessionId = session.id
         }
 
         typealias ResponseValue = String
@@ -75,14 +74,14 @@ class Session {
     func FindElementByName(_ name: String) -> Element {
         let elementRequest = ElementRequest(self, using: "name", value: name)
         let value = try! webDriver.send(elementRequest).value
-        return Element(self, elementId: value.ELEMENT)
+        return Element(in: self, id: value.ELEMENT)
    } 
 
     struct ElementRequest : WebDriverRequest {
         let sessionId: String
 
         init(_ session: Session, using strategy: String, value: String) {
-            sessionId = session.sessionId
+            sessionId = session.id
             body = .init(using: strategy, value: value)
         }
 

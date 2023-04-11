@@ -1,17 +1,17 @@
 class Element {
     let webDriver: WebDriver
     let session: Session
-    let elementId: String
+    let id: String
 
-    init(_ session: Session, elementId: String) {
+    init(in session: Session, id: String) {
         self.webDriver = session.webDriver
         self.session = session
-        self.elementId = elementId
+        self.id = id
     }
 
-    func Click() {
+    func click() {
         let clickRequest = ClickRequest(element: self)
-        let _ = try! webDriver.send(clickRequest).value
+        let _ = try! webDriver.send(clickRequest)
     }
 
     struct ClickRequest : WebDriverRequest {
@@ -19,11 +19,11 @@ class Element {
         
         init(element: Element) {
             self.element = element 
-            body = .init(id: element.elementId)
+            body = .init(id: element.id)
         }
 
         typealias ResponseValue = WebDriverNoResponseValue
-        var pathComponents: [String] { [ "session", element.session.sessionId, "element", element.elementId, "click" ] }
+        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "click" ] }
         var method: HTTPMethod { .post }
         var body: Body
 
