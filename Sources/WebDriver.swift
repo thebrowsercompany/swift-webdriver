@@ -25,14 +25,10 @@ struct WebDriver {
 
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
-        if let responseData: Data = responseData {
-            if (status == 200) {
-                return try JSONDecoder().decode(Request.Response.self, from: responseData)
-            } else {
-                throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
-            }
+        if (status == 200) {
+            return try JSONDecoder().decode(Request.Response.self, from: responseData)
         } else {
-            fatalError("URLRequest.send returned no response data!")
+            throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
         }
     }
 
