@@ -6,13 +6,15 @@ class SessionTests : XCTestCase {
         let winAppDriver = try! WinAppDriverProcess()
         let webDriver = WebDriver(url: winAppDriver.url)
 
-        var newSessionRequest = NewSessionRequest()
-        newSessionRequest.desiredCapabilities = .init(app: "C:\\Windows\\System32\\msinfo32.exe")
-        let sessionId = try! webDriver.sendPost(path: "session", request: newSessionRequest).sessionId;
+        // TODO: consider simplifying NewSessionRequest initialization
+        let newSessionRequest = NewSessionRequest(body: .init(desiredCapabilities: .init(app: "C:\\Windows\\System32\\msinfo32.exe")))
+        let sessionId = try! webDriver.send(newSessionRequest).sessionId;
 
-        let title: String = try! webDriver.sendGet(path: "session/\(sessionId)/title").value;
+        let sessionTitleRequest = SessionTitleRequest(sessionId: sessionId)
+        let title: String = try! webDriver.send(sessionTitleRequest).value;
         XCTAssertEqual(title, "System Information")
 
-        try! webDriver.sendDelete(path: "session/\(sessionId)")
+        let sessionDeleteRequest = SessionDeleteRequest(sessionId: sessionId)
+        let _ = try? webDriver.send(sessionDeleteRequest)
     }
 }

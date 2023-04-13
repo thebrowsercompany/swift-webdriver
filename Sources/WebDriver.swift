@@ -8,59 +8,56 @@ struct WebDriver {
         self.rootURL = url
     }
 
-    private func send(path: String, method: String, jsonBody: Data? = nil) throws -> Data {
-        var result: Data?
-        var error: Error?
-        let semaphore = DispatchSemaphore(value: 0)
+    // Send a WebDriverRequest to the web driver local service 
+    // TODO: consider making this function async/awaitable
+    func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
+        // Create urlRequest with proper Url and method
+        let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = request.method.rawValue
 
-        var request = URLRequest(url: rootURL.appendingPathComponent(path))
-        request.httpMethod = method
-        if let jsonBody = jsonBody {
-            request.setValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
-            request.httpBody = jsonBody
+        // Add the body if the WebDriverRequest type defines one
+        if Request.Body.self != CodableNone.self {
+            urlRequest.addValue("content-encoding", forHTTPHeaderField: "json")
+            urlRequest.addValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
+            urlRequest.httpBody = try! JSONEncoder().encode(request.body)
         }
 
-        print("Request: \(request.url!) \(method) \(String(decoding: request.httpBody ?? Data(), as: UTF8.self))")
+        // Send the request and decode result or error
+        let (status, responseData) = try urlRequest.send()
+        if (status == 200) {
+            return try JSONDecoder().decode(Request.Response.self, from: responseData)
+        } else {
+            throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
+        }
+    }
 
-        let task = URLSession.shared.dataTask(with: request) { (data, response, requestError) in
-            if let requestError = requestError {
-                error = requestError
-            } else if let data = data {
-                print("Response data: \(String(decoding: data, as: UTF8.self))")
-                if let response: HTTPURLResponse = response as? HTTPURLResponse {
-                    if response.statusCode == 200 {
-                        result = data
-                    } else {
-                        error = try! JSONDecoder().decode(WebDriverError.self, from: data)
-                    }
-                }
+    // Utility function to build a URL from its parts
+    // Inpired by GPT4
+    private static func buildURL(base: URL, pathComponents: [String], query: [String: String] = [:]) -> URL {
+        var url = base
+
+        // Append the path components
+        for pathComponent in pathComponents {
+            url.appendPathComponent(pathComponent)
+        }
+
+        if !query.isEmpty {
+            // Get the URL components
+            var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
+            
+            // Convert dictionary to query items
+            let queryItems = query.map { key, value in
+                URLQueryItem(name: key, value: value)
             }
 
-            semaphore.signal()
+            // Append query items to URL components
+            urlComponents.queryItems = queryItems
+
+            // Get the final URL
+            url = urlComponents.url!
         }
 
-        task.resume()
-        semaphore.wait()
-
-        if let error = error { throw error }
-        return result!
-    }
-
-    func sendGet<ResponseValue>(path: String, args: [String: String] = [:]) throws -> WebDriverResponse<ResponseValue> where ResponseValue : Decodable {
-        let result = try send(path: path, method: "GET")
-        return try JSONDecoder().decode(WebDriverResponse<ResponseValue>.self, from: result)
-    }
-    
-    func sendPost(path: String) throws {
-        _ = try send(path: path, method: "POST")
-    }
-
-    func sendPost<Request>(path: String, request: Request) throws -> Request.Response where Request : WebDriverRequest {
-        let result = try send(path: path, method: "POST", jsonBody: try JSONEncoder().encode(request))
-        return try JSONDecoder().decode(Request.Response.self, from: result)
-    }
-
-    func sendDelete(path: String) throws {
-        _ = try send(path: path, method: "DELETE")
+        return url
     }
 }
