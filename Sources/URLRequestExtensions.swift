@@ -1,31 +1,39 @@
 import Foundation
 import FoundationNetworking
 
+extension URLSession {
+  func dataTask(with request: URLRequest,
+                _ completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
+      -> URLSessionDataTask {
+    return dataTask(with: request) { (data, response, error) in
+      if let error {
+        completion(.failure(error))
+      } else if let data = data, let response = response as? HTTPURLResponse {
+        completion(.success((data, response)))
+      } else {
+        fatalError("unexpected result from URLSessionDataTask")
+      }
+    }
+  }
+}
+
 extension URLRequest {
-
-    // Simple Send extension to handle the complexity of sending to a web service
-    // // TODO: consider making this function async/awaitable
-    func send() throws -> (Int, Data?, Error?) {
-        var error: Error?
-        var result: Data?
-        var status: Int?
-        let semaphore = DispatchSemaphore(value: 0)
-
-        let task = URLSession.shared.dataTask(with: self) { (data, response, requestError) in
-            if let response: HTTPURLResponse = response as? HTTPURLResponse {
-                status = response.statusCode
-            }
-            error = requestError
-            result = data
+    func send() throws -> (Int, Data) {
+        var result: Result<(Data, HTTPURLResponse), Error> =
+            .failure(NSError(domain: NSURLErrorDomain, code: URLError.unknown.rawValue))
+        let semaphore: DispatchSemaphore = .init(value: 0)
+        let task = URLSession.shared.dataTask(with: self) {
+            result = $0
             semaphore.signal()
         }
-
         task.resume()
         semaphore.wait()
 
-        if let error = error { throw error }
-        return (status!, result, error)
+        switch result {
+        case let .failure(error):
+            throw error
+        case let .success((data, response)):
+            return (statusCode: response.statusCode, data)
+        }
     }
 }
-
-

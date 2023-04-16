@@ -13,8 +13,8 @@ extension WebDriver {
             body.desiredCapabilities = .init(app: app)
         }
 
-        var pathComponents: [String] = ["session"]
-        var method: HTTPMethod = .post
+        var pathComponents: [String] { ["session"] }
+        var method: HTTPMethod { .post }
         var body: Body = .init()
 
         struct RequiredCapabilities : Encodable {
@@ -36,12 +36,22 @@ extension WebDriver {
     }
 
     struct DeleteSessionRequest : WebDriverRequest {
-        let sessionId: String
         typealias ResponseValue = WebDriverNoResponseValue
+
+        let sessionId: String
         var pathComponents: [String] { ["session", sessionId] }
-        var method: HTTPMethod = .delete
-        var body: Body = .init()
+        var method: HTTPMethod { .delete }
+        var body: Body { .init() }
     }
+}
+
+struct SessionDeleteRequest : WebDriverRequest {
+    typealias ResponseValue = WebDriverNoResponseValue
+
+    let sessionId: String
+    var pathComponents: [String] { ["session", sessionId] }
+    var method: HTTPMethod { .delete }
+    var body: Body { .init() }
 }
 
 class Session {
@@ -59,16 +69,17 @@ class Session {
     } 
 
     struct SessionTitleRequest : WebDriverRequest {
+        typealias ResponseValue = String
+
         private let sessionId: String
 
         init(_ session: Session) {
             sessionId = session.id
         }
 
-        typealias ResponseValue = String
         var pathComponents: [String] { [ "session", sessionId, "title" ] }
         var method: HTTPMethod { .get }
-        var body: Body = .init()
+        var body: Body { .init() }
     }
 
     func FindElementByName(_ name: String) -> Element {
