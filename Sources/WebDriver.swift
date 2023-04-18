@@ -59,4 +59,53 @@ struct WebDriver {
 
         return url
     }
+
+    // WinAppDriver REST protocol request wrappers
+
+    // newSession(app: ) - Creates a new WinAppDriver session
+    //   app - location of the app to test
+    func newSession(app: String) -> Session {
+        let newSessionRequest = newSessionRequest(app: app)
+        return Session(in: self, id: try! send(newSessionRequest).sessionId)
+    }
+
+    struct newSessionRequest : WebDriverRequest {
+        typealias ResponseValue = WebDriverNoResponseValue
+
+        init(app: String) {
+            body.desiredCapabilities = .init(app: app)
+        }
+
+        var pathComponents: [String] { ["session"] }
+        var method: HTTPMethod { .post }
+        var body: Body = .init()
+
+        struct RequiredCapabilities : Encodable {
+        }
+
+        struct DesiredCapabilities : Encodable {
+            var app: String?
+        }
+
+        struct Body : Encodable {
+            var requiredCapabilities: RequiredCapabilities?
+            var desiredCapabilities: DesiredCapabilities = .init()
+        }
+    }
+
+    // delete(session:) - Delete existing WinAppDriver session
+    //   session: Session object returned by newSession
+    func delete(session: Session) {
+        let deleteSessionRequest = DeleteSessionRequest(sessionId: session.id)
+        let _ = try? send(deleteSessionRequest)
+    }
+
+    struct DeleteSessionRequest : WebDriverRequest {
+        typealias ResponseValue = WebDriverNoResponseValue
+
+        let sessionId: String
+        var pathComponents: [String] { ["session", sessionId] }
+        var method: HTTPMethod { .delete }
+        var body: Body { .init() }
+    }
 }

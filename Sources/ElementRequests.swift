@@ -1,3 +1,5 @@
+// Represents an element in the WinAppDriver API
+// (https://github.com/microsoft/WinAppDriver/blob/master/Docs/SupportedAPIs.md)
 class Element {
     let webDriver: WebDriver
     let session: Session
@@ -9,6 +11,7 @@ class Element {
         self.id = id
     }
 
+    // click() - simulate clicking an Element
     func click() {
         let clickRequest = ClickRequest(element: self)
         let _ = try! webDriver.send(clickRequest)

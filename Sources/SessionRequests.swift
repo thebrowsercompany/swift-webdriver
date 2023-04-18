@@ -1,59 +1,4 @@
-// Left here to facilitate code review
-// TODO: consider moving this extension to WebDriver itself
-extension WebDriver {
-    func newSession(app: String) -> Session {
-        let newSessionRequest = newSessionRequest(app: app)
-        return Session(in: self, id: try! send(newSessionRequest).sessionId)
-    }
-
-    struct newSessionRequest : WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
-
-        init(app: String) {
-            body.desiredCapabilities = .init(app: app)
-        }
-
-        var pathComponents: [String] { ["session"] }
-        var method: HTTPMethod { .post }
-        var body: Body = .init()
-
-        struct RequiredCapabilities : Encodable {
-        }
-
-        struct DesiredCapabilities : Encodable {
-            var app: String?
-        }
-
-        struct Body : Encodable {
-            var requiredCapabilities: RequiredCapabilities?
-            var desiredCapabilities: DesiredCapabilities = .init()
-        }
-    }
-
-    func delete(session: Session) {
-        let deleteSessionRequest = DeleteSessionRequest(sessionId: session.id)
-        let _ = try? send(deleteSessionRequest)
-    }
-
-    struct DeleteSessionRequest : WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
-
-        let sessionId: String
-        var pathComponents: [String] { ["session", sessionId] }
-        var method: HTTPMethod { .delete }
-        var body: Body { .init() }
-    }
-}
-
-struct SessionDeleteRequest : WebDriverRequest {
-    typealias ResponseValue = WebDriverNoResponseValue
-
-    let sessionId: String
-    var pathComponents: [String] { ["session", sessionId] }
-    var method: HTTPMethod { .delete }
-    var body: Body { .init() }
-}
-
+// Represents a Session in the WinAppDriver API
 class Session {
     let webDriver: WebDriver
     let id: String
@@ -63,6 +8,7 @@ class Session {
         self.id = id
     }
 
+    // title() - get the session title, usually the hwnd title
     func title() -> String {
         let sessionTitleRequest = SessionTitleRequest(self)
         return try! webDriver.send(sessionTitleRequest).value!
@@ -82,11 +28,14 @@ class Session {
         var body: Body { .init() }
     }
 
+    // findElementByName(_ name:)
+    //   name - the name of the element in the Inspect tool
+    //   (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     func findElementByName(_ name: String) -> Element {
         let elementRequest = ElementRequest(self, using: "name", value: name)
         let value = try! webDriver.send(elementRequest).value
         return Element(in: self, id: value!.ELEMENT)
-   } 
+    } 
 
     struct ElementRequest : WebDriverRequest {
         let sessionId: String
