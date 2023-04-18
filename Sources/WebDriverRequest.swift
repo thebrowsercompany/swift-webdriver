@@ -30,7 +30,7 @@ enum HTTPMethod : String {
 struct WebDriverResponse<Value> : Decodable where Value : Decodable {
     var sessionId: String
     var status: Int?
-    var value: Value
+    var value: Value?
 }
 
 struct WebDriverNoResponse : Decodable {

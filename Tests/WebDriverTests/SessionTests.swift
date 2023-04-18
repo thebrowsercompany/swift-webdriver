@@ -2,19 +2,28 @@ import XCTest
 @testable import WebDriver
 
 class SessionTests : XCTestCase {
-    public func testTitle() {
+
+    var webDriver: WebDriver!
+    var session: Session!
+
+    public override func setUp() {
         let winAppDriver = try! WinAppDriverProcess()
-        let webDriver = WebDriver(url: winAppDriver.url)
-
-        let session = webDriver.NewSession(app: "C:\\Windows\\System32\\msinfo32.exe")
-        
-        let title = session.Title()
+        webDriver = WebDriver(url: winAppDriver.url)
+        session = webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
+    }
+    
+    public func testTitle() {
+        let title = session.title()
         XCTAssertEqual(title, "System Information")
-        
-        let element = session.FindElementByName("Maximize")
-        element.click()
-        element.click()
+    }
 
-        webDriver.Delete(session: session)        
+    public func testMaximizeAndMinimize() {
+        let element = session.findElementByName("Maximize")
+        element.click()
+        element.click()
+    }
+
+    public override func tearDown() {
+        webDriver.delete(session: session)        
     }
 }

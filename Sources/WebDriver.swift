@@ -25,11 +25,10 @@ struct WebDriver {
 
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
-        if (status == 200) {
-            return try JSONDecoder().decode(Request.Response.self, from: responseData)
-        } else {
+        guard status == 200 else {
             throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
         }
+        return try JSONDecoder().decode(Request.Response.self, from: responseData)
     }
 
     // Utility function to build a URL from its parts

@@ -15,6 +15,8 @@ class Element {
     }
 
     struct ClickRequest : WebDriverRequest {
+        typealias ResponseValue = WebDriverNoResponseValue
+
         private let element: Element
         
         init(element: Element) {
@@ -22,7 +24,6 @@ class Element {
             body = .init(id: element.id)
         }
 
-        typealias ResponseValue = WebDriverNoResponseValue
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "click" ] }
         var method: HTTPMethod { .post }
         var body: Body

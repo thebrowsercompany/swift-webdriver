@@ -1,12 +1,12 @@
 // Left here to facilitate code review
-// TODO: consider moving this extension to WebDriver.swift
+// TODO: consider moving this extension to WebDriver itself
 extension WebDriver {
-    func NewSession(app: String) -> Session {
-        let newSessionRequest = NewSessionRequest(app: app)
+    func newSession(app: String) -> Session {
+        let newSessionRequest = newSessionRequest(app: app)
         return Session(in: self, id: try! send(newSessionRequest).sessionId)
     }
 
-    struct NewSessionRequest : WebDriverRequest {
+    struct newSessionRequest : WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         init(app: String) {
@@ -30,7 +30,7 @@ extension WebDriver {
         }
     }
 
-    func Delete(session: Session) {
+    func delete(session: Session) {
         let deleteSessionRequest = DeleteSessionRequest(sessionId: session.id)
         let _ = try? send(deleteSessionRequest)
     }
@@ -63,9 +63,9 @@ class Session {
         self.id = id
     }
 
-    func Title() -> String {
+    func title() -> String {
         let sessionTitleRequest = SessionTitleRequest(self)
-        return try! webDriver.send(sessionTitleRequest).value;
+        return try! webDriver.send(sessionTitleRequest).value!
     } 
 
     struct SessionTitleRequest : WebDriverRequest {
@@ -82,10 +82,10 @@ class Session {
         var body: Body { .init() }
     }
 
-    func FindElementByName(_ name: String) -> Element {
+    func findElementByName(_ name: String) -> Element {
         let elementRequest = ElementRequest(self, using: "name", value: name)
         let value = try! webDriver.send(elementRequest).value
-        return Element(in: self, id: value.ELEMENT)
+        return Element(in: self, id: value!.ELEMENT)
    } 
 
     struct ElementRequest : WebDriverRequest {
