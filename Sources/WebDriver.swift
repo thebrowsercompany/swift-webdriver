@@ -1,7 +1,7 @@
 import Foundation
 import FoundationNetworking
 
-struct WebDriver {
+public struct WebDriver {
     let rootURL : URL
 
     init(url: URL) {
@@ -10,6 +10,7 @@ struct WebDriver {
 
     // Send a WebDriverRequest to the web driver local service 
     // TODO: consider making this function async/awaitable
+    @discardableResult
     func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
         // Create urlRequest with proper Url and method
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
@@ -28,7 +29,8 @@ struct WebDriver {
         guard status == 200 else {
             throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
         }
-        return try JSONDecoder().decode(Request.Response.self, from: responseData)
+        let res = try JSONDecoder().decode(Request.Response.self, from: responseData)
+        return res
     }
 
     // Utility function to build a URL from its parts
@@ -64,12 +66,12 @@ struct WebDriver {
 
     // newSession(app: ) - Creates a new WinAppDriver session
     //   app - location of the app to test
-    func newSession(app: String) -> Session {
-        let newSessionRequest = newSessionRequest(app: app)
-        return Session(in: self, id: try! send(newSessionRequest).sessionId)
+    public func newSession(app: String) -> Session {
+        let NewSessionRequest = NewSessionRequest(app: app)
+        return Session(in: self, id: try! send(NewSessionRequest).sessionId!)
     }
 
-    struct newSessionRequest : WebDriverRequest {
+    struct NewSessionRequest : WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         init(app: String) {
@@ -91,21 +93,5 @@ struct WebDriver {
             var requiredCapabilities: RequiredCapabilities?
             var desiredCapabilities: DesiredCapabilities = .init()
         }
-    }
-
-    // delete(session:) - Delete existing WinAppDriver session
-    //   session: Session object returned by newSession
-    func delete(session: Session) {
-        let deleteSessionRequest = DeleteSessionRequest(sessionId: session.id)
-        let _ = try? send(deleteSessionRequest)
-    }
-
-    struct DeleteSessionRequest : WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
-
-        let sessionId: String
-        var pathComponents: [String] { ["session", sessionId] }
-        var method: HTTPMethod { .delete }
-        var body: Body { .init() }
     }
 }
