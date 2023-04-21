@@ -20,11 +20,11 @@ extension Session {
         var body: Body { .init() }
     }
 
-    /// findElementByName
-    /// - Parameter name: name of the element to find 
+    /// findElement(byName:)
+    /// - Parameter byName: name of the element to find 
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
-    /// - Returns: a new instance of Element
-    public func findElementByName(_ name: String) -> Element? {
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found 
+    public func findElement(byName name: String) -> Element? {
         let elementRequest = ElementRequest(self, using: "name", value: name)
         let value = try! webDriver.send(elementRequest).value
         return Element(in: self, id: value!.ELEMENT)

@@ -3,8 +3,8 @@ extension WebDriver {
     /// - Parameter app: location of the exe for the app to test
     /// - Returns: Session instance
     public func newSession(app: String) -> Session {
-        let NewSessionRequest = NewSessionRequest(app: app)
-        return Session(in: self, id: try! send(NewSessionRequest).sessionId!)
+        let newSessionRequest = NewSessionRequest(app: app)
+        return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 
     struct NewSessionRequest : WebDriverRequest {

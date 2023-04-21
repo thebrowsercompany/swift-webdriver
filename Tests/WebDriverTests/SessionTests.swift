@@ -3,24 +3,35 @@ import XCTest
 
 class SessionTests : XCTestCase {
 
+    // These statics are created before running any tests in this XCTestCase
+    // and destroyed after all tests in this XCTestCase have been run
+    static var winAppDriver: WinAppDriverProcess!
     static var webDriver: WebDriver!
+
     var session: Session!
 
-    // Executed once before all the tests in this class
+    // Called once before all the tests in this class
     public override class func setUp() {
-        let winAppDriver = try! WinAppDriverProcess()
+        winAppDriver = try! WinAppDriverProcess()
         webDriver = WebDriver(url: winAppDriver.url)
     }
 
-    // Executed before each test in this class
+    // Called before each test in this class
     public override func setUp() {
         session = Self.webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
     }
 
-    // Executed after each test in this class
+    // Called after each test in this class
     public override func tearDown() {
         // Force the destruction of the session
         session = nil
+    }
+
+    // Called after each test in this class
+    public override class func tearDown() {
+        // Force the destruction of the session
+        webDriver = nil
+        winAppDriver = nil
     }
 
     // Test methods
@@ -30,8 +41,8 @@ class SessionTests : XCTestCase {
         XCTAssertEqual(title, "System Information")
     }
 
-    public func testMaximizeAndMinimize() {
-        guard let element = session.findElementByName("Maximize") else {
+    public func testMaximizeAndRestore() {
+        guard let element = session.findElement(byName: "Maximize") else {
             XCTAssert(false, "Maximize button not found")
             return
         } 
