@@ -3,8 +3,7 @@ import XCTest
 
 class SessionTests : XCTestCase {
 
-    // These statics are created before running any tests in this XCTestCase
-    // and destroyed after all tests in this XCTestCase have been run
+    // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
     static var winAppDriver: WinAppDriverProcess!
     static var webDriver: WebDriver!
 

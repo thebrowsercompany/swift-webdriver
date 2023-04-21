@@ -23,11 +23,17 @@ extension Session {
     /// findElement(byName:)
     /// - Parameter byName: name of the element to find 
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
-    /// - Returns: a new instance of Element wrapping the found element, nil if not found 
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
     public func findElement(byName name: String) -> Element? {
         let elementRequest = ElementRequest(self, using: "name", value: name)
-        let value = try! webDriver.send(elementRequest).value
-        return Element(in: self, id: value!.ELEMENT)
+        var value: Session.ElementRequest.ResponseValue?
+        do {
+            value = try webDriver.send(elementRequest).value
+        } catch {
+            fatalError()
+        }
+        return value != nil ? Element(in: self, id: value!.ELEMENT) : nil
     } 
 
     struct ElementRequest : WebDriverRequest {
