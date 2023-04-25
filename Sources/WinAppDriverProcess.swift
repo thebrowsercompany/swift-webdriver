@@ -16,7 +16,11 @@ class WinAppDriverProcess {
         process.arguments = [ Self.ip, String(Self.port) ]
         process.standardInput = toStdinPipe.fileHandleForReading
         process.standardOutput = nil
-        try process.run()
+        do {
+            try process.run()
+        } catch {
+            fatalError("Could not start AppWinDriver!")
+        }
     }
 
     deinit {
