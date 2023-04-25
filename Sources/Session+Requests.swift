@@ -26,14 +26,16 @@ extension Session {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byName name: String) -> Element? {
-        let elementRequest = ElementRequest(self, using: "name", value: name)
+        let elementRequest = ElementRequest(self, using: "name", value: "foo")
         var value: Session.ElementRequest.ResponseValue?
         do {
             value = try webDriver.send(elementRequest).value
+        } catch is WebDriverError {
+            return nil
         } catch {
             fatalError()
         }
-        return value != nil ? Element(in: self, id: value!.ELEMENT) : nil
+        return Element(in: self, id: value!.ELEMENT)
     } 
 
     struct ElementRequest : WebDriverRequest {
