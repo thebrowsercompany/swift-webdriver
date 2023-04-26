@@ -26,7 +26,7 @@ extension Session {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byName name: String) -> Element? {
-        let elementRequest = ElementRequest(self, using: "name", value: "foo")
+        let elementRequest = ElementRequest(self, using: "name", value: name)
         var value: Session.ElementRequest.ResponseValue?
         do {
             value = try webDriver.send(elementRequest).value
