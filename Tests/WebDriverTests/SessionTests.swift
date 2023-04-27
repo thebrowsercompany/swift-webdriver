@@ -1,34 +1,24 @@
 import XCTest
 @testable import WebDriver
 
-class SessionTests : XCTestCase {
+class StaticSessionTests : XCTestCase {
 
     // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
     static var winAppDriver: WinAppDriverProcess!
     static var webDriver: WebDriver!
-
-    var session: Session!
+    static var session: Session!
 
     // Called once before all the tests in this class
     public override class func setUp() {
         winAppDriver = try! WinAppDriverProcess()
         webDriver = WebDriver(url: winAppDriver.url)
+        session = webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
     }
 
-    // Called before each test in this class
-    public override func setUp() {
-        session = Self.webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
-    }
-
-    // Called after each test in this class
-    public override func tearDown() {
-        // Force the destruction of the session
-        session = nil
-    }
-
-    // Called after each test in this class
+    // Called once after all tests in this class have run
     public override class func tearDown() {
         // Force the destruction of the session
+        session = nil
         webDriver = nil
         winAppDriver = nil
     }
@@ -36,12 +26,12 @@ class SessionTests : XCTestCase {
     // Test methods
 
     public func testTitle() {
-        let title = session.title
+        let title = Self.session.title
         XCTAssertEqual(title, "System Information")
     }
 
     public func testMaximizeAndRestore() {
-        guard let element = session.findElement(byName: "Maximize") else {
+        guard let element = Self.session.findElement(byName: "Maximize") else {
             XCTAssert(false, "Maximize button not found")
             return
         } 
