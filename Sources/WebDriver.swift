@@ -27,7 +27,9 @@ public struct WebDriver {
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
         guard status == 200 else {
-            throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
+            var error = try JSONDecoder().decode(WebDriverError.self, from: responseData)
+            error.status = status
+            throw error
         }
         let res = try JSONDecoder().decode(Request.Response.self, from: responseData)
         return res

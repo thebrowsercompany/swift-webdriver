@@ -30,8 +30,12 @@ extension Session {
         var value: Session.ElementRequest.ResponseValue?
         do {
             value = try webDriver.send(elementRequest).value
-        } catch is WebDriverError {
-            return nil
+        } catch let error as WebDriverError {
+            if error.status == 404 {
+                return nil
+            } else {
+                fatalError()
+            }
         } catch {
             fatalError()
         }
