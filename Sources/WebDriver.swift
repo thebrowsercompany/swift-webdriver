@@ -1,7 +1,7 @@
 import Foundation
 import FoundationNetworking
 
-struct WebDriver {
+public struct WebDriver {
     let rootURL : URL
 
     init(url: URL) {
@@ -10,6 +10,7 @@ struct WebDriver {
 
     // Send a WebDriverRequest to the web driver local service 
     // TODO: consider making this function async/awaitable
+    @discardableResult
     func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
         // Create urlRequest with proper Url and method
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
@@ -25,11 +26,13 @@ struct WebDriver {
 
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
-        if (status == 200) {
-            return try JSONDecoder().decode(Request.Response.self, from: responseData)
-        } else {
-            throw try JSONDecoder().decode(WebDriverError.self, from: responseData)
+        guard status == 200 else {
+            var error = try JSONDecoder().decode(WebDriverError.self, from: responseData)
+            error.status = status
+            throw error
         }
+        let res = try JSONDecoder().decode(Request.Response.self, from: responseData)
+        return res
     }
 
     // Utility function to build a URL from its parts

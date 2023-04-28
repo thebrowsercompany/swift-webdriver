@@ -27,10 +27,18 @@ enum HTTPMethod : String {
     case post = "POST"
 }
 
+// Response to a WebDriver request
+// All fields are optional because the response returned by WebDriver might be missing them, e.g., 
+// - deleteSession request returns no sessionId and no value
+// - element click request returns a sessionId but no value
+// - etc.
 struct WebDriverResponse<Value> : Decodable where Value : Decodable {
-    var sessionId: String
+    var sessionId: String?
     var status: Int?
-    var value: Value
+    var value: Value?
+}
+
+struct WebDriverNoResponse : Decodable {
 }
 
 struct WebDriverNoResponseValue : Decodable {
