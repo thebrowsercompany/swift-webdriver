@@ -1,7 +1,7 @@
 import XCTest
 @testable import WebDriver
 
-class StaticSessionTests : XCTestCase {
+class SessionTests : XCTestCase {
 
     // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
     static var winAppDriver: WinAppDriverProcess!
