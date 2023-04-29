@@ -26,7 +26,20 @@ extension Session {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byName name: String) -> Element? {
-        let elementRequest = ElementRequest(self, using: "name", value: name)
+        return findElement(using: "name", value: name)
+    }
+
+    /// findElement(byAccessibilityId:)
+    /// - Parameter byAccessiblityId: accessibiilty id of the element to find
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byAccessibilityId id: String) -> Element? {
+        return findElement(using: "accessibility id", value: id)
+    } 
+
+    // Helper for findElement APIs above
+    private func findElement(using: String, value: String) -> Element? {
+        let elementRequest = ElementRequest(self, using: using, value: value)
         var value: Session.ElementRequest.ResponseValue?
         do {
             value = try webDriver.send(elementRequest).value
