@@ -4,7 +4,6 @@ import XCTest
 class CalculatorTests : XCTestCase {
 
     // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
-    // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
     static var winAppDriver: WinAppDriverProcess!
     static var session: Session!
 
@@ -20,7 +19,7 @@ class CalculatorTests : XCTestCase {
     var header: Element?
     var calculatorResult: Element?
 
-    // Executed before each test
+    // Called before each test
     public override func setUp() {
         header = Self.session.findElement(byAccessibilityId: "Header") ??
                  Self.session.findElement(byAccessibilityId: "ContentPresenter")
@@ -42,6 +41,7 @@ class CalculatorTests : XCTestCase {
     }
 
    public func testAddition() {
+        // Find the buttons by their names and click them in sequence to perform 1 + 7 = 8
         Self.session.findElement(byName: "One")?.click();
         Self.session.findElement(byName: "Plus")?.click();
         Self.session.findElement(byName: "Seven")?.click();

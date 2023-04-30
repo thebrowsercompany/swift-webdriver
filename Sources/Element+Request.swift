@@ -21,8 +21,8 @@ extension Element {
 
     /// text - the element text
     public var text: String {
-        let sessionTitleRequest = TextRequest(element: self)
-        return try! webDriver.send(sessionTitleRequest).value!
+        let textRequest = TextRequest(element: self)
+        return try! webDriver.send(textRequest).value!
     } 
 
     struct TextRequest : WebDriverRequest {
