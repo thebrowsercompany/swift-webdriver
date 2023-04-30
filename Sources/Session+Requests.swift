@@ -37,7 +37,15 @@ extension Session {
         return findElement(using: "accessibility id", value: id)
     } 
 
-    // Helper for findElement APIs above
+    /// findElement(byXPath:)
+    /// - Parameter byXPath: xpath of the element to find in HTML content
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byXPath xpath: String) -> Element? {
+        return findElement(using: "xpath", value: xpath)
+    } 
+
+    // Helper for findElement functions above
     private func findElement(using: String, value: String) -> Element? {
         let elementRequest = ElementRequest(self, using: using, value: value)
         var value: Session.ElementRequest.ResponseValue?

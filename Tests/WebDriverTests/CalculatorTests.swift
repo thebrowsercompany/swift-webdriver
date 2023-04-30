@@ -48,4 +48,36 @@ class CalculatorTests : XCTestCase {
         Self.session.findElement(byName: "Equals")?.click();
         XCTAssertEqual("8", calculatorResultText);
     }
+
+    public func testDivision()
+    {
+        // Find the buttons by their accessibility ids and click them in sequence to perform 88 / 11 = 8
+        Self.session.findElement(byAccessibilityId: "num8Button")?.click();
+        Self.session.findElement(byAccessibilityId: "num8Button")?.click();
+        Self.session.findElement(byAccessibilityId: "divideButton")?.click();
+        Self.session.findElement(byAccessibilityId: "num1Button")?.click();
+        Self.session.findElement(byAccessibilityId: "num1Button")?.click();
+        Self.session.findElement(byAccessibilityId: "equalButton")?.click();
+        XCTAssertEqual("8", calculatorResultText);
+    }
+
+    public func testMultiplication()
+    {
+        // Find the buttons by their names using XPath and click them in sequence to perform 9 x 9 = 81
+        Self.session.findElement(byXPath:  "//Button[@Name='Nine']")?.click();
+        Self.session.findElement(byXPath:  "//Button[@Name='Multiply by']")?.click();
+        Self.session.findElement(byXPath:  "//Button[@Name='Nine']")?.click();
+        Self.session.findElement(byXPath:  "//Button[@Name='Equals']")?.click();
+        XCTAssertEqual("81", calculatorResultText);
+    }
+
+    public func testSubtraction()
+    {
+        // Find the buttons by their accessibility ids using XPath and click them in sequence to perform 9 - 1 = 8
+        Self.session.findElement(byXPath:  "//Button[@AutomationId=\"num9Button\"]")?.click();
+        Self.session.findElement(byXPath:  "//Button[@AutomationId=\"minusButton\"]")?.click();
+        Self.session.findElement(byXPath:  "//Button[@AutomationId=\"num1Button\"]")?.click();
+        Self.session.findElement(byXPath:  "//Button[@AutomationId=\"equalButton\"]")?.click();
+        XCTAssertEqual("8", calculatorResultText);
+    }
 }
