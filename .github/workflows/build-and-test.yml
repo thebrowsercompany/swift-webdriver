@@ -1,10 +1,6 @@
 name: Build & Test
 
-on:
-  workflow_call:
-    secrets:
-      GITHUB_NUGET_TOKEN:
-        required: true
+on: [push]
 
 jobs:
   build:
