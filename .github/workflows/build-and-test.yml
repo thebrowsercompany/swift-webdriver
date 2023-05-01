@@ -19,19 +19,5 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v3
 
-    - name: Build
-      run: swift build --disable-keychain
-
-    # long file path support needed for building tests, the dependencies
-    # that SPM checks out end up having paths which are too long. this can't
-    # be locally set bc the SPM checkouts aren't part of this repo
-    - name: Configure long file path
-      run: git config --system core.longpaths true
-
     - name: Test
-      run: swift test
-      
-    # unset long file paths
-    - name: Unset long file path
-      if: always()
-      run: git config --system --unset core.longpaths
+      run: swift test --disable-keychain
