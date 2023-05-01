@@ -22,3 +22,6 @@ jobs:
     - name: Build
       run: swift build --disable-keychain --build-tests
 
+    - name: Test
+      run: swift test --disable-keychain
+
