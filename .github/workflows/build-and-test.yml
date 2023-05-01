@@ -23,5 +23,5 @@ jobs:
       run: swift build --disable-keychain --build-tests
 
     - name: Test
-      run: swift test --disable-keychain
+      run: swift test --disable-keychain --skip-build
 
