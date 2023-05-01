@@ -21,7 +21,8 @@ extension Session {
     }
 
     /// findElement(byName:)
-    /// - Parameter byName: name of the element to find 
+    /// Search for an element by name, starting from the root.
+    /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
@@ -30,7 +31,8 @@ extension Session {
     }
 
     /// findElement(byAccessibilityId:)
-    /// - Parameter byAccessiblityId: accessibiilty id of the element to find
+    /// Search for an element in the accessibility tree, starting from the root.
+    /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byAccessibilityId id: String) -> Element? {
@@ -38,7 +40,8 @@ extension Session {
     } 
 
     /// findElement(byXPath:)
-    /// - Parameter byXPath: xpath of the element to find in HTML content
+    /// Search for an element by xpath, starting from the HTML root.
+    /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byXPath xpath: String) -> Element? {
@@ -46,7 +49,8 @@ extension Session {
     } 
 
     /// findElement(byClassName:)
-    /// - Parameter byClassName: class name of the element to find in HTML content
+    /// Search for an element by class name, starting from the HTML root.
+    /// - Parameter byClassName: class name of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byClassName className: String) -> Element? {

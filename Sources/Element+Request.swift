@@ -39,8 +39,9 @@ extension Element {
         var body: Body { .init() }
     }
 
-    /// findElement(byName:)
-    /// - Parameter byName: name of the element to find
+    /// findElement(byName:) 
+    /// Search for an element by name, starting from this element.
+    /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
@@ -49,7 +50,8 @@ extension Element {
     }
 
     /// findElement(byAccessibilityId:)
-    /// - Parameter byAccessiblityId: accessibiilty id of the element to find
+    /// Search for an element in the accessibility tree, starting from this element
+    /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byAccessibilityId id: String) -> Element? {
@@ -57,7 +59,8 @@ extension Element {
     } 
 
     /// findElement(byXPath:)
-    /// - Parameter byXPath: xpath of the element to find in HTML content
+    /// Search for an element by xpath in the HTML tree, starting from this element
+    /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byXPath xpath: String) -> Element? {
@@ -65,7 +68,8 @@ extension Element {
     } 
 
     /// findElement(byClassName:)
-    /// - Parameter byClassName: class name of the element to find in HTML content
+    /// Search for an element by class name in the HTML tree, starting from this element
+    /// - Parameter byClassName: class name of the element to search for 
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byClassName className: String) -> Element? {
