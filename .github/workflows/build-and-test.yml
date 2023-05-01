@@ -1,0 +1,38 @@
+name: Build & Test
+
+on:
+  workflow_call:
+    secrets:
+      GITHUB_NUGET_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+
+    steps:
+    - name: Setup Visual Studio Development Environment
+      uses: compnerd/gha-setup-vsdevenv@main
+
+    - name: Install Swift
+      uses: compnerd/gha-setup-swift@main
+      with:
+        branch: development
+        tag: DEVELOPMENT-SNAPSHOT-2023-02-27-a
+
+    - name: Build
+      run: swift build --disable-keychain
+
+    # long file path support needed for building tests, the dependencies
+    # that SPM checks out end up having paths which are too long. this can't
+    # be locally set bc the SPM checkouts aren't part of this repo
+    - name: Configure long file path
+      run: git config --system core.longpaths true
+
+    - name: Test
+      run: swift test
+      
+    # unset long file paths
+    - name: Unset long file path
+      if: always()
+      run: git config --system --unset core.longpaths
