@@ -21,7 +21,7 @@ jobs:
         tag: DEVELOPMENT-SNAPSHOT-2023-02-27-a
 
     - name: Build
-      run: cd ${{github.workspace}} && swift build --disable-keychain
+      run: cd ${{github.workspace}} && swift build --disable-keychain --package-path ${{github.workspace}}
 
     # long file path support needed for building tests, the dependencies
     # that SPM checks out end up having paths which are too long. this can't
