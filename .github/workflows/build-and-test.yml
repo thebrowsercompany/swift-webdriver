@@ -6,10 +6,6 @@ jobs:
   build:
     runs-on: windows-2022
 
-    defaults:
-      run:
-        working-directory: ${{github.workspace}}
-
     steps:
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
@@ -20,8 +16,11 @@ jobs:
         branch: development
         tag: DEVELOPMENT-SNAPSHOT-2023-02-27-a
 
+    - name: Check out repository code
+      uses: actions/checkout@v3
+
     - name: Build
-      run: cd ${{github.workspace}} && swift build --disable-keychain --package-path ${{github.workspace}}
+      run: swift build --disable-keychain
 
     # long file path support needed for building tests, the dependencies
     # that SPM checks out end up having paths which are too long. this can't
