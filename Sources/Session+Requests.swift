@@ -45,6 +45,14 @@ extension Session {
         return findElement(using: "xpath", value: xpath)
     } 
 
+    /// findElement(byClassName:)
+    /// - Parameter byClassName: class name of the element to find in HTML content
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byClassName className: String) -> Element? {
+        return findElement(using: "class name", value: className)
+    } 
+
     // Helper for findElement functions above
     private func findElement(using: String, value: String) -> Element? {
         let elementRequest = ElementRequest(self, using: using, value: value)

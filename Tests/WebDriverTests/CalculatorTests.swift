@@ -17,7 +17,23 @@ class CalculatorTests : XCTestCase {
 
         // Locate the element with the result of the calculation
         calculatorResult = Self.session.findElement(byAccessibilityId: "CalculatorResults")!
+
+        // Identify calculator mode by locating the header
+        let header = Self.session.findElement(byAccessibilityId: "Header") ??
+                 Self.session.findElement(byAccessibilityId: "ContentPresenter")
+
+        // Ensure that calculator is in standard mode
+        if header?.text.compare("Standard", options: .caseInsensitive) != .orderedSame {
+            Self.session.findElement(byAccessibilityId: "TogglePaneButton")?.click();
+            Thread.sleep(forTimeInterval: 1)
+            let splitViewPane = session.findElement(byClassName: "SplitViewPane");
+            splitViewPane?.findElement(byName: "Standard Calculator")?.click();
+            Thread.sleep(forTimeInterval: 1)
+            XCTAssertEqual(header?.text.compare("Standard", options: .caseInsensitive), .orderedSame)
+        }
     }
+
+    var calculatorResult: Element?
 
     private static var calculatorResult: Element?
 
