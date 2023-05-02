@@ -21,12 +21,45 @@ extension Session {
     }
 
     /// findElement(byName:)
-    /// - Parameter byName: name of the element to find 
+    /// Search for an element by name, starting from the root.
+    /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
     public func findElement(byName name: String) -> Element? {
-        let elementRequest = ElementRequest(self, using: "name", value: name)
+        return findElement(using: "name", value: name)
+    }
+
+    /// findElement(byAccessibilityId:)
+    /// Search for an element in the accessibility tree, starting from the root.
+    /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byAccessibilityId id: String) -> Element? {
+        return findElement(using: "accessibility id", value: id)
+    } 
+
+    /// findElement(byXPath:)
+    /// Search for an element by xpath, starting from the HTML root.
+    /// - Parameter byXPath: xpath of the element to search for
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byXPath xpath: String) -> Element? {
+        return findElement(using: "xpath", value: xpath)
+    } 
+
+    /// findElement(byClassName:)
+    /// Search for an element by class name, starting from the HTML root.
+    /// - Parameter byClassName: class name of the element to search for
+    /// - Returns: a new instance of Element wrapping the found element, nil if not found
+    /// - calls fatalError for any other error    
+    public func findElement(byClassName className: String) -> Element? {
+        return findElement(using: "class name", value: className)
+    } 
+
+    // Helper for findElement functions above
+    private func findElement(using: String, value: String) -> Element? {
+        let elementRequest = ElementRequest(self, using: using, value: value)
         var value: Session.ElementRequest.ResponseValue?
         do {
             value = try webDriver.send(elementRequest).value
