@@ -35,19 +35,19 @@ For additional examples, refere to folder `Test\WebDriverTests`.
 
 ## Architecture
 
-Examples of usage of the APIs are in the `Tests\WebDriverTests` folder, including tests for common apps such as Calculator. They are written to be callable by XCTest, Apple's testing framework. They are organized using `XCTestCase` classes and individual test method names need to start with `test` to be discovered by the testing framework.
+Examples of usage of the APIs are in the `Tests\WebDriverTests` folder, including tests for common apps such as Calculator. They are written to be callable by [XCTest](https://developer.apple.com/documentation/xctest), Apple's testing framework.
 
 The `setUp()` method of the `XCTestCase` class instantiates the WinAppDriver using `WinAppDriverProcess` and creates a testing session, passing it the location of the Windows app to launch as the test target. The target app will be launched and terminated for each test session.
 
 Implementations of the bindings are in the `Sources` folder. `WebDriver.swift`, `Session.swift`, `Element.swift` implement the corresponding object structs or classes. Files with the same names followed by `+requests` implement the actual bindings as extensions of these structs or classes.
 
-Each binding consist of a request struct confomring to the `WebDriverRequest` protocol and specializing the request, and of a method of the appropriate object instantiating that struct and passing it to `WebDriver.send<Request>(:)`. This encapsulates the specifics of the underlying http requests to that function.
+Each binding consist of a request struct conforming to the `WebDriverRequest` protocol and specializing the request, and of a method of the appropriate object instantiating that struct and passing it to `WebDriver.send<Request>(:)`. This encapsulates the specifics of the underlying http requests to that function.
 
 ## Building and running the project
 
-In VSCode, install the Swift extension to integrate with standard build and test IDE features, including the testing sidbar, in which tests can be run or debugged individually, by XCTestCase, or all at once.
+In VSCode, install the [Swift extension]( https://marketplace.visualstudio.com/items?itemName=sswg.swift-lang) to integrate with standard build and test IDE features, including the testing sidbar, in which tests can be run or debugged individually, by XCTestCase, or all at once.
 
-From the command line, use `swift build` and `swift test` to build or build and run tests, respectively. Refer to `swift test -help` for command parameters. 
+From the command line, use `swift build` and `swift test` to build and run tests. Refer to `swift test -help` for command parameters. 
 
 ## Contributing
 
