@@ -1,5 +1,7 @@
 # webdriver-swift
 
+[![Build & Test](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml)
+
 A Swift library for communicating with WebDriver endpoints such as WebDriver, Appium or WinAppDriver on Windows.
 
 TThis library provides swift bindings wrapping the REST APIs ([documented here](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) supported by these servers, in the same spirit as Selenium and Appium provide in other languages such as Objective-C or C#. WebDriver was initially targeted at web page testing (HTML content), but WinAppDriver and Appium repurpose them for application testing. As such, they implement a subset of the protocol and exhibit some other small differences. 
