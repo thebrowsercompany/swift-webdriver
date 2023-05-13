@@ -39,7 +39,7 @@ class NotepadTest : XCTestCase {
     // TODO: implement a way to confirm that the dialog was dismissed and notepad exited, 
     // e.g., by attempting to get the window handle from the session
     public func testDismisNewFileDialog() {
-        let webDriver = WebDriver(url: Self.winAppDriver.url)
+        let webDriver = WebDriver(endpoint: Self.winAppDriver.endpoint)
         let notepad = Notepad(webDriver: webDriver, appArguments: UUID().uuidString, appWorkingDir: NSTemporaryDirectory())
         Thread.sleep(forTimeInterval: 1)
         notepad.dismissNewFileDialog()
