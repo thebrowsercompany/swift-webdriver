@@ -4,8 +4,8 @@ import FoundationNetworking
 public struct WebDriver {
     let rootURL : URL
 
-    init(url: URL) {
-        self.rootURL = url
+    init(endpoint: URL) {
+        self.rootURL = endpoint
     }
 
     // Send a WebDriverRequest to the web driver local service 

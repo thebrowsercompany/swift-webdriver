@@ -12,7 +12,7 @@ class SessionTests : XCTestCase {
         winAppDriver = try! WinAppDriverProcess()
         
         // We don't store webDriver as session maintains it alive
-        let webDriver = WebDriver(url: winAppDriver.url)
+        let webDriver = WebDriver(endpoint: winAppDriver.endpoint)
         session = webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
     }
 

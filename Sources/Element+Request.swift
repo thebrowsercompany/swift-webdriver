@@ -59,7 +59,7 @@ extension Element {
     } 
 
     /// findElement(byXPath:)
-    /// Search for an element by xpath in the HTML tree, starting from this element
+    /// Search for an element by xpath, starting from this element
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
@@ -68,7 +68,7 @@ extension Element {
     } 
 
     /// findElement(byClassName:)
-    /// Search for an element by class name in the HTML tree, starting from this element
+    /// Search for an element by class name, starting from this element
     /// - Parameter byClassName: class name of the element to search for 
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    

@@ -12,7 +12,7 @@ class CalculatorTests : XCTestCase {
         winAppDriver = try! WinAppDriverProcess()
         
         // We don't store webDriver as session maintains it alive
-        let webDriver = WebDriver(url: winAppDriver.url)
+        let webDriver = WebDriver(endpoint: winAppDriver.endpoint)
         session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
 
         // Locate the element with the result of the calculation
