@@ -29,5 +29,5 @@ class WinAppDriverProcess {
         process.terminate()
     }
 
-    var url : URL { URL(string: "http://\(Self.ip):\(Self.port)")! }
+    var endpoint : URL { URL(string: "http://\(Self.ip):\(Self.port)")! }
 }

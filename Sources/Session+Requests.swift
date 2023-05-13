@@ -40,7 +40,7 @@ extension Session {
     } 
 
     /// findElement(byXPath:)
-    /// Search for an element by xpath, starting from the HTML root.
+    /// Search for an element by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
@@ -49,7 +49,7 @@ extension Session {
     } 
 
     /// findElement(byClassName:)
-    /// Search for an element by class name, starting from the HTML root.
+    /// Search for an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
