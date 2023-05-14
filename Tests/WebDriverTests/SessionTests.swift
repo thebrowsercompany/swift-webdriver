@@ -13,7 +13,8 @@ class SessionTests : XCTestCase {
         
         // We don't store webDriver as session maintains it alive
         let webDriver = WebDriver(endpoint: winAppDriver.endpoint)
-        session = webDriver.newSession(app: "C:\\Windows\\System32\\msinfo32.exe")
+        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
+        session = webDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
     }
 
     // Called once after all tests in this class have run

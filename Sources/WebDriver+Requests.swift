@@ -2,8 +2,9 @@ extension WebDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - Parameter app: location of the exe for the app to test
     /// - Returns: Session instance
-    public func newSession(app: String, appArguments: String? = nil, appWorkingDir: String? = nil) -> Session {
-        let newSessionRequest = NewSessionRequest(app: app, appArguments: appArguments, appWorkingDir: appWorkingDir)
+    public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil) -> Session {
+        let args = appArguments?.joined(separator: " ")
+        let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir)
         return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 

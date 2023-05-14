@@ -4,8 +4,9 @@ import Foundation
 
 class Notepad {
     let session: Session
-    init(webDriver: WebDriver, appArguments: String?, appWorkingDir: String?) {
-        session = webDriver.newSession(app: "C:\\Windows\\System32\\notepad.exe", 
+    init(webDriver: WebDriver, appArguments: [String]?, appWorkingDir: String?) {
+        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
+        session = webDriver.newSession(app: "\(windowsDir)\\System32\\notepad.exe", 
             appArguments: appArguments, appWorkingDir: appWorkingDir)
     }
 
@@ -38,10 +39,10 @@ class NotepadTest : XCTestCase {
     // TODO: implement a way to check that notepad has the correct name and working directory
     // TODO: implement a way to confirm that the dialog was dismissed and notepad exited, 
     // e.g., by attempting to get the window handle from the session
-    public func testDismisNewFileDialog() {
+    public func testDismissNewFileDialog() {
         let webDriver = WebDriver(endpoint: Self.winAppDriver.endpoint)
-        let notepad = Notepad(webDriver: webDriver, appArguments: UUID().uuidString, appWorkingDir: NSTemporaryDirectory())
-        Thread.sleep(forTimeInterval: 1)
+        let notepad = Notepad(webDriver: webDriver, appArguments: [UUID().uuidString], appWorkingDir: NSTemporaryDirectory())
+        Thread.sleep(forTimeInterval: 1)  // Needed until WIN-496
         notepad.dismissNewFileDialog()
     }
 }
