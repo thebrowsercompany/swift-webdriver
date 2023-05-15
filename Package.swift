@@ -13,5 +13,6 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(name: "WebDriver", path: "Sources"),
         .testTarget(name: "WebDriverTests", dependencies: ["WebDriver"]),
+        .testTarget(name: "UnitTests", dependencies: ["WebDriver"]),
     ]
 )
