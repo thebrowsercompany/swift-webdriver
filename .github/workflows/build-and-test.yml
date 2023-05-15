@@ -8,6 +8,11 @@ jobs:
     timeout-minutes: 20
 
     steps:
+    # - name: run winappdriver directly
+    #   shell: pwsh
+    #   run: |
+    #     Start-Process -FilePath "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe" -ArgumentList "127.0.0.1 4723"
+
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
 
@@ -24,6 +29,18 @@ jobs:
       run: swift build --disable-keychain --build-tests
 
     - name: Test
+      timeout-minutes: 5
       run: swift test --disable-keychain --skip-build
-      timeout-minutes: 10
 
+    - name: Take screenshot
+      if: failure()
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        ${{ github.workspace }}\scripts\screenshot.ps1 ${{ github.workspace }}\screenshot.png
+
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: screenshot
+        path: ${{ github.workspace }}\screenshot.png
