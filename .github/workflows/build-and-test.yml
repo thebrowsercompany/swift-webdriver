@@ -5,6 +5,7 @@ on: [push]
 jobs:
   build:
     runs-on: windows-2022
+    timeout-minutes: 20
 
     steps:
     - name: Setup Visual Studio Development Environment
@@ -24,4 +25,5 @@ jobs:
 
     - name: Test
       run: swift test --disable-keychain --skip-build
+      timeout-minutes: 10
 
