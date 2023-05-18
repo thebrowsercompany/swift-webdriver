@@ -52,17 +52,9 @@ extension WebDriver {
         }
 
         // Attach a new session to the app window
-        let session = newSession(attachTo: arcWindow!)
+        let session = newSession(appTopLevelWindowElement: arcWindow!)
         session.appProcess = process
         return session
-    }
-
-    /// newSession(attachTo:)
-    /// - Parameter attachTo: window element to start a session on 
-    /// - Returns: new Session instance
-    public func newSession(attachTo appTopLevelWindow: Element) -> Session {
-            let newSessionRequest = NewSessionAttachRequest(appTopLevelWindow: appTopLevelWindow)
-            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 
     struct NewSessionRequest : WebDriverRequest {
@@ -100,13 +92,36 @@ extension WebDriver {
         }
     }
 
+    /// newSession(appTopLevelWindowElement:)
+    /// Creates a new session attached to an existing app top level window
+    /// - Parameter appTopLevelWindowElement: the Element representing that window
+    /// - Returns: new Session instance
+    public func newSession(appTopLevelWindowElement: Element) -> Session {
+            let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowElement: appTopLevelWindowElement)
+            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+    }
+
+    /// newSession(appTopLevelWindowHandle:)
+    /// Creates a new session attached to an existing app top level window
+    /// - Parameter appTopLevelWindowHandle: the window handle
+    /// - Returns: new Session instance
+    public func newSession(appTopLevelWindowHandle: UInt32) -> Session {
+            let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
+            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+    }
+
     struct NewSessionAttachRequest : WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
-        init(appTopLevelWindow: Element) {
-            var appTopLevelWindowHandle = appTopLevelWindow.getAttribute(name: "NativeWindowHandle")
-            appTopLevelWindowHandle = String(Int(appTopLevelWindowHandle) ?? 0, radix: 16)
-            body.desiredCapabilities = .init(appTopLevelWindowHandle: appTopLevelWindowHandle)
+        init(appTopLevelWindowHandle: UInt32) {
+            let appTopLevelWindowHexHandle = String(appTopLevelWindowHandle, radix: 16)
+            body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
+        }
+
+        init(appTopLevelWindowElement: Element) {
+            let appTopLevelWindowHandle = appTopLevelWindowElement.getAttribute(name: "NativeWindowHandle")
+            let appTopLevelWindowHexHandle = String(UInt32(appTopLevelWindowHandle) ?? 0, radix: 16)
+            body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
         }
 
         var pathComponents: [String] { ["session"] }
@@ -117,9 +132,9 @@ extension WebDriver {
         }
 
         struct DesiredCapabilities : Encodable {
-            var appTopLevelWindowHandle: String?
+            var appTopLevelWindowHexHandle: String?
             enum CodingKeys: String, CodingKey {
-                case appTopLevelWindowHandle = "appTopLevelWindow"
+                case appTopLevelWindowHexHandle = "appTopLevelWindow"
             }
         }
 
