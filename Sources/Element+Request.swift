@@ -115,4 +115,30 @@ extension Element {
             var ELEMENT: String
         }
     }
+
+    /// getAttribute(name:)
+    /// Return a specific attribute of an element
+    /// - Parameter name: the attribute name as given by inspect.exe
+    /// - Returns: the attribute value string
+    /// - calls fatalError for any other error    
+    public func getAttribute(name: String) -> String {
+        let attributeRequest = AttributeRequest(self, name: name)
+        return try! webDriver.send(attributeRequest).value!
+    }
+
+    struct AttributeRequest : WebDriverRequest {
+        typealias ResponseValue = String
+        
+        let element: Element
+        let name: String
+
+        init(_ element: Element, name: String) {
+            self.element = element
+            self.name = name
+        }
+
+        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "attribute", name ] }
+        var method: HTTPMethod { .get }
+        var body: Body = .init()
+    }     
 }

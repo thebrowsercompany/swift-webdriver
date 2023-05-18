@@ -1,7 +1,12 @@
+import Foundation
+
 // Represents a Session in the WinAppDriver API
 public class Session {
     let webDriver: WebDriver
     let id: String
+
+    // Process of the app being tested when launched directly (not through WinAppDriver)
+    var appProcess : Process?
 
     init(in webDriver: WebDriver, id: String){
         self.webDriver = webDriver
