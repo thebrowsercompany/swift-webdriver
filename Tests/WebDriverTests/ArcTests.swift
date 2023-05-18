@@ -15,6 +15,7 @@ class Arc {
     }
 
     func close() {
+        print("Closing Arc")
         session.findElement(byName: "Close")?.click()
     }
 }
@@ -33,11 +34,11 @@ class ArcTests : XCTestCase {
         winAppDriver = nil
     }
 
-    func testNewTab() {
+    func testStartAndClose() {
         let arc = Arc(
             webDriver: WebDriver(endpoint: Self.winAppDriver.endpoint),
             app: "c:\\BCNY\\arc\\Apps\\BrowserWin\\build\\bin\\Arc.exe",
             appArguments: ["--no-sandbox", "--user-data-dir=c:\\temp\\Chromium"])
-        arc.createNewTab()
+        arc.close()
     }
 }

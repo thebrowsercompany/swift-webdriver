@@ -3,9 +3,10 @@ import WinSDK
 
 extension WebDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
-    /// - Parameter app: location of the exe for the app to test
+    /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 
     /// - appWorkingDir: working directory to run the app in
+    /// - waitForAppLaunch: time to wait to the app to launch in secs, 0 by default
     /// - Returns: new Session instance
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) -> Session {
             let args = appArguments?.joined(separator: " ")
@@ -15,12 +16,12 @@ extension WebDriver {
 
     /// newAttachedSession(app:)
     /// Starts the app directly and attach a new session to its window
-    /// - Parameters:
-    /// - Parameter app: location of the exe for the app to test
+    /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 
     /// - appWorkingDir: working directory to run the app in
+    /// - timeOut: retries until this timeout expires, in secs, 5 by default
     /// - Returns: new Session instance
-    public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil) -> Session {
+    public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, timeOut: Int? = nil) -> Session {
         // Start the app process
         let process = Process()
         process.executableURL = URL(fileURLWithPath: app)
@@ -34,27 +35,46 @@ extension WebDriver {
             fatalError("Could not run: \(app) \(String(describing: args))")
         }
         
-        // From a desktop session, find the app top level window element
-        // repeating up to 5 times for slow launches
-        let desktopSession = newSession(app: "Root")
-        var arcWindow: Element? = nil
-        var count = 0
-        while count < 5 && arcWindow == nil {
-            count += 1
-            arcWindow = desktopSession.findElement(byName: "Arc")
-            if arcWindow == nil {
-                // TODO: Sleep might noe be necessary, findElement already waits some
+        var arcWindowHandle: HWND? = nil
+        let start = clock()
+        let timeOut = timeOut ?? 5
+        Thread.sleep(forTimeInterval: 1)
+        while arcWindowHandle == nil && ((clock() - start) / CLOCKS_PER_SEC) < timeOut {
+            arcWindowHandle = findTopLevelWindow(for: process)
+            if arcWindowHandle == nil {
                 Thread.sleep(forTimeInterval: 1)
             }
         }
-        if arcWindow == nil {
+        if arcWindowHandle == nil {
             fatalError("Application window not found!")
         }
 
-        // Attach a new session to the app window
-        let session = newSession(appTopLevelWindowElement: arcWindow!)
+        let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: arcWindowHandle))
         session.appProcess = process
         return session
+    }
+
+    // Helper to enumearate the top level windows and find the one belongging to a given process
+    func findTopLevelWindow(for process: Process) -> HWND? {
+        struct Context {
+            let dwProcessId: DWORD
+            var hwnd: HWND?
+        }
+        var context = Context(dwProcessId: DWORD(process.processIdentifier)) 
+        let callback: @convention(c) (HWND?, LPARAM) -> WindowsBool = { (hwnd, lParam) in
+            let pContext = UnsafeMutablePointer<Context>(bitPattern: UInt(lParam))!
+            var pid: DWORD = 0
+            GetWindowThreadProcessId(hwnd, &pid)
+            if pid == pContext.pointee.dwProcessId {
+                pContext.pointee.hwnd = hwnd
+                return false
+            }
+            return true
+        }
+        _ = withUnsafePointer(to: &context) {
+            EnumWindows(callback, LPARAM(UInt(bitPattern: $0)))
+        }
+        return context.hwnd
     }
 
     struct NewSessionRequest : WebDriverRequest {
@@ -105,7 +125,7 @@ extension WebDriver {
     /// Creates a new session attached to an existing app top level window
     /// - Parameter appTopLevelWindowHandle: the window handle
     /// - Returns: new Session instance
-    public func newSession(appTopLevelWindowHandle: UInt32) -> Session {
+    public func newSession(appTopLevelWindowHandle: UInt) -> Session {
             let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
             return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
@@ -113,14 +133,17 @@ extension WebDriver {
     struct NewSessionAttachRequest : WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
-        init(appTopLevelWindowHandle: UInt32) {
+        init(appTopLevelWindowHandle: UInt) {
             let appTopLevelWindowHexHandle = String(appTopLevelWindowHandle, radix: 16)
             body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
         }
 
         init(appTopLevelWindowElement: Element) {
             let appTopLevelWindowHandle = appTopLevelWindowElement.getAttribute(name: "NativeWindowHandle")
-            let appTopLevelWindowHexHandle = String(UInt32(appTopLevelWindowHandle) ?? 0, radix: 16)
+            if appTopLevelWindowHandle == "0" {
+                fatalError("This element is not a Window")
+            }
+            let appTopLevelWindowHexHandle = String(UInt(appTopLevelWindowHandle) ?? 0, radix: 16)
             body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
         }
 
