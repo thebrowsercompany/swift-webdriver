@@ -1,0 +1,25 @@
+name: "Run a command and flush stdout"
+description: "Helper to flush the stdout buffer in case a command ends abruptly."
+
+inputs:
+  cmd-exec:
+    description: Command to execute
+    required: true
+  cmd-args:
+    description: Arguments to the command line
+    required: false
+    default: ""
+  working-directory:
+    required: false
+    default: ${{ github.workspace }}/Apps/BrowserWin
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run
+      working-directory: ${{ inputs.working-directory }}
+      shell: pwsh
+      run: |
+        $proc = Start-Process -NoNewWindow -Wait -PassThru -FilePath ${{ inputs.cmd-exec }} -ArgumentList '${{ inputs.cmd-args }}'
+        [Console]::Out.Flush()
+        exit $proc.ExitCode
