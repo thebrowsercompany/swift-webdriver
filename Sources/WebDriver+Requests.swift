@@ -96,13 +96,13 @@ extension WebDriver {
             var appArguments: String?
             var appWorkingDir: String?
             var waitForAppLaunch: Int?
-            let experimentalWebdriver = true
+            let experimentalWebDriver = true
             enum CodingKeys: String, CodingKey {
                 case app
                 case appArguments
                 case appWorkingDir
                 case waitForAppLaunch = "ms:waitForAppLaunch"
-                case experimentalWebdriver = "ms:experimental-webdriver"
+                case experimentalWebDriver = "ms:experimental-webdriver"
             }
         }
 
