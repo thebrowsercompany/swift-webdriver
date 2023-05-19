@@ -64,7 +64,7 @@ extension Session {
         do {
             value = try webDriver.send(elementRequest).value
         } catch let error as WebDriverError {
-            if error.status == WebDriverError.Statuses.NoSuchElement {
+            if error.status == .NoSuchElement {
                 return nil
             } else {
                 fatalError()

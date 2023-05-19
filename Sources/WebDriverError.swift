@@ -1,6 +1,6 @@
 struct WebDriverError : Decodable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
-    enum Statuses: Int, Decodable {
+    enum Status: Int, Decodable {
         case success = 0
         case NoSuchDriver = 6
         case NoSuchElement = 7
@@ -28,7 +28,7 @@ struct WebDriverError : Decodable, Error {
         case MoveTargetOutOfBounds = 34
     }
     
-    var status: Statuses?
+    var status: Status?
     var value: Value
 
     struct Value : Decodable {
