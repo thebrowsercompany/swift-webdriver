@@ -20,17 +20,23 @@ jobs:
       uses: compnerd/gha-setup-swift@main
       with:
         branch: development
-        tag: DEVELOPMENT-SNAPSHOT-2023-02-27-a
+        tag: DEVELOPMENT-SNAPSHOT-2023-04-20-a
 
     - name: Check out repository code
       uses: actions/checkout@v3
 
     - name: Build
-      run: swift build --disable-keychain --build-tests
+      uses: arc/windows-run-and-flush@main
+      with:
+        cmd-exec: swift
+        cmd-args: "build ${{ runner.debug && '--verbose' || '' }} --disable-keychain --build-tests"
 
     - name: Test
-      timeout-minutes: 5
-      run: swift test --disable-keychain --skip-build
+      timeout-minutes: 10
+      uses: arc/windows-run-and-flush@main
+      with:
+        cmd-exec: swift
+        cmd-args: "test ${{ runner.debug && '--verbose' || '' }} --disable-keychain --skip-build"
 
     - name: Take screenshot
       if: failure()
