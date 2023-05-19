@@ -35,6 +35,7 @@ jobs:
       uses: ./.github/actions/windows-run-and-flush
       with:
         cmd-exec: swift
+        working-directory: ${{ github.workspace }}
         cmd-args: "build ${{ runner.debug && '--verbose' || '' }} --disable-keychain --build-tests"
 
     - name: Test
@@ -42,6 +43,7 @@ jobs:
       uses: ./.github/actions/windows-run-and-flush
       with:
         cmd-exec: swift
+        working-directory: ${{ github.workspace }}
         cmd-args: "test ${{ runner.debug && '--verbose' || '' }} --disable-keychain --skip-build"
 
     - name: Take screenshot
