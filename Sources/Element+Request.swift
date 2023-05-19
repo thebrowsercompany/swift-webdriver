@@ -83,7 +83,7 @@ extension Element {
         do {
             value = try webDriver.send(elementRequest).value
         } catch let error as WebDriverError {
-            if error.status == .NoSuchElement {
+            if error.status == .noSuchElement {
                 return nil
             } else {
                 fatalError()

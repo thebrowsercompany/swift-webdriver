@@ -2,30 +2,30 @@ struct WebDriverError : Decodable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
     enum Status: Int, Decodable {
         case success = 0
-        case NoSuchDriver = 6
-        case NoSuchElement = 7
-        case NoSuchFrame = 8
-        case UnknownCommand = 9
-        case StaleElementReference = 10
-        case ElementNotVisible = 11
-        case InvalidElementState = 12
-        case UnknownError = 13
-        case ElementIsNotSelectable = 15
-        case JavaScriptError = 17
-        case XPathLookupError = 19
-        case Timeout = 21
-        case NoSuchWindow = 23
-        case InvalidCookieDomain = 24
-        case UnableToSetCookie = 25
-        case UnexpectedAlertOpen = 26
-        case NoAlertOpenError = 27
-        case ScriptTimeout = 28
-        case InvalidElementCoordinates = 29
-        case IMENotAvailable = 30
-        case IMEEngineActivationFailed = 31
-        case InvalidSelector = 32
-        case SessionNotCreatedException = 33
-        case MoveTargetOutOfBounds = 34
+        case noSuchDriver = 6
+        case noSuchElement = 7
+        case noSuchFrame = 8
+        case unknownCommand = 9
+        case staleElementReference = 10
+        case elementNotVisible = 11
+        case invalidElementState = 12
+        case unknownError = 13
+        case elementIsNotSelectable = 15
+        case javaScriptError = 17
+        case xPathLookupError = 19
+        case timeout = 21
+        case noSuchWindow = 23
+        case invalidCookieDomain = 24
+        case unableToSetCookie = 25
+        case unexpectedAlertOpen = 26
+        case noAlertOpenError = 27
+        case scriptTimeout = 28
+        case invalidElementCoordinates = 29
+        case imeNotAvailable = 30
+        case imeEngineActivationFailed = 31
+        case invalidSelector = 32
+        case sessionNotCreatedException = 33
+        case moveTargetOutOfBounds = 34
     }
     
     var status: Status?
