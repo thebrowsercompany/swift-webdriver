@@ -13,6 +13,9 @@ jobs:
     #   run: |
     #     Start-Process -FilePath "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe" -ArgumentList "127.0.0.1 4723"
 
+    - name: Check out repository code
+      uses: actions/checkout@v3
+
     - name: Start SSH session
       uses: luchihoratiu/debug-via-ssh@main
       with:
@@ -27,9 +30,6 @@ jobs:
       with:
         branch: development
         tag: DEVELOPMENT-SNAPSHOT-2023-04-20-a
-
-    - name: Check out repository code
-      uses: actions/checkout@v3
 
     - name: Build
       uses: ./.github/actions/windows-run-and-flush
