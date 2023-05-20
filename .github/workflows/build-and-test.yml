@@ -33,10 +33,10 @@ jobs:
       run: |
         cmd /c 'START "winappdriver" "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe" "127.0.0.1" "4723"'
 
-    - name: Start Calculator
-      shell: pwsh
-      run: |
-        cmd /c 'START "calculator" "C:\Windows\System32\calc.exe"'
+    # - name: Start Calculator
+    #   shell: pwsh
+    #   run: |
+    #     cmd /c 'START "calculator" "C:\Windows\System32\calc.exe"'
           
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
