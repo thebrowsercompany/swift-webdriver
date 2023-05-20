@@ -16,18 +16,18 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v3
 
+    - name: Start SSH session
+      uses: luchihoratiu/debug-via-ssh@main
+      with:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+        SSH_PASS: ${{ secrets.SSH_PASS }}
+
     - name: Start WinAppDriver
       shell: pwsh
       run: |
         cmd /c 'START "winappdriver" "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe" "127.0.0.1" "4723"'
         
       # Start-Process -FilePath "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe" -ArgumentList "127.0.0.1 4723"
-
-    # - name: Start SSH session
-    #   uses: luchihoratiu/debug-via-ssh@main
-    #   with:
-    #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
-    #     SSH_PASS: ${{ secrets.SSH_PASS }}
 
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
