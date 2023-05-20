@@ -36,7 +36,7 @@ jobs:
     - name: Start Calculator
       shell: pwsh
       run: |
-        cmd /c 'START "calculator" "C:\Windows\System32\calc.exe"
+        cmd /c 'START "calculator" "C:\Windows\System32\calc.exe"'
           
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
