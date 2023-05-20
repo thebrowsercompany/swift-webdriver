@@ -12,13 +12,16 @@ jobs:
     timeout-minutes: 20
 
     steps:
-    # - name: run winappdriver directly
-    #   shell: pwsh
-    #   run: |
-    #     Start-Process -FilePath "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe" -ArgumentList "127.0.0.1 4723"
 
     - name: Check out repository code
       uses: actions/checkout@v3
+
+    - name: Start WinAppDriver
+      shell: pwsh
+      run: |
+        cmd /c 'START "winappdriver" "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe" "127.0.0.1" "4723"'
+        
+      # Start-Process -FilePath "C:\\Program Files (x86)\\Windows Application Driver\\WinAppDriver.exe" -ArgumentList "127.0.0.1 4723"
 
     # - name: Start SSH session
     #   uses: luchihoratiu/debug-via-ssh@main
@@ -41,6 +44,7 @@ jobs:
         cmd-exec: swift
         working-directory: ${{ github.workspace }}
         cmd-args: "build ${{ runner.debug && '--verbose' || '' }} --disable-keychain --build-tests"
+
 
     - name: Test
       timeout-minutes: 10
