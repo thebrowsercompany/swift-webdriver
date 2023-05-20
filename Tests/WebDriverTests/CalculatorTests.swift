@@ -17,8 +17,8 @@ class CalculatorTests : XCTestCase {
         session = webDriver.newSession(app: "\(windowsDir)\\system32\\calc.exe")
 
         // session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
-        sleep(3)
-        
+        Thread.sleep(forTimeInterval:3)
+
         // Locate the element with the result of the calculation
         calculatorResult = Self.session.findElement(byAccessibilityId: "CalculatorResults")!
 
