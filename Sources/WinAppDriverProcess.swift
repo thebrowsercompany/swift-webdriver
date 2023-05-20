@@ -8,7 +8,8 @@ class WinAppDriverProcess {
     let toStdinPipe: Pipe
 
     init() throws {
-        let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
+        // let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
+        let path = "\(ProcessInfo.processInfo.environment["WINDIR"]!)\\notepad.exe"
         
         toStdinPipe = Pipe()
         process = Process()
