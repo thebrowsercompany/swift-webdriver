@@ -14,7 +14,7 @@ class CalculatorTests : XCTestCase {
         // We don't store webDriver as session maintains it alive
         let webDriver = WebDriver(endpoint: winAppDriver.endpoint)
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = webDriver.newSession(app: "\(windowsDir)\\win32calc.exe")
+        session = webDriver.newSession(app: "\(windowsDir)\\system32\\win32calc.exe")
 
         // session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
 
