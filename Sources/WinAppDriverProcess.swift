@@ -19,11 +19,11 @@ class WinAppDriverProcess {
 
         DispatchQueue.global(qos: .background).async {
             print("is background thread")
-            do {
-                try self.process.run()
-            } catch {
-                fatalError("Could not start AppWinDriver!")
-            }
+            // do {
+            //     try self.process.run()
+            // } catch {
+            //     fatalError("Could not start AppWinDriver!")
+            // }
         }
 
        // abort()
