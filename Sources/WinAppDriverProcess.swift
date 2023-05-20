@@ -17,13 +17,21 @@ class WinAppDriverProcess {
         process.standardInput = toStdinPipe.fileHandleForReading
         process.standardOutput = nil
 
+
+        "sending task to the background thread..."
+            .data(using: .utf8)
+            .map(FileHandle.standardError.write)
+
         DispatchQueue.global(qos: .background).async {
-            print("is background thread")
-            // do {
-            //     try self.process.run()
-            // } catch {
-            //     fatalError("Could not start AppWinDriver!")
-            // }
+            "is background thread"
+                .data(using: .utf8)
+                .map(FileHandle.standardError.write)
+
+            do {
+                try self.process.run()
+            } catch {
+                fatalError("Could not start AppWinDriver!")
+            }
         }
 
        // abort()
