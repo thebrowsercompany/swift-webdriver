@@ -13,7 +13,10 @@ class CalculatorTests : XCTestCase {
         
         // We don't store webDriver as session maintains it alive
         let webDriver = WebDriver(endpoint: winAppDriver.endpoint)
-        session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
+        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
+        session = webDriver.newSession(app: "\(windowsDir)\\System32\\calc.exe", 
+
+        // session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
 
         // Locate the element with the result of the calculation
         calculatorResult = Self.session.findElement(byAccessibilityId: "CalculatorResults")!
