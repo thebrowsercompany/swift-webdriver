@@ -6,7 +6,7 @@ extension WebDriver {
     /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 
     /// - appWorkingDir: working directory to run the app in
-    /// - waitForAppLaunch: time to wait to the app to launch in secs, 0 by default
+    /// - waitForAppLaunch: time to wait to the app to launch in seconds, 0 by default
     /// - Returns: new Session instance
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) -> Session {
             let args = appArguments?.joined(separator: " ")
@@ -15,13 +15,13 @@ extension WebDriver {
     }
 
     /// newAttachedSession(app:)
-    /// Starts the app directly and attach a new session to its window
+    /// Starts the app and attach a new session to its window
     /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 
     /// - appWorkingDir: working directory to run the app in
-    /// - timeOut: retries until this timeout expires, in secs, 5 by default
+    /// - retryForTimeInterval: retries attaching for that time interval, in seconds, 5 by default
     /// - Returns: new Session instance
-    public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, timeOut: Int? = nil) -> Session {
+    public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, retryForTimeInterval: TimeInterval? = nil) -> Session {
         // Start the app process
         let process = Process()
         process.executableURL = URL(fileURLWithPath: app)
@@ -36,10 +36,9 @@ extension WebDriver {
         }
         
         var arcWindowHandle: HWND? = nil
-        let start = clock()
-        let timeOut = timeOut ?? 5
-        Thread.sleep(forTimeInterval: 1)
-        while arcWindowHandle == nil && ((clock() - start) / CLOCKS_PER_SEC) < timeOut {
+        let start = Date.now
+        let retryForTimeInterval = retryForTimeInterval ?? 5
+        while arcWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
             arcWindowHandle = findTopLevelWindow(for: process)
             if arcWindowHandle == nil {
                 Thread.sleep(forTimeInterval: 1)
