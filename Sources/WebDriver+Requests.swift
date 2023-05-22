@@ -35,20 +35,20 @@ extension WebDriver {
             fatalError("Could not run: \(app) \(String(describing: args))")
         }
         
-        var arcWindowHandle: HWND? = nil
+        var topLevelWindowHandle: HWND? = nil
         let start = Date.now
         let retryForTimeInterval = retryForTimeInterval ?? 5
-        while arcWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
-            arcWindowHandle = findTopLevelWindow(for: process)
-            if arcWindowHandle == nil {
+        while topLevelWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
+            topLevelWindowHandle = findTopLevelWindow(for: process)
+            if topLevelWindowHandle == nil {
                 Thread.sleep(forTimeInterval: 1)
             }
         }
-        if arcWindowHandle == nil {
+        if topLevelWindowHandle == nil {
             fatalError("Application window not found!")
         }
 
-        let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: arcWindowHandle))
+        let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: topLevelWindowHandle))
         session.appProcess = process
         return session
     }
@@ -111,15 +111,6 @@ extension WebDriver {
         }
     }
 
-    /// newSession(appTopLevelWindowElement:)
-    /// Creates a new session attached to an existing app top level window
-    /// - Parameter appTopLevelWindowElement: the Element representing that window
-    /// - Returns: new Session instance
-    public func newSession(appTopLevelWindowElement: Element) -> Session {
-            let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowElement: appTopLevelWindowElement)
-            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
-    }
-
     /// newSession(appTopLevelWindowHandle:)
     /// Creates a new session attached to an existing app top level window
     /// - Parameter appTopLevelWindowHandle: the window handle
@@ -134,15 +125,6 @@ extension WebDriver {
 
         init(appTopLevelWindowHandle: UInt) {
             let appTopLevelWindowHexHandle = String(appTopLevelWindowHandle, radix: 16)
-            body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
-        }
-
-        init(appTopLevelWindowElement: Element) {
-            let appTopLevelWindowHandle = appTopLevelWindowElement.getAttribute(name: "NativeWindowHandle")
-            if appTopLevelWindowHandle == "0" {
-                fatalError("This element is not a Window")
-            }
-            let appTopLevelWindowHexHandle = String(UInt(appTopLevelWindowHandle) ?? 0, radix: 16)
             body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
         }
 

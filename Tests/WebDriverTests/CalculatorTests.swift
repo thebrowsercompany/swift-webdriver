@@ -4,8 +4,8 @@ import XCTest
 class CalculatorTests : XCTestCase {
 
     // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
-    static var winAppDriver: WinAppDriverProcess!
-    static var session: Session!
+    private static var winAppDriver: WinAppDriverProcess!
+    private static var session: Session!
 
     // Called once before all the tests in this class
     public override class func setUp() {
@@ -16,15 +16,15 @@ class CalculatorTests : XCTestCase {
         session = webDriver.newSession(app: "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App")
 
         // Locate the element with the result of the calculation
-        calculatorResult = Self.session.findElement(byAccessibilityId: "CalculatorResults")!
+        calculatorResult = session.findElement(byAccessibilityId: "CalculatorResults")!
 
         // Identify calculator mode by locating the header
-        let header = Self.session.findElement(byAccessibilityId: "Header") ??
-                 Self.session.findElement(byAccessibilityId: "ContentPresenter")
+        let header = session.findElement(byAccessibilityId: "Header") ??
+                 session.findElement(byAccessibilityId: "ContentPresenter")
 
         // Ensure that calculator is in standard mode
         if header?.text.compare("Standard", options: .caseInsensitive) != .orderedSame {
-            Self.session.findElement(byAccessibilityId: "TogglePaneButton")?.click()
+            session.findElement(byAccessibilityId: "TogglePaneButton")?.click()
             Thread.sleep(forTimeInterval: 1)
             let splitViewPane = session.findElement(byClassName: "SplitViewPane")
             splitViewPane?.findElement(byName: "Standard Calculator")?.click()
@@ -37,6 +37,7 @@ class CalculatorTests : XCTestCase {
 
     // Called once after all tests in this class have run
     public override class func tearDown() {
+        calculatorResult = nil
         session = nil
         winAppDriver = nil
     }
