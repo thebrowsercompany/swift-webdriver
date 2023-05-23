@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - uses: arc/windows-swift-setup
+    - uses: thebrowsercompany/arc/windows-swift-setup@main
       with:
         GiTHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GiTHUB_NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,6 +50,6 @@ jobs:
         name: screenshot
         path: ${{ github.workspace }}\screenshot.png
 
-    - uses: thebrowsercompany/arc/windows-swift-setup@main
+    - uses: thebrowsercompany/arc/windows-swift-teardown@main
       with:
         working-directory: ${{ github.workspace }}
