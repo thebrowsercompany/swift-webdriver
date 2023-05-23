@@ -8,22 +8,48 @@ jobs:
     timeout-minutes: 20
 
     steps:
-    - name: Setup Visual Studio Development Environment
-      uses: compnerd/gha-setup-vsdevenv@main
+    - uses: actions/checkout@v3
 
-    - name: Install Swift
-      uses: compnerd/gha-setup-swift@main
+    - uses: arc/windows-swift-setup
       with:
-        branch: development
-        tag: DEVELOPMENT-SNAPSHOT-2023-02-27-a
+        GiTHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GiTHUB_NUGET_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BUILD_PRESET: debug
+        working-directory: ${{ github.workspace }}
 
-    - name: Check out repository code
-      uses: actions/checkout@v3
+    - name: Start WinAppDriver
+      shell: pwsh
+      run: |
+          cmd /c 'START "winappdriver" "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe" "127.0.0.1" "4723"'
 
     - name: Build
-      run: swift build --disable-keychain --build-tests
+      uses: arc/windows-run-and-flush
+      with:
+        cmd-exec: swift
+        working-directory: ${{ github.workspace }}
+        cmd-args: "build ${{ runner.debug && '--verbose' || '' }} --disable-keychain --build-tests"
 
     - name: Test
-      run: swift test --disable-keychain --skip-build
       timeout-minutes: 10
+      uses: arc/windows-run-and-flush
+      with:
+        cmd-exec: swift
+        working-directory: ${{ github.workspace }}
+        cmd-args: "test ${{ runner.debug && '--verbose' || '' }} --disable-keychain --skip-build"
 
+    - name: Take screenshot
+      if: failure()
+      continue-on-error: true
+      shell: pwsh
+      run: |
+        ${{ github.workspace }}\scripts\screenshot.ps1 ${{ github.workspace }}\screenshot.png
+
+    - uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: screenshot
+        path: ${{ github.workspace }}\screenshot.png
+
+    - uses: arc/windows-swift-setup
+      with:
+        working-directory: ${{ github.workspace }}
