@@ -37,7 +37,7 @@ class ArcTests : XCTestCase {
     func testStartAndClose() {
         let arc = Arc(
             webDriver: WebDriver(endpoint: Self.winAppDriver.endpoint),
-            app: "c:\\BCNY\\arc\\Apps\\BrowserWin\\build\\bin\\Arc.exe",
+            app: ".\\arcbuild\\Arc.exe",
             appArguments: ["--no-sandbox", "--user-data-dir=c:\\temp\\Chromium"])
         arc.close()
     }
