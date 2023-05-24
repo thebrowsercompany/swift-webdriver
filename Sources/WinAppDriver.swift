@@ -4,28 +4,24 @@ public class WinAppDriver: WebDriver {
     static let ip = "127.0.0.1"
     static let port = 4723
 
-    let process: Process
-    let toStdinPipe: Pipe
-    let httpWebDriver: HTTPWebDriver
+    // let process: Process
+    // let toStdinPipe: Pipe
 
-    public init() throws {
-        let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
+    // init() throws {
+        // let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
         
-        toStdinPipe = Pipe()
-        process = Process()
-        process.executableURL = URL(fileURLWithPath: path)
-        process.arguments = [ Self.ip, String(Self.port) ]
-        process.standardInput = toStdinPipe.fileHandleForReading
-        process.standardOutput = nil
-        do {
-            try process.run()
-        } catch {
-            fatalError("Could not start WinAppDriver!")
-        }
-
-        let endpoint = URL(string: "http://\(Self.ip):\(Self.port)")!
-        httpWebDriver = HTTPWebDriver(endpoint: endpoint)
-    }
+        // toStdinPipe = Pipe()
+        // process = Process()
+        // process.executableURL = URL(fileURLWithPath: path)
+        // process.arguments = [ Self.ip, String(Self.port) ]
+        // process.standardInput = toStdinPipe.fileHandleForReading
+        // process.standardOutput = nil
+        // do {
+        //     try process.run()
+        // } catch {
+        //     fatalError("Could not start AppWinDriver!")
+        // }
+    // }
 
     // deinit {
     //     // WinAppDriver responds waits for a key to return

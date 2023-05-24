@@ -1,7 +1,7 @@
 import Foundation
 import WinSDK
 
-extension WebDriver {
+extension WinAppDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 
