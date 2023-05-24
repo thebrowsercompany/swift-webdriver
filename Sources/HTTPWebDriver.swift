@@ -1,17 +1,17 @@
 import Foundation
 import FoundationNetworking
 
-public struct HTTPWebDriver {
+public struct HTTPWebDriver: WebDriver {
     let rootURL : URL
 
-    init(endpoint: URL) {
+    public init(endpoint: URL) {
         self.rootURL = endpoint
     }
 
     // Send a WebDriverRequest to the web driver local service 
     // TODO: consider making this function async/awaitable
     @discardableResult
-    func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
+    public func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
         // Create urlRequest with proper Url and method
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
         var urlRequest = URLRequest(url: url)
