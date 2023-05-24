@@ -1,8 +1,14 @@
 import Foundation
 
-class WinAppDriverProcess {
+public class WinAppDriver: WebDriver {
     static let ip = "127.0.0.1"
     static let port = 4723
+
+    let httpWebDriver: HTTPWebDriver
+
+    public init() throws {
+        httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(Self.ip):\(Self.port)")!)
+    }
 
     // let process: Process
     // let toStdinPipe: Pipe
@@ -29,5 +35,8 @@ class WinAppDriverProcess {
     //     process.terminate()
     // }
 
-    var endpoint : URL { URL(string: "http://\(Self.ip):\(Self.port)")! }
+    @discardableResult
+    public func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
+        try httpWebDriver.send(request)
+    }
 }

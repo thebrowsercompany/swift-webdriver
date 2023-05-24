@@ -1,7 +1,7 @@
 import Foundation
 import FoundationNetworking
 
-protocol WebDriverRequest {
+public protocol WebDriverRequest {
     associatedtype Body : Encodable = CodableNone
     associatedtype ResponseValue : Decodable = CodableNone
     typealias Response = WebDriverResponse<ResponseValue>
@@ -16,12 +16,12 @@ protocol WebDriverRequest {
 // Saves protocol implementers from having to define if they do not use 
 // TODO: is there a way to provide a default for body?
 extension WebDriverRequest {
-    var query: [String: String] { get { [:] }}
+    public var query: [String: String] { get { [:] }}
 }
 
-struct CodableNone : Codable {}
+public struct CodableNone : Codable {}
 
-enum HTTPMethod : String {
+public enum HTTPMethod : String {
     case get = "GET"
     case delete = "DELETE"
     case post = "POST"
@@ -32,15 +32,15 @@ enum HTTPMethod : String {
 // - deleteSession request returns no sessionId and no value
 // - element click request returns a sessionId but no value
 // - etc.
-struct WebDriverResponse<Value> : Decodable where Value : Decodable {
-    var sessionId: String?
-    var status: Int?
-    var value: Value?
+public struct WebDriverResponse<Value> : Decodable where Value : Decodable {
+    public var sessionId: String?
+    public var status: Int?
+    public var value: Value?
 }
 
-struct WebDriverNoResponse : Decodable {
+public struct WebDriverNoResponse : Decodable {
 }
 
-struct WebDriverNoResponseValue : Decodable {
-    init(from decoder: Decoder) throws { }
+public struct WebDriverNoResponseValue : Decodable {
+    public init(from decoder: Decoder) throws { }
 }
