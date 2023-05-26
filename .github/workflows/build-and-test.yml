@@ -33,6 +33,12 @@ jobs:
         curl -H "Authorization: token ${{ inputs.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v4.raw" -O -L https://api.github.com/repos/thebrowsercompany/infra/contents/resources/windows/ErrorReporting.reg
         regedit.exe /s ErrorReporting.reg
 
+    - name: Download and unzip arc.exe for tests
+      shell: pwsh
+      run: |
+        curl -H "Authorization: token ${{ inputs.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v4.raw" -O -L https://github.com/thebrowsercompany/webdriver-swift/releases/download/v0.1.0-experiment/arcbuild.zip
+        unzip arcbuild.zip
+
     - name: Start WinAppDriver
       shell: pwsh
       run: |
