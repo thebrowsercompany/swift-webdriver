@@ -20,9 +20,10 @@ public class WinAppDriver: WebDriver {
     init() throws {
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(Self.ip):\(Self.port)")!)
         
+        // We start WinAppDriver only if its process is not already started
+        // CI machines start it using a GitHub action before running the tests 
+        // to get around https://linear.app/the-browser-company/issue/WIN-569/winappdriver-does-not-work-on-ci
         if !isProcessRunning(withName: "WinAppDriver.exe") {
-            // If we don't get status back from the server, we assume it needs to be started
-
             let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
 
             runningProcess = RunningProcess()
