@@ -8,10 +8,6 @@ public class WinAppDriver: WebDriver {
     let httpWebDriver: HTTPWebDriver
 
     struct RunningProcess {
-        init() {
-            process = Process()
-            toStdinPipe = Pipe()
-        }
         var process: Process
         var toStdinPipe: Pipe
     }
@@ -26,25 +22,27 @@ public class WinAppDriver: WebDriver {
         if !isProcessRunning(withName: "WinAppDriver.exe") {
             let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
 
-            runningProcess = RunningProcess()
-            if let runningProcess = runningProcess {
-                runningProcess.process.executableURL = URL(fileURLWithPath: path)
-                runningProcess.process.arguments = [ Self.ip, String(Self.port) ]
-                runningProcess.process.standardInput = runningProcess.toStdinPipe.fileHandleForReading
-                runningProcess.process.standardOutput = nil
-                do {
-                    try runningProcess.process.run()
-                } catch {
-                    fatalError("Could not start WinAppDriver!")
-                }
+            let process = Process()
+            let pipe = Pipe()
+            process.executableURL = URL(fileURLWithPath: path)
+            process.arguments = [ Self.ip, String(Self.port) ]
+            process.standardInput = pipe.fileHandleForReading
+            process.standardOutput = nil
+            runningProcess = RunningProcess(process: process, toStdinPipe: pipe)
+            do {
+                try runningProcess!.process.run()
+            } catch {
+                fatalError("Could not start WinAppDriver!")
             }
         }
     }
 
     deinit {
         // WinAppDriver responds waits for a key to return
-        try? runningProcess?.toStdinPipe.fileHandleForWriting.write(contentsOf: "\n".data(using: .utf8)!)
-        runningProcess?.process.terminate()
+        if let runningProcess = runningProcess {
+            try? runningProcess.toStdinPipe.fileHandleForWriting.write(contentsOf: "\n".data(using: .utf8)!)
+            runningProcess.process.terminate()
+        }
     }
 
     @discardableResult

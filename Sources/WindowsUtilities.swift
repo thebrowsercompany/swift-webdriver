@@ -17,20 +17,20 @@ func isProcessRunning(withName processName: String) -> Bool {
 
     for i in 0..<processCount {
         let processId = processIds[i]
-        let processHandle = OpenProcess(DWORD(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ), false, processId)
+        guard let processHandle = OpenProcess(DWORD(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ), false, processId) else {
+            continue
+        }
 
-        if processHandle != nil {
-            defer {
-                CloseHandle(processHandle)
-            }
+        defer {
+            CloseHandle(processHandle)
+        }
 
-            var processNameBuffer: [WCHAR] = Array(repeating: 0, count: Int(MAX_PATH))
-            if K32GetModuleBaseNameW(processHandle, nil, &processNameBuffer, DWORD(processNameBuffer.count)) > 0 {
-                let processNameString = String(decodingCString: processNameBuffer, as: UTF16.self)
+        var processNameBuffer: [WCHAR] = Array(repeating: 0, count: Int(MAX_PATH))
+        if K32GetModuleBaseNameW(processHandle, nil, &processNameBuffer, DWORD(processNameBuffer.count)) > 0 {
+            let processNameString = String(decodingCString: processNameBuffer, as: UTF16.self)
 
-                if processNameString.lowercased() == processName.lowercased() {
-                    return true
-                }
+            if processNameString.lowercased() == processName.lowercased() {
+                return true
             }
         }
     }
