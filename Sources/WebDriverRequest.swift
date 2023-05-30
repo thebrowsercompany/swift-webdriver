@@ -4,7 +4,7 @@ import FoundationNetworking
 public protocol WebDriverRequest {
     associatedtype Body : Encodable = CodableNone
     associatedtype ResponseValue : Decodable = CodableNone
-    typealias Response = WebDriverResponse<ResponseValue>
+    associatedtype Response : Decodable = WebDriverResponse<ResponseValue>
 
     var pathComponents: [String] { get }
     var query: [String: String] { get }

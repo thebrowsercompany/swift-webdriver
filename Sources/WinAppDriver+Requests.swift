@@ -2,6 +2,40 @@ import Foundation
 import WinSDK
 
 extension WinAppDriver {
+        /// status - returns WinAppDriver status
+    /// Returns: an instance of the Status type, nil if error
+    public var status: Status? {
+        get throws { 
+            let statusRequest = StatusRequest()
+            return try send(statusRequest)
+        }
+    }
+
+    public struct Status: Decodable {
+        var build: Build?
+        var os: OS?
+        
+        struct Build : Decodable {
+            var revision: String?
+            var time: String?
+            var version: String?
+        }
+        struct OS : Decodable {
+            var arch: String?
+            var name: String?
+            var version: String?
+        }
+    }
+
+    struct StatusRequest : WebDriverRequest {
+        typealias Response = Status
+        
+        var pathComponents: [String] { [ "status" ] }
+        var method: HTTPMethod { .get }
+        var body: Body { .init() }
+    }
+
+
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - app: location of the exe for the app to test
     /// - appArguments: Array of arguments to pass to the app on launch 

@@ -4,6 +4,8 @@ import FoundationNetworking
 public struct HTTPWebDriver: WebDriver {
     let rootURL : URL
 
+    public static let defaultTimeout: TimeInterval = 5  // seconds
+
     public init(endpoint: URL) {
         self.rootURL = endpoint
     }
@@ -16,6 +18,7 @@ public struct HTTPWebDriver: WebDriver {
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
+        urlRequest.timeoutInterval = Self.defaultTimeout
 
         // Add the body if the WebDriverRequest type defines one
         if Request.Body.self != CodableNone.self {
