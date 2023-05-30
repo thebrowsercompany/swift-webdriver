@@ -3,13 +3,19 @@ import WinSDK
 
 // Helper to determine if a process with a given name is running
 func isProcessRunning(withName processName: String) -> Bool {
+    findProcessId(withName: processName) != 0
+}
+
+// Helper to find the id of a process by name
+// Return 0 if process not found
+func findProcessId(withName processName: String) -> DWORD {
     var processIds: [DWORD] = []
     var bytesReturned: DWORD = 0
 
     repeat {
         processIds = Array(repeating: 0, count: processIds.count + 1024)
         if !K32EnumProcesses(&processIds, DWORD(processIds.count * MemoryLayout<DWORD>.size), &bytesReturned) {
-            return false
+            return 0
         }
     } while bytesReturned == DWORD(processIds.count * MemoryLayout<DWORD>.size)
 
@@ -29,21 +35,26 @@ func isProcessRunning(withName processName: String) -> Bool {
                 let processNameString = String(decodingCString: processNameBuffer, as: UTF16.self)
 
                 if processNameString.lowercased() == processName.lowercased() {
-                    return true
+                    return processId
                 }
             }
         }
     }
-    return false
+    return 0
 }
 
 // Helper to enumearate the top level windows and find the one belongging to a given process
 func findTopLevelWindow(for process: Process) -> HWND? {
+    findTopLevelWindow(for: DWORD(bitPattern: process.processIdentifier))
+}
+
+// Helper to enumearate the top level windows and find the one belongging to a given process by id
+func findTopLevelWindow(for processId: DWORD) -> HWND? {
     struct Context {
         let dwProcessId: DWORD
         var hwnd: HWND?
     }
-    var context = Context(dwProcessId: DWORD(process.processIdentifier)) 
+    var context = Context(dwProcessId: DWORD(processId)) 
     let callback: @convention(c) (HWND?, LPARAM) -> WindowsBool = { (hwnd, lParam) in
         let pContext = UnsafeMutablePointer<Context>(bitPattern: UInt(lParam))!
         var pid: DWORD = 0
@@ -58,4 +69,39 @@ func findTopLevelWindow(for process: Process) -> HWND? {
         EnumWindows(callback, LPARAM(UInt(bitPattern: $0)))
     }
     return context.hwnd
+}
+
+// Helper to Shell execute an app identified by URL
+func openURL(_ urlString: String, args: [String]? = nil, wdir: String? = nil) {
+    guard let urlCString = urlString.cString(using: .utf8) else {
+        print("Failed to convert URL string to CString")
+        return
+    }
+
+    var argsCString: [CChar]? = nil
+    var wdirCString: [CChar]? = nil
+
+    if args != nil {
+        let argsString = args!.joined(separator: " ")
+        argsCString = argsString.cString(using: .utf8)
+    }
+
+    if wdir != nil {
+        wdirCString = wdir!.cString(using: .utf8)
+    }
+
+    let result = ShellExecuteA(nil, "open", urlCString, argsCString, wdirCString, SW_SHOWNORMAL)
+
+    if Int(bitPattern: result) <= 32 {
+        print("Failed to open URL: \(urlString), error code: \(String(describing:result))")
+    }
+}
+
+// Helper to extract the exe name out of a path to an exe file
+func getExeName(fromPath path: String) -> String? {
+    if let url = URL(string: path) {
+        return url.lastPathComponent
+    }
+    let url = URL(fileURLWithPath: path)
+    return url.lastPathComponent
 }

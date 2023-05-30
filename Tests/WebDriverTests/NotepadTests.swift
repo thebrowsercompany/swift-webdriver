@@ -6,7 +6,7 @@ class Notepad {
     let session: Session
     init(winAppDriver: WinAppDriver, appArguments: [String]?, appWorkingDir: String?) {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = winAppDriver.newSession(app: "\(windowsDir)\\System32\\notepad.exe", 
+        session = winAppDriver.newAttachedSession(app: "\(windowsDir)\\System32\\notepad.exe", 
             appArguments: appArguments, appWorkingDir: appWorkingDir)
     }
 

@@ -23,23 +23,34 @@ extension WinAppDriver {
     /// - Returns: new Session instance
     public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, retryForTimeInterval: TimeInterval? = nil) -> Session {
         // Start the app process
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: app)
-        process.arguments = appArguments
-        process.standardInput = nil
-        process.standardOutput = nil
-        do {
-            try process.run()
-        } catch {
+        // let process = Process()
+        // process.executableURL = URL(fileURLWithPath: app)
+        // process.arguments = appArguments
+        // process.standardInput = nil
+        // process.standardOutput = nil
+        // do {
+        //     try process.run()
+        // } catch {
+        //     let args = appArguments?.joined(separator: " ")
+        //     fatalError("Could not run: \(app) \(String(describing: args))")
+        // }
+
+        openURL(app, args: appArguments, wdir: appWorkingDir)
+        guard let exeName = getExeName(fromPath: app) else {
+            fatalError("Can't extract the app exe name")
+        }
+        
+        let processId = findProcessId(withName: exeName)
+        if processId == 0 {
             let args = appArguments?.joined(separator: " ")
             fatalError("Could not run: \(app) \(String(describing: args))")
         }
-        
+                
         var topLevelWindowHandle: HWND? = nil
         let start = Date.now
         let retryForTimeInterval = retryForTimeInterval ?? 5
         while topLevelWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
-            topLevelWindowHandle = findTopLevelWindow(for: process)
+            topLevelWindowHandle = findTopLevelWindow(for: processId)
             if topLevelWindowHandle == nil {
                 Thread.sleep(forTimeInterval: 1)
             }
@@ -49,7 +60,7 @@ extension WinAppDriver {
         }
 
         let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: topLevelWindowHandle))
-        session.appProcess = process
+        //session.appProcess = process
         return session
     }
 
