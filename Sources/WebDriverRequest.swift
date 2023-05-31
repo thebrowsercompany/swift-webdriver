@@ -3,8 +3,8 @@ import FoundationNetworking
 
 public protocol WebDriverRequest {
     associatedtype Body : Encodable = CodableNone
-    associatedtype ResponseValue : Decodable = CodableNone
-    associatedtype Response : Decodable = WebDriverResponse<ResponseValue>
+    associatedtype ResponseValue : Codable = CodableNone
+    associatedtype Response : Codable = WebDriverResponse<ResponseValue>
 
     var pathComponents: [String] { get }
     var query: [String: String] { get }
@@ -32,15 +32,15 @@ public enum HTTPMethod : String {
 // - deleteSession request returns no sessionId and no value
 // - element click request returns a sessionId but no value
 // - etc.
-public struct WebDriverResponse<Value> : Decodable where Value : Decodable {
+public struct WebDriverResponse<Value> : Codable where Value : Codable {
     public var sessionId: String?
     public var status: Int?
     public var value: Value?
 }
 
-public struct WebDriverNoResponse : Decodable {
+public struct WebDriverNoResponse : Codable {
 }
 
-public struct WebDriverNoResponseValue : Decodable {
+public struct WebDriverNoResponseValue : Codable {
     public init(from decoder: Decoder) throws { }
 }

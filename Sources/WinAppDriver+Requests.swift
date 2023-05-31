@@ -11,16 +11,16 @@ extension WinAppDriver {
         }
     }
 
-    public struct Status: Decodable {
+    public struct Status: Codable {
         var build: Build?
         var os: OS?
         
-        struct Build : Decodable {
+        struct Build : Codable {
             var revision: String?
             var time: String?
             var version: String?
         }
-        struct OS : Decodable {
+        struct OS : Codable {
             var arch: String?
             var name: String?
             var version: String?

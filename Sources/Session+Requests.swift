@@ -92,7 +92,7 @@ extension Session {
             var value: String
         }
 
-        struct ResponseValue : Decodable {
+        struct ResponseValue : Codable {
             var ELEMENT: String
         }
     }
