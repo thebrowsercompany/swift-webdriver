@@ -64,10 +64,10 @@ extension WinAppDriver {
         var method: HTTPMethod { .post }
         var body: Body = .init()
 
-        struct RequiredCapabilities : Encodable {
+        struct RequiredCapabilities : Codable {
         }
 
-        struct DesiredCapabilities : Encodable {
+        struct DesiredCapabilities : Codable {
             var app: String?
             var appArguments: String?
             var appWorkingDir: String?
@@ -82,7 +82,7 @@ extension WinAppDriver {
             }
         }
 
-        struct Body : Encodable {
+        struct Body : Codable {
             var requiredCapabilities: RequiredCapabilities?
             var desiredCapabilities: DesiredCapabilities = .init()
         }
@@ -109,17 +109,17 @@ extension WinAppDriver {
         var method: HTTPMethod { .post }
         var body: Body = .init()
 
-        struct RequiredCapabilities : Encodable {
+        struct RequiredCapabilities : Codable {
         }
 
-        struct DesiredCapabilities : Encodable {
+        struct DesiredCapabilities : Codable {
             var appTopLevelWindowHexHandle: String?
             enum CodingKeys: String, CodingKey {
                 case appTopLevelWindowHexHandle = "appTopLevelWindow"
             }
         }
 
-        struct Body : Encodable {
+        struct Body : Codable {
             var requiredCapabilities: RequiredCapabilities?
             var desiredCapabilities: DesiredCapabilities = .init()
         }

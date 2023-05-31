@@ -11,12 +11,11 @@ class APIToRequestMappingTests : XCTestCase {
         mockWebDriver.expect(path: "session/mySession/title", method: .get) { WebDriverResponse(value: "mySession.title") }
         XCTAssertEqual(session.title, "mySession.title")
 
-        struct ElementResponseValue : Codable {
-            var ELEMENT: String
+        mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Session.ElementRequest.self) {
+            XCTAssertEqual($0.using, "name")
+            XCTAssertEqual($0.value, "myElement.name")
+            return WebDriverResponse(value: .init(ELEMENT: "myElement"))
         }
-
-        // TODO: assert that the request has expected values 
-        mockWebDriver.expect(path: "session/mySession/element", method: .post) { WebDriverResponse(value: ElementResponseValue(ELEMENT: "myElement")) }
         let element = session.findElement(byName: "myElement.name")!
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/text", method: .get) { WebDriverResponse(value: "myElement.text") }

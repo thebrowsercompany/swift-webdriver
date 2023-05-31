@@ -106,7 +106,7 @@ extension Element {
         var method: HTTPMethod { .post }
         var body: Body
 
-        struct Body : Encodable {
+        struct Body : Codable {
             var using: String
             var value: String
         }
