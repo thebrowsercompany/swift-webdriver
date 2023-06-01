@@ -26,6 +26,7 @@ public struct WebDriverStatus: Codable {
         var time: String?
         var version: String?
     }
+    
     struct OS : Codable {
         var arch: String?
         var name: String?
