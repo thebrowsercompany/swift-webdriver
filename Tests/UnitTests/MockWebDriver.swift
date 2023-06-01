@@ -18,16 +18,16 @@ class MockWebDriver: WebDriver {
     }
 
     /// Queues an expected request and specifies its response handler
-    func expect<ResponseValue : Encodable>(path: String, method: HTTPMethod, handler: @escaping () -> ResponseValue) {
+    func expect<Response : Encodable>(path: String, method: HTTPMethod, handler: @escaping () -> Response) {
         expectations.append(Expectation(path: path, method: method, handler: {
-            let responseValue = handler()
-            return ResponseValue.self == CodableNone.self ? nil : try! JSONEncoder().encode(responseValue)
+            let response = handler()
+            return Response.self == CodableNone.self ? nil : try! JSONEncoder().encode(response)
         }))
     }
 
     /// Queues an expected request
     func expect(path: String, method: HTTPMethod) {
-        expect(path: path, method: method) { CodableNone() }
+        expect(path: path, method: method) { WebDriverResponse<CodableNone>() }
     }
 
     @discardableResult
@@ -38,16 +38,8 @@ class MockWebDriver: WebDriver {
         XCTAssertEqual(request.pathComponents.joined(separator: "/"), expectation.path)
         XCTAssertEqual(request.method, expectation.method)
 
-        let responseValue = expectation.handler()
+        let responseData = expectation.handler()
 
-        var response = Request.Response()
-        if Request.ResponseValue.self == WebDriverNoResponseValue.self {
-            XCTAssertNil(responseValue)
-        }
-        else {
-            XCTAssertNotNil(responseValue)
-            response.value = try JSONDecoder().decode(Request.ResponseValue.self, from: responseValue!)
-        }
-        return response
+        return try JSONDecoder().decode(Request.Response.self, from: responseData!)
     }
 }

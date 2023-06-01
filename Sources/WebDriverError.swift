@@ -1,6 +1,6 @@
-struct WebDriverError : Decodable, Error {
+struct WebDriverError : Codable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
-    enum Status: Int, Decodable {
+    enum Status: Int, Codable {
         case success = 0
         case noSuchDriver = 6
         case noSuchElement = 7
@@ -31,7 +31,7 @@ struct WebDriverError : Decodable, Error {
     var status: Status?
     var value: Value
 
-    struct Value : Decodable {
+    struct Value : Codable {
         var error: String
         var message: String
         var stacktrace: String?
