@@ -14,11 +14,12 @@ public struct HTTPWebDriver: WebDriver {
     // TODO: consider making this function async/awaitable
     @discardableResult
     public func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
+        print("called send")
         // Create urlRequest with proper Url and method
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
-        urlRequest.timeoutInterval = Self.defaultTimeout
+        //urlRequest.timeoutInterval = Self.defaultTimeout
 
         // Add the body if the WebDriverRequest type defines one
         if Request.Body.self != CodableNone.self {
@@ -28,7 +29,9 @@ public struct HTTPWebDriver: WebDriver {
         }
 
         // Send the request and decode result or error
+        print("About to send request: \(urlRequest.httpMethod) \(urlRequest.url), ")
         let (status, responseData) = try urlRequest.send()
+        print("Handling response, http status: \(status)")
         guard status == 200 else {
             let error = try JSONDecoder().decode(WebDriverError.self, from: responseData)
             throw error
