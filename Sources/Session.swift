@@ -6,7 +6,7 @@ public class Session {
     let id: String
 
     // Process of the app being tested when launched directly (not through WinAppDriver)
-    var appProcess : Process?
+    var appProcess : ProcessWrapper?
 
     init(in webDriver: some WebDriver, id: String){
         self.webDriver = webDriver

@@ -72,29 +72,34 @@ func findTopLevelWindow(for processId: DWORD) -> HWND? {
 }
 
 // Helper to Shell execute an app identified by URL
-func openURL(_ urlString: String, args: [String]? = nil, wdir: String? = nil) {
-    guard let urlCString = urlString.cString(using: .utf8) else {
-        print("Failed to convert URL string to CString")
-        return
+// and retrieve the launch process id
+func openURL(_ url: String, args: [String]? = nil, workingDir: String? = nil) -> DWORD {
+    let verb = "open"
+    let processId = verb.withCString { verb in
+        url.withCString { url in
+            (args?.joined(separator: " ") ?? "").withCString { args in
+                (workingDir ?? "").withCString { workingDir in
+
+                    var sei: SHELLEXECUTEINFO = SHELLEXECUTEINFO()
+                    sei.cbSize = DWORD(MemoryLayout<SHELLEXECUTEINFO>.size)
+                    sei.fMask = ULONG(SEE_MASK_NOCLOSEPROCESS)
+                    sei.lpVerb = verb
+                    sei.lpFile = url
+                    sei.lpParameters = args
+                    sei.lpDirectory = workingDir
+                    sei.nShow = Int32(SW_SHOWNORMAL)
+
+                    guard ShellExecuteExA(&sei) else {
+                        fatalError("Failed to open URL: \(url)")
+                    }
+
+                    return GetProcessId(sei.hProcess)
+                }
+            }
+        }
     }
 
-    var argsCString: [CChar]? = nil
-    var wdirCString: [CChar]? = nil
-
-    if args != nil {
-        let argsString = args!.joined(separator: " ")
-        argsCString = argsString.cString(using: .utf8)
-    }
-
-    if wdir != nil {
-        wdirCString = wdir!.cString(using: .utf8)
-    }
-
-    let result = ShellExecuteA(nil, "open", urlCString, argsCString, wdirCString, SW_SHOWNORMAL)
-
-    if Int(bitPattern: result) <= 32 {
-        print("Failed to open URL: \(urlString), error code: \(String(describing:result))")
-    }
+    return processId
 }
 
 // Helper to extract the exe name out of a path to an exe file

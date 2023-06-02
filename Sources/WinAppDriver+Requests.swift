@@ -21,36 +21,42 @@ extension WinAppDriver {
     /// - appWorkingDir: working directory to run the app in
     /// - retryForTimeInterval: retries attaching for that time interval, in seconds, 5 by default
     /// - Returns: new Session instance
+    /// Notes : at this time, this only works with applications that have a single top level window
     public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, retryForTimeInterval: TimeInterval? = nil) -> Session {
-        // Start the app process
-        // let process = Process()
-        // process.executableURL = URL(fileURLWithPath: app)
-        // process.arguments = appArguments
-        // process.standardInput = nil
-        // process.standardOutput = nil
-        // do {
-        //     try process.run()
-        // } catch {
-        //     let args = appArguments?.joined(separator: " ")
-        //     fatalError("Could not run: \(app) \(String(describing: args))")
-        // }
+        // Launch the app using either a swift Process object or Windows ShellExecute and retrieve the process id
+        // Due to https://linear.app/the-browser-company/issue/WIN-569/winappdriver-does-not-work-on-ci, 
+        // we use ShellExecute
+        let startAppWithShellExecute = true
+        var processWrapper: ProcessWrapper = .none
 
-        openURL(app, args: appArguments, wdir: appWorkingDir)
-        guard let exeName = getExeName(fromPath: app) else {
-            fatalError("Can't extract the app exe name")
+        if startAppWithShellExecute {
+            let processId = openURL(app, args: appArguments, workingDir: appWorkingDir)
+            processWrapper = .windows(processId: processId)
+        } else {
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: app)
+            process.arguments = appArguments
+            process.standardInput = nil
+            process.standardOutput = nil
+            do {
+                try process.run()
+            } catch {
+                let args = appArguments?.joined(separator: " ")
+                fatalError("Could not run: \(app) \(String(describing: args))")
+            }
+            processWrapper = .swift(process: process)
         }
-        
-        let processId = findProcessId(withName: exeName)
-        if processId == 0 {
-            let args = appArguments?.joined(separator: " ")
-            fatalError("Could not run: \(app) \(String(describing: args))")
-        }
-                
+
+        // Retrieve the top level window handle for the process
+        // This only supports apps that have a single top level window on their launch process
+        // Some apps, such as msinfo.exe have more than one top level window. Others, such as notepad 
+        // on Win11, have their top level window on a different process than their launch process.
+        // This would have to be improved to support these cases.
         var topLevelWindowHandle: HWND? = nil
         let start = Date.now
         let retryForTimeInterval = retryForTimeInterval ?? 5
         while topLevelWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
-            topLevelWindowHandle = findTopLevelWindow(for: processId)
+            topLevelWindowHandle = findTopLevelWindow(for: processWrapper.processId)
             if topLevelWindowHandle == nil {
                 Thread.sleep(forTimeInterval: 1)
             }
@@ -60,7 +66,7 @@ extension WinAppDriver {
         }
 
         let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: topLevelWindowHandle))
-        //session.appProcess = process
+        session.appProcess = processWrapper
         return session
     }
 

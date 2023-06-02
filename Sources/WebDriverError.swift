@@ -26,6 +26,7 @@ struct WebDriverError : Codable, Error {
         case invalidSelector = 32
         case sessionNotCreatedException = 33
         case moveTargetOutOfBounds = 34
+        case invalidArgument = 100          // returned by WinAppDriver when passing an incorrect window handle to attach to
     }
     
     var status: Status?
