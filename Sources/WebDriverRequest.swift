@@ -2,9 +2,9 @@ import Foundation
 import FoundationNetworking
 
 public protocol WebDriverRequest {
-    associatedtype Body : Encodable = CodableNone
-    associatedtype ResponseValue : Codable = CodableNone
-    associatedtype Response : Codable = WebDriverResponse<ResponseValue>
+    associatedtype Body: Codable = CodableNone
+    associatedtype ResponseValue: Codable = CodableNone
+    associatedtype Response: Codable = WebDriverResponse<ResponseValue>
 
     var pathComponents: [String] { get }
     var query: [String: String] { get }
