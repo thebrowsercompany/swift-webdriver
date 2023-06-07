@@ -140,5 +140,54 @@ extension Element {
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "attribute", name ] }
         var method: HTTPMethod { .get }
         var body: Body = .init()
-    }     
+    }
+
+    /// location - return x, y location of the element relative to the screen top left corner
+    public var location: (x: Int, y: Int) {
+        let locationRequest = LocationRequest(element: self)
+        let responseValue = try! webDriver.send(locationRequest).value!
+        return (responseValue.x, responseValue.y)
+    } 
+
+    struct LocationRequest : WebDriverRequest {
+        private let element: Element
+        
+        init(element: Element) {
+            self.element = element 
+        }
+
+        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "location"] }
+        var method: HTTPMethod { .get }
+        var body: Body = .init()
+
+        struct ResponseValue: Codable {
+            let x: Int
+            let y: Int
+        }
+    }
+
+    /// size - return width, height of the element
+    public var size: (width: Int, height: Int) {
+        let sizeRequest = SizeRequest(element: self)
+        let response = try! webDriver.send(sizeRequest)
+        let responseValue = response.value!
+        return (responseValue.width, responseValue.height)
+    } 
+
+    struct SizeRequest : WebDriverRequest {
+        private let element: Element
+        
+        init(element: Element) {
+            self.element = element 
+        }
+
+        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "size"] }
+        var method: HTTPMethod { .get }
+        var body: Body { .init() }
+
+        struct ResponseValue: Codable {
+            let width: Int
+            let height: Int
+        }
+    }
 }

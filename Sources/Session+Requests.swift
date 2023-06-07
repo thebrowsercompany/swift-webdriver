@@ -96,4 +96,120 @@ extension Session {
             var ELEMENT: String
         }
     }
+
+    /// moveTo(::) - move the pointer to a location relative to the current pointer position or an element
+    /// - Parameters:
+    ///   - element: if not nil the top left of the element provides the origin
+    ///   - xOffset: x offset from the left of the element
+    ///   - yOffset: y offset from the top of the element
+    public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) {
+        let moveToRequest = MoveToRequest(self, element: element, xOffset: xOffset, yOffset: yOffset)
+        try! webDriver.send(moveToRequest)
+    }   
+
+    struct MoveToRequest: WebDriverRequest {
+        typealias ResponseValue = CodableNone
+
+        let session: Session        
+        let element: Element?
+
+        init(_ session: Session, element: Element?, xOffset: Int, yOffset: Int) {
+            self.session = session
+            self.element = element
+            body = .init(elementId: element?.id ?? "", xOffset: xOffset, yOffset: yOffset)
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "moveto"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body : Codable {
+            var elementId: String
+            var xOffset: Int
+            var yOffset: Int
+            enum CodingKeys: String, CodingKey {
+                case elementId = "element"
+                case xOffset = "xoffset"
+                case yOffset = "yoffset"
+            }
+        }
+    }  
+
+    /// click(:) - click one of the mouse buttons
+    /// - Parameter button: see MouseButton enum
+    public func click(button: MouseButton) {
+        let clickRequest = ClickRequest(self, button: button)
+        try! webDriver.send(clickRequest)
+    }   
+
+    struct ClickRequest: WebDriverRequest {
+        typealias ResponseValue = CodableNone
+
+        let session: Session
+
+        init(_ session: Session, button: MouseButton = .left) {
+            self.session = session
+            body = .init(button: button)
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "click"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body : Codable {
+            var button: MouseButton
+        }
+    }  
+
+    /// buttonDown(:) - press down one of the mouse buttons
+    /// - Parameter button: see MouseButton enum
+    public func buttonDown(button: MouseButton) {
+        let buttonDownRequest = ButtonDownRequest(self, button: button)
+        try! webDriver.send(buttonDownRequest)
+    }   
+
+    struct ButtonDownRequest: WebDriverRequest {
+        typealias ResponseValue = CodableNone
+
+        let session: Session
+
+        init(_ session: Session, button: MouseButton = .left) {
+            self.session = session
+            body = .init(button: button)
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "buttonDown"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body : Codable {
+            var button: MouseButton
+        }
+    }  
+
+    /// buttonUp(:) - release one of the mouse buttons
+    /// - Parameter button: see MouseButton enum
+    public func buttonUp(button: MouseButton) {
+        let buttonUpRequest = ButtonUpRequest(self, button: button)
+        try! webDriver.send(buttonUpRequest)
+    }   
+
+    struct ButtonUpRequest: WebDriverRequest {
+        typealias ResponseValue = CodableNone
+
+        let session: Session
+
+        init(_ session: Session, button: MouseButton = .left) {
+            self.session = session
+            body = .init(button: button)
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "buttonUp"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body : Codable {
+            var button: MouseButton
+        }
+    }  
 }
