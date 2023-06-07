@@ -14,45 +14,6 @@ extension WinAppDriver {
             return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 
-    /// newAttachedSession(app:)
-    /// Starts the app and attach a new session to its window
-    /// - app: location of the exe for the app to test
-    /// - appArguments: Array of arguments to pass to the app on launch 
-    /// - appWorkingDir: working directory to run the app in
-    /// - retryForTimeInterval: retries attaching for that time interval, in seconds, 5 by default
-    /// - Returns: new Session instance
-    public func newAttachedSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, retryForTimeInterval: TimeInterval? = nil) -> Session {
-        // Start the app process
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: app)
-        process.arguments = appArguments
-        process.standardInput = nil
-        process.standardOutput = nil
-        do {
-            try process.run()
-        } catch {
-            let args = appArguments?.joined(separator: " ")
-            fatalError("Could not run: \(app) \(String(describing: args))")
-        }
-        
-        var topLevelWindowHandle: HWND? = nil
-        let start = Date.now
-        let retryForTimeInterval = retryForTimeInterval ?? 5
-        while topLevelWindowHandle == nil && Date.now < Date(timeInterval: retryForTimeInterval, since: start) {
-            topLevelWindowHandle = findTopLevelWindow(for: process)
-            if topLevelWindowHandle == nil {
-                Thread.sleep(forTimeInterval: 1)
-            }
-        }
-        if topLevelWindowHandle == nil {
-            fatalError("Application window not found!")
-        }
-
-        let session = newSession(appTopLevelWindowHandle: UInt(bitPattern: topLevelWindowHandle))
-        session.appProcess = process
-        return session
-    }
-
     struct NewSessionRequest : WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
