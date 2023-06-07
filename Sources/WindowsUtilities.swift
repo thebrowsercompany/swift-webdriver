@@ -36,26 +36,3 @@ func isProcessRunning(withName processName: String) -> Bool {
     }
     return false
 }
-
-// Helper to enumearate the top level windows and find the one belongging to a given process
-func findTopLevelWindow(for process: Process) -> HWND? {
-    struct Context {
-        let dwProcessId: DWORD
-        var hwnd: HWND?
-    }
-    var context = Context(dwProcessId: DWORD(process.processIdentifier)) 
-    let callback: @convention(c) (HWND?, LPARAM) -> WindowsBool = { (hwnd, lParam) in
-        let pContext = UnsafeMutablePointer<Context>(bitPattern: UInt(lParam))!
-        var pid: DWORD = 0
-        GetWindowThreadProcessId(hwnd, &pid)
-        if pid == pContext.pointee.dwProcessId {
-            pContext.pointee.hwnd = hwnd
-            return false
-        }
-        return true
-    }
-    _ = withUnsafePointer(to: &context) {
-        EnumWindows(callback, LPARAM(UInt(bitPattern: $0)))
-    }
-    return context.hwnd
-}
