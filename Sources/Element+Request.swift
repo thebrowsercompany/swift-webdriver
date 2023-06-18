@@ -190,4 +190,31 @@ extension Element {
             let height: Int
         }
     }
+
+    /// Send keys to an element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
+    public func sendKeys(value: [String]) {
+        let keysRequest = KeysRequest(element: self, value: value)
+        try! webDriver.send(keysRequest)
+    }
+
+    struct KeysRequest : WebDriverRequest {
+        typealias ResponseValue = WebDriverNoResponseValue
+        
+        private let element: Element
+
+        init(element: Element, value: [String]) {
+            self.element = element
+            body = .init(value: value)
+        }
+
+        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "value"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body : Codable {
+            var value: [String]
+        }
+    } 
+    
 }

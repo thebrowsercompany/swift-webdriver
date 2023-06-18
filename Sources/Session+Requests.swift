@@ -1,6 +1,7 @@
 extension Session {
    
     /// title - the session title, usually the hwnd title
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public var title: String {
         let sessionTitleRequest = TitleRequest(self)
         return try! webDriver.send(sessionTitleRequest).value!
@@ -26,6 +27,7 @@ extension Session {
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
     public func findElement(byName name: String) -> Element? {
         return findElement(using: "name", value: name)
     }
@@ -35,6 +37,7 @@ extension Session {
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
     public func findElement(byAccessibilityId id: String) -> Element? {
         return findElement(using: "accessibility id", value: id)
     } 
@@ -44,6 +47,7 @@ extension Session {
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
     public func findElement(byXPath xpath: String) -> Element? {
         return findElement(using: "xpath", value: xpath)
     } 
@@ -52,7 +56,8 @@ extension Session {
     /// Search for an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
     public func findElement(byClassName className: String) -> Element? {
         return findElement(using: "class name", value: className)
     } 
@@ -91,6 +96,41 @@ extension Session {
             var using: String
             var value: String
         }
+
+        struct ResponseValue : Codable {
+            var ELEMENT: String
+        }
+    }
+
+    /// Find active (focused) element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
+    public func findActiveElement() -> Element? {
+        let activeElementRequest = ActiveElementRequest(self)
+        var value: Session.ActiveElementRequest.ResponseValue?
+        do {
+            value = try webDriver.send(activeElementRequest).value
+        } catch let error as WebDriverError {
+            if error.status == .noSuchElement {
+                return nil
+            } else {
+                fatalError()
+            }
+        } catch {
+            fatalError()
+        }
+        return Element(in: self, id: value!.ELEMENT)
+    }
+
+    struct ActiveElementRequest : WebDriverRequest {
+        let session: Session
+
+        init(_ session: Session) {
+            self.session = session
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "element", "active" ] }
+        var method: HTTPMethod { .post }
+        var body: Body = .init()
 
         struct ResponseValue : Codable {
             var ELEMENT: String

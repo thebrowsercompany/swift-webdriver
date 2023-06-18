@@ -4,10 +4,16 @@ import Foundation
 
 class Notepad {
     let session: Session
+    var editor: Element?
+
     init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
         session = winAppDriver.newSession(app: "\(windowsDir)\\System32\\notepad.exe", 
             appArguments: appArguments, appWorkingDir: appWorkingDir)
+
+        // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
+        // Instead, grab the editor here as the active element
+        editor = session.findActiveElement()
     }
 
     func dismissNewFileDialog() {
@@ -27,6 +33,17 @@ class Notepad {
 
     func click(button: MouseButton = .left) {
         session.click(button: button)
+    }
+
+    func typeInEditor(keys: [String]) {
+        if editor == nil {
+            editor = session.findElement(byName: "Text Editor")
+            if editor == nil {
+                editor = session.findElement(byClassName: "Edit")
+            }
+        }
+        XCTAssertNotNil(editor)
+        editor!.sendKeys(value: keys)
     }
 
     func close() {
@@ -73,6 +90,11 @@ class NotepadTests : XCTestCase {
 
         // Check that "New Tab" is now present
         XCTAssertNotNil(notepad.session.findElement(byName: "New tab")) 
+    }
+
+    public func testTypingSomething() {
+        let notepad = Notepad(winAppDriver: Self.winAppDriver)
+        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", "\u{E007}", "Another line"])        
     }
 }
 
