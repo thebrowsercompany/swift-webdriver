@@ -17,7 +17,9 @@ class Notepad {
     }
 
     func dismissNewFileDialog() {
-        session.findElement(byName: "No")?.click()
+        let dismissButton = session.findElement(byName: "No")
+        XCTAssertNotNil(dismissButton, "Dismiss New File dialog: Button \"no\" was not found")
+        dismissButton?.click()
     }
 
     func moveToCenterOf(byName name: String) {
@@ -92,9 +94,14 @@ class NotepadTests : XCTestCase {
         XCTAssertNotNil(notepad.session.findElement(byName: "New tab")) 
     }
 
-    public func testTypingSomething() {
+    public func testTypingTwoLines() {
         let notepad = Notepad(winAppDriver: Self.winAppDriver)
-        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", "\u{E007}", "Another line"])        
+        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", "\u{E007}", "Another line"])
+        XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))        
+        Thread.sleep(forTimeInterval: 1) // visual verification
+        notepad.typeInEditor(keys: ["\u{E009}", "a", "\u{E009}", "\u{E017}"])
+        notepad.close()
+        Thread.sleep(forTimeInterval: 1)
     }
 }
 
