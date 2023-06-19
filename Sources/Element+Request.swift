@@ -120,7 +120,7 @@ extension Element {
     /// Return a specific attribute of an element
     /// - Parameter name: the attribute name as given by inspect.exe
     /// - Returns: the attribute value string
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error
     public func getAttribute(name: String) -> String {
         let attributeRequest = AttributeRequest(self, name: name)
         return try! webDriver.send(attributeRequest).value!
@@ -143,6 +143,7 @@ extension Element {
     }
 
     /// location - return x, y location of the element relative to the screen top left corner
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidlocation
     public var location: (x: Int, y: Int) {
         let locationRequest = LocationRequest(element: self)
         let responseValue = try! webDriver.send(locationRequest).value!
@@ -167,6 +168,7 @@ extension Element {
     }
 
     /// size - return width, height of the element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidsize
     public var size: (width: Int, height: Int) {
         let sizeRequest = SizeRequest(element: self)
         let response = try! webDriver.send(sizeRequest)
@@ -199,7 +201,7 @@ extension Element {
     }
 
     struct KeysRequest : WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
+        typealias ResponseValue = CodableNone
         
         private let element: Element
 
