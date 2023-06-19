@@ -43,6 +43,9 @@ class APIToRequestMappingTests : XCTestCase {
         mockWebDriver.expect(path: "session/mySession/element/myElement/text", method: .get) { WebDriverResponse(value: "myElement.text") }
         XCTAssertEqual(element.text, "myElement.text")
 
+        mockWebDriver.expect(path: "session/mySession/element/myElement/attribute/myAttribute.name", method: .get) { WebDriverResponse(value: "myAttribute.value") }
+        XCTAssertEqual(element.getAttribute(name: "myAttribute.name"), "myAttribute.value")
+
         mockWebDriver.expect(path: "session/mySession/element/myElement/click", method: .post)
         element.click()
 
