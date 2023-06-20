@@ -96,10 +96,10 @@ class NotepadTests : XCTestCase {
 
     public func testTypingTwoLines() {
         let notepad = Notepad(winAppDriver: Self.winAppDriver)
-        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", "\u{E007}", "Another line"])
+        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCode.enter.rawValue, "Another line"])
         XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))        
         Thread.sleep(forTimeInterval: 1) // visual verification
-        notepad.typeInEditor(keys: ["\u{E009}", "a", "\u{E009}", "\u{E017}"])
+        notepad.typeInEditor(keys: [KeyCode.control.rawValue, "a", KeyCode.control.rawValue, KeyCode.delete.rawValue])
         notepad.close()
         Thread.sleep(forTimeInterval: 1)
     }

@@ -1,5 +1,6 @@
 extension Element {
     /// click() - simulate clicking this Element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public func click() {
         let clickRequest = ClickRequest(element: self)
         try! webDriver.send(clickRequest)
@@ -20,6 +21,7 @@ extension Element {
     }
 
     /// text - the element text
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidtext
     public var text: String {
         let textRequest = TextRequest(element: self)
         return try! webDriver.send(textRequest).value!
@@ -44,7 +46,8 @@ extension Element {
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error 
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byName name: String) -> Element? {
         return findElement(using: "name", value: name)
     }
@@ -54,6 +57,7 @@ extension Element {
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byAccessibilityId id: String) -> Element? {
         return findElement(using: "accessibility id", value: id)
     } 
@@ -63,6 +67,7 @@ extension Element {
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byXPath xpath: String) -> Element? {
         return findElement(using: "xpath", value: xpath)
     } 
@@ -72,6 +77,7 @@ extension Element {
     /// - Parameter byClassName: class name of the element to search for 
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byClassName className: String) -> Element? {
         return findElement(using: "class name", value: className)
     } 
@@ -121,6 +127,7 @@ extension Element {
     /// - Parameter name: the attribute name as given by inspect.exe
     /// - Returns: the attribute value string
     /// - calls fatalError for any other error
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidattributename
     public func getAttribute(name: String) -> String {
         let attributeRequest = AttributeRequest(self, name: name)
         return try! webDriver.send(attributeRequest).value!

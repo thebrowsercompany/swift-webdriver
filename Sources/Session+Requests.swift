@@ -177,6 +177,7 @@ extension Session {
 
     /// click(:) - click one of the mouse buttons
     /// - Parameter button: see MouseButton enum
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
     public func click(button: MouseButton) {
         let clickRequest = ClickRequest(self, button: button)
         try! webDriver.send(clickRequest)
@@ -203,6 +204,7 @@ extension Session {
 
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
     public func buttonDown(button: MouseButton) {
         let buttonDownRequest = ButtonDownRequest(self, button: button)
         try! webDriver.send(buttonDownRequest)
@@ -229,6 +231,7 @@ extension Session {
 
     /// buttonUp(:) - release one of the mouse buttons
     /// - Parameter button: see MouseButton enum
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
     public func buttonUp(button: MouseButton) {
         let buttonUpRequest = ButtonUpRequest(self, button: button)
         try! webDriver.send(buttonUpRequest)
