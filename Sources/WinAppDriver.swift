@@ -13,7 +13,7 @@ public class WinAppDriver: WebDriver {
     }
     var runningProcess: RunningProcess? = nil
 
-    init() throws {
+    public init() throws {
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(Self.ip):\(Self.port)")!)
         
         // We start WinAppDriver only if its process is not already started
