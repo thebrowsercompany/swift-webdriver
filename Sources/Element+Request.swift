@@ -207,6 +207,13 @@ extension Element {
         try! webDriver.send(keysRequest)
     }
 
+    /// Send keys to an element
+    /// This overload takes a single string for simplicity
+    public func sendKeys(value: String) {
+        let keysRequest = KeysRequest(element: self, value: [value])
+        try! webDriver.send(keysRequest)
+    }
+
     struct KeysRequest : WebDriverRequest {
         typealias ResponseValue = CodableNone
         

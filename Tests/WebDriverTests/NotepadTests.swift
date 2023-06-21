@@ -88,7 +88,6 @@ class NotepadTests : XCTestCase {
         // Move the mouse to center of "File" menu and click to open menu
         notepad.moveToCenterOf(byName: "File")
         notepad.click()
-        Thread.sleep(forTimeInterval: 1) // visual verification
 
         // Check that "New Tab" is now present
         XCTAssertNotNil(notepad.session.findElement(byName: "New tab")) 
@@ -98,29 +97,7 @@ class NotepadTests : XCTestCase {
         let notepad = Notepad(winAppDriver: Self.winAppDriver)
         notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCode.enter.rawValue, "Another line"])
         XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))        
-        Thread.sleep(forTimeInterval: 1) // visual verification
         notepad.typeInEditor(keys: [KeyCode.control.rawValue, "a", KeyCode.control.rawValue, KeyCode.delete.rawValue])
         notepad.close()
-        Thread.sleep(forTimeInterval: 1)
-    }
-}
-
-class NotepadMultiStepTests : XCTestCase {
-
-    // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test    
-    static var winAppDriver: WinAppDriver!
-    static var notepad: Notepad!
-    static var fileMenu: Element!
-
-    // Called once before all the tests in this class
-    public override class func setUp() {
-        winAppDriver = try! WinAppDriver()
-        notepad = Notepad(winAppDriver: Self.winAppDriver)
-    }
-
-    // Called once after all tests in this class have run
-    public override class func tearDown() {
-        notepad = nil
-        winAppDriver = nil
     }
 }
