@@ -13,7 +13,7 @@ class Notepad {
 
         // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
         // Instead, grab the editor here as the active element
-        editor = session.findActiveElement()
+        editor = session.activeElement
     }
 
     func dismissNewFileDialog() {

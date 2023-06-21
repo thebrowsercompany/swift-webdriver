@@ -22,7 +22,7 @@ class APIToRequestMappingTests : XCTestCase {
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Session.ActiveElementRequest.self) {
             return WebDriverResponse(value: .init(ELEMENT: "myElement"))
         }
-        _ = session.findActiveElement()!
+        _ = session.activeElement!
 
         mockWebDriver.expect(path: "session/mySession/moveto", method: .post, type: Session.MoveToRequest.self) {
             XCTAssertEqual($0.elementId, "myElement")
@@ -32,11 +32,23 @@ class APIToRequestMappingTests : XCTestCase {
         }
         session.moveTo(element: element, xOffset: 30, yOffset: 0)
 
-        mockWebDriver.expect(path: "session/mySession/click", method: .post, type: Session.ClickRequest.self) {
+        mockWebDriver.expect(path: "session/mySession/click", method: .post, type: Session.ButtonRequest.self) {
             XCTAssertEqual($0.button, .left)
             return WebDriverResponse<CodableNone>()
         }
         session.click(button: .left)
+
+        mockWebDriver.expect(path: "session/mySession/buttondown", method: .post, type: Session.ButtonRequest.self) {
+            XCTAssertEqual($0.button, .right)
+            return WebDriverResponse<CodableNone>()
+        }
+        session.buttonDown(button: .right)
+
+        mockWebDriver.expect(path: "session/mySession/buttonup", method: .post, type: Session.ButtonRequest.self) {
+            XCTAssertEqual($0.button, .right)
+            return WebDriverResponse<CodableNone>()
+        }
+        session.buttonUp(button: .right)
 
         // Element requests unit-tests
 

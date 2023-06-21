@@ -65,9 +65,9 @@ extension Session {
     // Helper for findElement functions above
     private func findElement(using: String, value: String) -> Element? {
         let elementRequest = ElementRequest(self, using: using, value: value)
-        var value: Session.ElementRequest.ResponseValue?
+        let value: Session.ElementRequest.ResponseValue
         do {
-            value = try webDriver.send(elementRequest).value
+            value = try webDriver.send(elementRequest).value!
         } catch let error as WebDriverError {
             if error.status == .noSuchElement {
                 return nil
@@ -77,7 +77,7 @@ extension Session {
         } catch {
             fatalError()
         }
-        return Element(in: self, id: value!.ELEMENT)
+        return Element(in: self, id: value.ELEMENT)
     } 
 
     struct ElementRequest : WebDriverRequest {
@@ -104,7 +104,7 @@ extension Session {
 
     /// Find active (focused) element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
-    public func findActiveElement() -> Element? {
+    public var activeElement: Element? {
         let activeElementRequest = ActiveElementRequest(self)
         var value: Session.ActiveElementRequest.ResponseValue?
         do {
@@ -175,79 +175,49 @@ extension Session {
         }
     }  
 
+    enum ButtonRequestAction: String {
+        case click = "click"
+        case buttonUp = "buttonup"
+        case buttonDown = "buttondown"
+    }
+
     /// click(:) - click one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
-    public func click(button: MouseButton) {
-        let clickRequest = ClickRequest(self, button: button)
+    public func click(button: MouseButton = .left) {
+        let clickRequest = ButtonRequest(self, buttonRequestAction: .click, button: button)
         try! webDriver.send(clickRequest)
     }   
-
-    struct ClickRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
-
-        let session: Session
-
-        init(_ session: Session, button: MouseButton = .left) {
-            self.session = session
-            body = .init(button: button)
-        }
-
-        var pathComponents: [String] { [ "session", session.id, "click"] }
-        var method: HTTPMethod { .post }
-        var body: Body
-
-        struct Body : Codable {
-            var button: MouseButton
-        }
-    }  
 
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
-    public func buttonDown(button: MouseButton) {
-        let buttonDownRequest = ButtonDownRequest(self, button: button)
+    public func buttonDown(button: MouseButton = .left) {
+        let buttonDownRequest = ButtonRequest(self, buttonRequestAction: .buttonDown, button: button)
         try! webDriver.send(buttonDownRequest)
     }   
-
-    struct ButtonDownRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
-
-        let session: Session
-
-        init(_ session: Session, button: MouseButton = .left) {
-            self.session = session
-            body = .init(button: button)
-        }
-
-        var pathComponents: [String] { [ "session", session.id, "buttonDown"] }
-        var method: HTTPMethod { .post }
-        var body: Body
-
-        struct Body : Codable {
-            var button: MouseButton
-        }
-    }  
 
     /// buttonUp(:) - release one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
-    public func buttonUp(button: MouseButton) {
-        let buttonUpRequest = ButtonUpRequest(self, button: button)
+    public func buttonUp(button: MouseButton = .left) {
+        let buttonUpRequest = ButtonRequest(self, buttonRequestAction: .buttonUp, button: button)
         try! webDriver.send(buttonUpRequest)
     }   
 
-    struct ButtonUpRequest: WebDriverRequest {
+    struct ButtonRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
 
         let session: Session
+        let buttonRequestAction: ButtonRequestAction
 
-        init(_ session: Session, button: MouseButton = .left) {
+        init(_ session: Session, buttonRequestAction: ButtonRequestAction, button: MouseButton) {
             self.session = session
             body = .init(button: button)
+            self.buttonRequestAction = buttonRequestAction
         }
 
-        var pathComponents: [String] { [ "session", session.id, "buttonUp"] }
+        var pathComponents: [String] { [ "session", session.id, buttonRequestAction.rawValue] }
         var method: HTTPMethod { .post }
         var body: Body
 
