@@ -1,0 +1,31 @@
+name: "Post-build steps for swift toolchain on a Windows runner"
+description: "Helper to avoid duplication of post-build steps in Windows workflows"
+
+inputs:
+  working-directory:
+    required: false
+    default: ${{ github.workspace }}/Apps/BrowserWin
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload Crash Dumps
+      continue-on-error: true
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: Crash dumps
+        path: ${{ env.LOCALAPPDATA }}\*.dmp
+
+    - name: Unset long file path
+      continue-on-error: true
+      if: success() || failure()
+      working-directory: ${{ inputs.working-directory }}
+      shell: pwsh
+      run: git config --system --unset core.longpaths
+
+    - name: Unset git for private repos
+      continue-on-error: true
+      if: always()
+      shell: pwsh
+      run: if (test-path ~/_netrc) { Remove-Item ~/_netrc }

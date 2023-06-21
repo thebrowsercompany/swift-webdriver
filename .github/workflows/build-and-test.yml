@@ -39,7 +39,7 @@ jobs:
           cmd /c 'START "winappdriver" "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe" "127.0.0.1" "4723"'
 
     - name: Build
-      uses: thebrowsercompany/arc/.github/actions/windows-run-and-flush@main
+      uses: ./.github/actions/windows-run-and-flush
       with:
         cmd-exec: swift
         working-directory: ${{ github.workspace }}
@@ -47,7 +47,7 @@ jobs:
 
     - name: Test
       timeout-minutes: 10
-      uses: thebrowsercompany/arc/.github/actions/windows-run-and-flush@main
+      uses: ./.github/actions/windows-run-and-flush
       with:
         cmd-exec: swift
         working-directory: ${{ github.workspace }}
@@ -66,6 +66,6 @@ jobs:
         name: screenshot
         path: ${{ github.workspace }}\screenshot.png
 
-    - uses: thebrowsercompany/arc/.github/actions/windows-swift-teardown@main
+    - uses: ./.github/actions/windows-swift-teardown
       with:
         working-directory: ${{ github.workspace }}
