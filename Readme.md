@@ -29,7 +29,7 @@ A typical use of these bindings to implement a test that launches Notepad and cl
 
 ```swift
 let winAppDriver = WinAppDriver()
-let session = WinAppDriver.webDriver.createSession(app: "notepad.exe")
+let session = winAppDriver.newSession(app: "notepad.exe")
 session.findElement(byName: "close").click()
 ```
 For additional examples, refere to folder `Test\WebDriverTests`.
