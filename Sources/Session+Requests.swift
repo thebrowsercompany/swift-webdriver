@@ -1,11 +1,11 @@
 extension Session {
-   
+
     /// title - the session title, usually the hwnd title
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public var title: String {
         let sessionTitleRequest = TitleRequest(self)
         return try! webDriver.send(sessionTitleRequest).value!
-    } 
+    }
 
     struct TitleRequest : WebDriverRequest {
         typealias ResponseValue = String
@@ -26,8 +26,8 @@ extension Session {
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
+    /// - calls fatalError for any other error
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
     public func findElement(byName name: String) -> Element? {
         return findElement(using: "name", value: name)
     }
@@ -36,31 +36,31 @@ extension Session {
     /// Search for an element in the accessibility tree, starting from the root.
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
+    /// - calls fatalError for any other error
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
     public func findElement(byAccessibilityId id: String) -> Element? {
         return findElement(using: "accessibility id", value: id)
-    } 
+    }
 
     /// findElement(byXPath:)
     /// Search for an element by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
+    /// - calls fatalError for any other error
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
     public func findElement(byXPath xpath: String) -> Element? {
         return findElement(using: "xpath", value: xpath)
-    } 
+    }
 
     /// findElement(byClassName:)
     /// Search for an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement    
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
     public func findElement(byClassName className: String) -> Element? {
         return findElement(using: "class name", value: className)
-    } 
+    }
 
     // Helper for findElement functions above
     private func findElement(using: String, value: String) -> Element? {
@@ -78,7 +78,7 @@ extension Session {
             fatalError()
         }
         return Element(in: self, id: value.ELEMENT)
-    } 
+    }
 
     struct ElementRequest : WebDriverRequest {
         let session: Session
@@ -145,12 +145,12 @@ extension Session {
     public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) {
         let moveToRequest = MoveToRequest(self, element: element, xOffset: xOffset, yOffset: yOffset)
         try! webDriver.send(moveToRequest)
-    }   
+    }
 
     struct MoveToRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
 
-        let session: Session        
+        let session: Session
         let element: Element?
 
         init(_ session: Session, element: Element?, xOffset: Int, yOffset: Int) {
@@ -173,7 +173,7 @@ extension Session {
                 case yOffset = "yoffset"
             }
         }
-    }  
+    }
 
     enum ButtonRequestAction: String {
         case click = "click"
@@ -187,7 +187,7 @@ extension Session {
     public func click(button: MouseButton = .left) {
         let clickRequest = ButtonRequest(self, buttonRequestAction: .click, button: button)
         try! webDriver.send(clickRequest)
-    }   
+    }
 
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
@@ -195,7 +195,7 @@ extension Session {
     public func buttonDown(button: MouseButton = .left) {
         let buttonDownRequest = ButtonRequest(self, buttonRequestAction: .buttonDown, button: button)
         try! webDriver.send(buttonDownRequest)
-    }   
+    }
 
     /// buttonUp(:) - release one of the mouse buttons
     /// - Parameter button: see MouseButton enum
@@ -203,7 +203,7 @@ extension Session {
     public func buttonUp(button: MouseButton = .left) {
         let buttonUpRequest = ButtonRequest(self, buttonRequestAction: .buttonUp, button: button)
         try! webDriver.send(buttonUpRequest)
-    }   
+    }
 
     struct ButtonRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
@@ -224,5 +224,5 @@ extension Session {
         struct Body : Codable {
             var button: MouseButton
         }
-    }  
+    }
 }

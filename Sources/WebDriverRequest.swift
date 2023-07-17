@@ -13,7 +13,7 @@ public protocol WebDriverRequest {
 }
 
 // Provide a default for the query part of the request URL
-// Saves protocol implementers from having to define if they do not use 
+// Saves protocol implementers from having to define if they do not use
 // TODO: is there a way to provide a default for body?
 extension WebDriverRequest {
     public var query: [String: String] { get { [:] }}
@@ -28,7 +28,7 @@ public enum HTTPMethod : String {
 }
 
 // Response to a WebDriver request
-// All fields are optional because the response returned by WebDriver might be missing them, e.g., 
+// All fields are optional because the response returned by WebDriver might be missing them, e.g.,
 // - deleteSession request returns no sessionId and no value
 // - element click request returns a sessionId but no value
 // - etc.
