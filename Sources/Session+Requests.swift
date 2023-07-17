@@ -21,6 +21,28 @@ extension Session {
         var body: Body { .init() }
     }
 
+    /// screenshot()
+    /// Take a screenshot of the current page.
+    /// - Returns: The screenshot as a base64 encoded PNG.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
+    public func screenshot() -> String {
+        let screenshotRequest = ScreenshotRequest(self)
+        return try! webDriver.send(screenshotRequest).value!
+    }
+
+    struct ScreenshotRequest : WebDriverRequest {
+        typealias ResponseValue = String
+
+        private let session: Session
+        init(_ session: Session) {
+            self.session = session
+        }
+
+        var pathComponents: [String] { [ "session", session.id, "screenshot" ] }
+        var method: HTTPMethod { .get }
+        var body: Body { .init() }
+    }
+
     /// findElement(byName:)
     /// Search for an element by name, starting from the root.
     /// - Parameter byName: name of the element to search for
