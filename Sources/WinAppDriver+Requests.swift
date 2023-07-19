@@ -12,8 +12,8 @@ extension WinAppDriver {
             let args = appArguments?.joined(separator: " ")
 
             print("Starting: \(app)")
-            print("Arguments: \(args)")
-            printAndFlush("Working Dir: \(appWorkingDir)")
+            print("Arguments: \(args as String? ?? "(None)")")
+            printAndFlush("Working Dir: \(appWorkingDir as String? ?? "(None)")")
 
             let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
             return Session(in: self, id: try! send(newSessionRequest).sessionId!)
