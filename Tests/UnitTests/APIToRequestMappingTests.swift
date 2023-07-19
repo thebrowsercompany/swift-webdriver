@@ -1,6 +1,8 @@
 import XCTest
 @testable import WebDriver
 
+let base64image: String = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
+
 /// Tests how usage of high-level Session/Element APIs map to lower-level requests
 class APIToRequestMappingTests : XCTestCase {
     func testSessionAndElement() throws {
@@ -11,6 +13,9 @@ class APIToRequestMappingTests : XCTestCase {
         // Session requests unit-tests
         mockWebDriver.expect(path: "session/mySession/title", method: .get) { WebDriverResponse(value: "mySession.title") }
         XCTAssertEqual(session.title, "mySession.title")
+
+        mockWebDriver.expect(path: "session/mySession/screenshot", method: .get) { WebDriverResponse(value: base64image) }
+        XCTAssertEqual(session.screenshot(), base64image)
 
         mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Session.ElementRequest.self) {
             XCTAssertEqual($0.using, "name")

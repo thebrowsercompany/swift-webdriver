@@ -28,6 +28,11 @@ class SessionTests : XCTestCase {
         XCTAssertEqual(title, "System Information")
     }
 
+    public func testScreenshot() {
+        let image: String = Self.session.screenshot()
+        XCTAssert(!image.isEmpty)
+    }
+
     public func testMaximizeAndRestore() {
         guard let element = Self.session.findElement(byName: "Maximize") else {
             XCTAssert(false, "Maximize button not found")
