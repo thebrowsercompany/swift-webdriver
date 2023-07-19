@@ -10,9 +10,9 @@ extension Element {
         typealias ResponseValue = WebDriverNoResponseValue
 
         private let element: Element
-        
+
         init(element: Element) {
-            self.element = element 
+            self.element = element
         }
 
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "click" ] }
@@ -25,15 +25,15 @@ extension Element {
     public var text: String {
         let textRequest = TextRequest(element: self)
         return try! webDriver.send(textRequest).value!
-    } 
+    }
 
     struct TextRequest : WebDriverRequest {
         typealias ResponseValue = String
 
         private let element: Element
-        
+
         init(element: Element) {
-            self.element = element 
+            self.element = element
         }
 
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "text"] }
@@ -41,12 +41,12 @@ extension Element {
         var body: Body { .init() }
     }
 
-    /// findElement(byName:) 
+    /// findElement(byName:)
     /// Search for an element by name, starting from this element.
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error 
+    /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byName name: String) -> Element? {
         return findElement(using: "name", value: name)
@@ -56,31 +56,31 @@ extension Element {
     /// Search for an element in the accessibility tree, starting from this element
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byAccessibilityId id: String) -> Element? {
         return findElement(using: "accessibility id", value: id)
-    } 
+    }
 
     /// findElement(byXPath:)
     /// Search for an element by xpath, starting from this element
     /// - Parameter byXPath: xpath of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byXPath xpath: String) -> Element? {
         return findElement(using: "xpath", value: xpath)
-    } 
+    }
 
     /// findElement(byClassName:)
     /// Search for an element by class name, starting from this element
-    /// - Parameter byClassName: class name of the element to search for 
+    /// - Parameter byClassName: class name of the element to search for
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
-    /// - calls fatalError for any other error    
+    /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byClassName className: String) -> Element? {
         return findElement(using: "class name", value: className)
-    } 
+    }
 
     // Helper for findElement functions above
     private func findElement(using: String, value: String) -> Element? {
@@ -98,7 +98,7 @@ extension Element {
             fatalError()
         }
         return Element(in: session, id: value!.ELEMENT)
-    } 
+    }
 
     struct ElementRequest : WebDriverRequest {
         let element: Element
@@ -135,7 +135,7 @@ extension Element {
 
     struct AttributeRequest : WebDriverRequest {
         typealias ResponseValue = String
-        
+
         let element: Element
         let name: String
 
@@ -155,13 +155,13 @@ extension Element {
         let locationRequest = LocationRequest(element: self)
         let responseValue = try! webDriver.send(locationRequest).value!
         return (responseValue.x, responseValue.y)
-    } 
+    }
 
     struct LocationRequest : WebDriverRequest {
         private let element: Element
-        
+
         init(element: Element) {
-            self.element = element 
+            self.element = element
         }
 
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "location"] }
@@ -181,13 +181,13 @@ extension Element {
         let response = try! webDriver.send(sizeRequest)
         let responseValue = response.value!
         return (responseValue.width, responseValue.height)
-    } 
+    }
 
     struct SizeRequest : WebDriverRequest {
         private let element: Element
-        
+
         init(element: Element) {
-            self.element = element 
+            self.element = element
         }
 
         var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "size"] }
@@ -216,7 +216,7 @@ extension Element {
 
     struct KeysRequest : WebDriverRequest {
         typealias ResponseValue = CodableNone
-        
+
         private let element: Element
 
         init(element: Element, value: [String]) {
@@ -231,6 +231,6 @@ extension Element {
         struct Body : Codable {
             var value: [String]
         }
-    } 
-    
+    }
+
 }

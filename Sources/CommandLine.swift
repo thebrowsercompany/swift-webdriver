@@ -1,4 +1,4 @@
-    
+
 // Build the argument string of a command line from an array of arguments
 // properly excaping each argument
 func buildCommandLineArgsString(args: [String]?) -> String? {
