@@ -1,4 +1,5 @@
 import XCTest
+import TestsCommon
 @testable import WebDriver
 
 class SessionTests : XCTestCase {
@@ -29,8 +30,8 @@ class SessionTests : XCTestCase {
     }
 
     public func testScreenshot() {
-        let image: String = Self.session.screenshot()
-        XCTAssert(!image.isEmpty)
+        let data: Data = Self.session.makePNGScreenshot()
+        XCTAssert(isPNG(data: data))
     }
 
     public func testMaximizeAndRestore() {

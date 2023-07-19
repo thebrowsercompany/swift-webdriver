@@ -1,3 +1,5 @@
+import Foundation
+
 extension Session {
 
     /// title - the session title, usually the hwnd title
@@ -23,11 +25,13 @@ extension Session {
 
     /// screenshot()
     /// Take a screenshot of the current page.
-    /// - Returns: The screenshot as a base64 encoded PNG.
+    /// - Returns: The screenshot Data.
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
-    public func screenshot() -> String {
+    public func makePNGScreenshot() -> Data {
         let screenshotRequest = ScreenshotRequest(self)
-        return try! webDriver.send(screenshotRequest).value!
+
+        let base64: String = try! webDriver.send(screenshotRequest).value!
+        return Data(base64Encoded: base64)!
     }
 
     struct ScreenshotRequest : WebDriverRequest {
