@@ -48,8 +48,8 @@ extension Element {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byName name: String) -> Element? {
-        findElement(using: "name", value: name)
+    public func findElement(byName name: String, withRetry: Bool = true) -> Element? {
+        findElement(using: "name", value: name, withRetry: withRetry)
     }
 
     /// findElement(byAccessibilityId:)
@@ -58,8 +58,8 @@ extension Element {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byAccessibilityId id: String) -> Element? {
-        findElement(using: "accessibility id", value: id)
+    public func findElement(byAccessibilityId id: String, withRetry: Bool = true) -> Element? {
+        findElement(using: "accessibility id", value: id, withRetry: withRetry)
     }
 
     /// findElement(byXPath:)
@@ -68,8 +68,8 @@ extension Element {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byXPath xpath: String) -> Element? {
-        findElement(using: "xpath", value: xpath)
+    public func findElement(byXPath xpath: String, withRetry: Bool = true) -> Element? {
+        findElement(using: "xpath", value: xpath, withRetry: withRetry)
     }
 
     /// findElement(byClassName:)
@@ -78,48 +78,13 @@ extension Element {
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byClassName className: String) -> Element? {
-        findElement(using: "class name", value: className)
+    public func findElement(byClassName className: String, withRetry: Bool = true) -> Element? {
+        findElement(using: "class name", value: className, withRetry: withRetry)
     }
 
     // Helper for findElement functions above
-    private func findElement(using: String, value: String) -> Element? {
-        let elementRequest = ElementRequest(self, using: using, value: value)
-        var value: Element.ElementRequest.ResponseValue?
-        do {
-            value = try webDriver.send(elementRequest).value
-        } catch let error as WebDriverError {
-            if error.status == .noSuchElement {
-                return nil
-            } else {
-                fatalError()
-            }
-        } catch {
-            fatalError()
-        }
-        return Element(in: session, id: value!.ELEMENT)
-    }
-
-    struct ElementRequest: WebDriverRequest {
-        let element: Element
-
-        init(_ element: Element, using strategy: String, value: String) {
-            self.element = element
-            body = .init(using: strategy, value: value)
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "element"] }
-        var method: HTTPMethod { .post }
-        var body: Body
-
-        struct Body: Codable {
-            var using: String
-            var value: String
-        }
-
-        struct ResponseValue: Codable {
-            var ELEMENT: String
-        }
+    private func findElement(using: String, value: String, withRetry: Bool) -> Element? {
+        session.findElement(startingAt: self, using: using, value: value, withRetry: withRetry)
     }
 
     /// getAttribute(name:)
