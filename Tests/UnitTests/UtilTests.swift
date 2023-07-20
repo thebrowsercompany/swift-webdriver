@@ -1,9 +1,7 @@
-import XCTest
 @testable import WebDriver
+import XCTest
 
-
-class UtilsTests : XCTestCase {
-
+class UtilsTests: XCTestCase {
     func testbuildCommandLineArgsString() {
         XCTAssertEqual(buildCommandLineArgsString(args: ["my dir\\file.txt"]), "\"my dir\\\\file.txt\"")
         XCTAssertEqual(buildCommandLineArgsString(args: ["my\tdir\\file.txt"]), "\"my\tdir\\\\file.txt\"")

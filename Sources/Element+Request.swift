@@ -6,7 +6,7 @@ extension Element {
         try! webDriver.send(clickRequest)
     }
 
-    struct ClickRequest : WebDriverRequest {
+    struct ClickRequest: WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         private let element: Element
@@ -15,7 +15,7 @@ extension Element {
             self.element = element
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "click" ] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "click"] }
         var method: HTTPMethod { .post }
         var body: Body { .init() }
     }
@@ -27,7 +27,7 @@ extension Element {
         return try! webDriver.send(textRequest).value!
     }
 
-    struct TextRequest : WebDriverRequest {
+    struct TextRequest: WebDriverRequest {
         typealias ResponseValue = String
 
         private let element: Element
@@ -36,7 +36,7 @@ extension Element {
             self.element = element
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "text"] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "text"] }
         var method: HTTPMethod { .get }
         var body: Body { .init() }
     }
@@ -49,7 +49,7 @@ extension Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byName name: String) -> Element? {
-        return findElement(using: "name", value: name)
+        findElement(using: "name", value: name)
     }
 
     /// findElement(byAccessibilityId:)
@@ -59,7 +59,7 @@ extension Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byAccessibilityId id: String) -> Element? {
-        return findElement(using: "accessibility id", value: id)
+        findElement(using: "accessibility id", value: id)
     }
 
     /// findElement(byXPath:)
@@ -69,7 +69,7 @@ extension Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byXPath xpath: String) -> Element? {
-        return findElement(using: "xpath", value: xpath)
+        findElement(using: "xpath", value: xpath)
     }
 
     /// findElement(byClassName:)
@@ -79,7 +79,7 @@ extension Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public func findElement(byClassName className: String) -> Element? {
-        return findElement(using: "class name", value: className)
+        findElement(using: "class name", value: className)
     }
 
     // Helper for findElement functions above
@@ -100,7 +100,7 @@ extension Element {
         return Element(in: session, id: value!.ELEMENT)
     }
 
-    struct ElementRequest : WebDriverRequest {
+    struct ElementRequest: WebDriverRequest {
         let element: Element
 
         init(_ element: Element, using strategy: String, value: String) {
@@ -108,16 +108,16 @@ extension Element {
             body = .init(using: strategy, value: value)
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "element" ] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "element"] }
         var method: HTTPMethod { .post }
         var body: Body
 
-        struct Body : Codable {
+        struct Body: Codable {
             var using: String
             var value: String
         }
 
-        struct ResponseValue : Codable {
+        struct ResponseValue: Codable {
             var ELEMENT: String
         }
     }
@@ -133,7 +133,7 @@ extension Element {
         return try! webDriver.send(attributeRequest).value!
     }
 
-    struct AttributeRequest : WebDriverRequest {
+    struct AttributeRequest: WebDriverRequest {
         typealias ResponseValue = String
 
         let element: Element
@@ -144,7 +144,7 @@ extension Element {
             self.name = name
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "attribute", name ] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "attribute", name] }
         var method: HTTPMethod { .get }
         var body: Body = .init()
     }
@@ -157,14 +157,14 @@ extension Element {
         return (responseValue.x, responseValue.y)
     }
 
-    struct LocationRequest : WebDriverRequest {
+    struct LocationRequest: WebDriverRequest {
         private let element: Element
 
         init(element: Element) {
             self.element = element
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "location"] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "location"] }
         var method: HTTPMethod { .get }
         var body: Body = .init()
 
@@ -183,14 +183,14 @@ extension Element {
         return (responseValue.width, responseValue.height)
     }
 
-    struct SizeRequest : WebDriverRequest {
+    struct SizeRequest: WebDriverRequest {
         private let element: Element
 
         init(element: Element) {
             self.element = element
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "size"] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "size"] }
         var method: HTTPMethod { .get }
         var body: Body { .init() }
 
@@ -214,7 +214,7 @@ extension Element {
         try! webDriver.send(keysRequest)
     }
 
-    struct KeysRequest : WebDriverRequest {
+    struct KeysRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
 
         private let element: Element
@@ -224,13 +224,12 @@ extension Element {
             body = .init(value: value)
         }
 
-        var pathComponents: [String] { [ "session", element.session.id, "element", element.id, "value"] }
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "value"] }
         var method: HTTPMethod { .post }
         var body: Body
 
-        struct Body : Codable {
+        struct Body: Codable {
             var value: [String]
         }
     }
-
 }

@@ -4,22 +4,22 @@ import WinSDK
 extension WinAppDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - app: location of the exe for the app to test
-    /// - appArguments: Array of arguments to pass to the app on launch 
+    /// - appArguments: Array of arguments to pass to the app on launch
     /// - appWorkingDir: working directory to run the app in
     /// - waitForAppLaunch: time to wait to the app to launch in seconds, 0 by default
     /// - Returns: new Session instance
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) -> Session {
-            let args = appArguments?.joined(separator: " ")
+        let args = appArguments?.joined(separator: " ")
 
-            print("Starting: \(app)")
-            print("Arguments: \(args as String? ?? "(None)")")
-            printAndFlush("Working Dir: \(appWorkingDir as String? ?? "(None)")")
+        print("Starting: \(app)")
+        print("Arguments: \(args as String? ?? "(None)")")
+        printAndFlush("Working Dir: \(appWorkingDir as String? ?? "(None)")")
 
-            let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
-            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+        let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
+        return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 
-    struct NewSessionRequest : WebDriverRequest {
+    struct NewSessionRequest: WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         init(app: String, appArguments: String?, appWorkingDir: String?, waitForAppLaunch: Int?) {
@@ -30,10 +30,9 @@ extension WinAppDriver {
         var method: HTTPMethod { .post }
         var body: Body = .init()
 
-        struct RequiredCapabilities : Codable {
-        }
+        struct RequiredCapabilities: Codable {}
 
-        struct DesiredCapabilities : Codable {
+        struct DesiredCapabilities: Codable {
             var app: String?
             var appArguments: String?
             var appWorkingDir: String?
@@ -48,7 +47,7 @@ extension WinAppDriver {
             }
         }
 
-        struct Body : Codable {
+        struct Body: Codable {
             var requiredCapabilities: RequiredCapabilities?
             var desiredCapabilities: DesiredCapabilities = .init()
         }
@@ -59,11 +58,11 @@ extension WinAppDriver {
     /// - Parameter appTopLevelWindowHandle: the window handle
     /// - Returns: new Session instance
     public func newSession(appTopLevelWindowHandle: UInt) -> Session {
-            let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
-            return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+        let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
+        return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
 
-    struct NewSessionAttachRequest : WebDriverRequest {
+    struct NewSessionAttachRequest: WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         init(appTopLevelWindowHandle: UInt) {
@@ -75,17 +74,16 @@ extension WinAppDriver {
         var method: HTTPMethod { .post }
         var body: Body = .init()
 
-        struct RequiredCapabilities : Codable {
-        }
+        struct RequiredCapabilities: Codable {}
 
-        struct DesiredCapabilities : Codable {
+        struct DesiredCapabilities: Codable {
             var appTopLevelWindowHexHandle: String?
             enum CodingKeys: String, CodingKey {
                 case appTopLevelWindowHexHandle = "appTopLevelWindow"
             }
         }
 
-        struct Body : Codable {
+        struct Body: Codable {
             var requiredCapabilities: RequiredCapabilities?
             var desiredCapabilities: DesiredCapabilities = .init()
         }

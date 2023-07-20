@@ -16,12 +16,12 @@ public protocol WebDriverRequest {
 // Saves protocol implementers from having to define if they do not use
 // TODO: is there a way to provide a default for body?
 extension WebDriverRequest {
-    public var query: [String: String] { get { [:] }}
+    public var query: [String: String] { [:] }
 }
 
-public struct CodableNone : Codable {}
+public struct CodableNone: Codable {}
 
-public enum HTTPMethod : String {
+public enum HTTPMethod: String {
     case get = "GET"
     case delete = "DELETE"
     case post = "POST"
@@ -32,15 +32,14 @@ public enum HTTPMethod : String {
 // - deleteSession request returns no sessionId and no value
 // - element click request returns a sessionId but no value
 // - etc.
-public struct WebDriverResponse<Value> : Codable where Value : Codable {
+public struct WebDriverResponse<Value>: Codable where Value: Codable {
     public var sessionId: String?
     public var status: Int?
     public var value: Value?
 }
 
-public struct WebDriverNoResponse : Codable {
-}
+public struct WebDriverNoResponse: Codable {}
 
-public struct WebDriverNoResponseValue : Codable {
-    public init(from decoder: Decoder) throws { }
+public struct WebDriverNoResponseValue: Codable {
+    public init(from decoder: Decoder) throws {}
 }

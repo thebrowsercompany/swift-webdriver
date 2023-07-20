@@ -1,10 +1,10 @@
-import XCTest
 @testable import WebDriver
+import XCTest
 
 /// A mock WebDriver implementation which can be configured
 /// to expect certain requests and fail if they don't match.
 class MockWebDriver: WebDriver {
-    struct UnexpectedRequestBodyError : Error {}
+    struct UnexpectedRequestBodyError: Error {}
 
     struct Expectation {
         let path: String
@@ -26,14 +26,12 @@ class MockWebDriver: WebDriver {
             let requestBody: RequestBody
             if let requestBodyData = $0 {
                 requestBody = try JSONDecoder().decode(RequestBody.self, from: requestBodyData)
-            }
-            else if RequestBody.self == CodableNone.self {
+            } else if RequestBody.self == CodableNone.self {
                 requestBody = CodableNone() as Any as! RequestBody
-            }
-            else {
+            } else {
                 throw UnexpectedRequestBodyError()
             }
-             
+
             let response = try handler(requestBody)
             return Response.self == CodableNone.self ? nil : try! JSONEncoder().encode(response)
         }))
@@ -58,13 +56,13 @@ class MockWebDriver: WebDriver {
     /// Queues an expected request and specifies its response handler
     // This overload ignores the incoming request body.
     func expect<Response: Codable>(path: String, method: HTTPMethod, handler: @escaping () throws -> Response) {
-        expect(path: path, method: method) { (requestBody: CodableNone) -> Response in try handler() }
+        expect(path: path, method: method) { (_: CodableNone) -> Response in try handler() }
     }
 
     /// Queues an expected request
     // This overload ignores the incoming request body and returns a default response.
     func expect(path: String, method: HTTPMethod) {
-        expect(path: path, method: method) { (requestBody: CodableNone) -> WebDriverResponse<CodableNone> in WebDriverResponse<CodableNone>() }
+        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in WebDriverResponse<CodableNone>() }
     }
 
     @discardableResult

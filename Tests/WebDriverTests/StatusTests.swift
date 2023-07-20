@@ -1,11 +1,11 @@
-import XCTest
 @testable import WebDriver
+import XCTest
 
-class StatusTest : XCTestCase {
+class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
 
     // Called once before all the tests in this class
-    public override class func setUp() {
+    override public class func setUp() {
         // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test
         winAppDriver = try! WinAppDriver()
     }
@@ -19,11 +19,11 @@ class StatusTest : XCTestCase {
         XCTAssert(status?.build?.version != String())
 
         // Check the returned date format
-        if let dateString = status?.build?.time  {
+        if let dateString = status?.build?.time {
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale(identifier: "en_US_POSIX")
             dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
-            let date = dateFormatter.date(from: dateString) 
+            let date = dateFormatter.date(from: dateString)
             XCTAssert(date != nil)
         }
 

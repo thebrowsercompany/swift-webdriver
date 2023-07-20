@@ -1,11 +1,12 @@
-import XCTest
 import TestsCommon
 @testable import WebDriver
+import XCTest
 
-let base64TestImage: String = "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
+let base64TestImage: String =
+    "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
 
 /// Tests how usage of high-level Session/Element APIs map to lower-level requests
-class APIToRequestMappingTests : XCTestCase {
+class APIToRequestMappingTests: XCTestCase {
     func testSessionAndElement() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(in: mockWebDriver, id: "mySession")
@@ -27,7 +28,7 @@ class APIToRequestMappingTests : XCTestCase {
         let element = session.findElement(byName: "myElement.name")!
 
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Session.ActiveElementRequest.self) {
-            return WebDriverResponse(value: .init(ELEMENT: "myElement"))
+            WebDriverResponse(value: .init(ELEMENT: "myElement"))
         }
         _ = session.activeElement!
 
@@ -68,10 +69,12 @@ class APIToRequestMappingTests : XCTestCase {
         mockWebDriver.expect(path: "session/mySession/element/myElement/click", method: .post)
         element.click()
 
-        mockWebDriver.expect(path: "session/mySession/element/myElement/location", method: .get, type: Element.LocationRequest.self) { WebDriverResponse(value: .init(x: 10, y: -20)) }
+        mockWebDriver
+            .expect(path: "session/mySession/element/myElement/location", method: .get, type: Element.LocationRequest.self) { WebDriverResponse(value: .init(x: 10, y: -20)) }
         XCTAssert(element.location == (x: 10, y: -20))
 
-        mockWebDriver.expect(path: "session/mySession/element/myElement/size", method: .get, type: Element.SizeRequest.self) { WebDriverResponse(value: .init(width: 100, height: 200)) }
+        mockWebDriver
+            .expect(path: "session/mySession/element/myElement/size", method: .get, type: Element.SizeRequest.self) { WebDriverResponse(value: .init(width: 100, height: 200)) }
         XCTAssert(element.size == (width: 100, height: 200))
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Element.KeysRequest.self) {

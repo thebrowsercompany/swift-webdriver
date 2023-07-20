@@ -1,4 +1,4 @@
-struct WebDriverError : Codable, Error {
+struct WebDriverError: Codable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
     enum Status: Int, Codable {
         case success = 0
@@ -28,11 +28,11 @@ struct WebDriverError : Codable, Error {
         case moveTargetOutOfBounds = 34
         case invalidArgument = 100 // returned by WinAppDriver when passing an incorrect window handle to attach to
     }
-    
+
     var status: Status?
     var value: Value
 
-    struct Value : Codable {
+    struct Value: Codable {
         var error: String
         var message: String
         var stacktrace: String?
