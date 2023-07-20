@@ -2,25 +2,25 @@ import Foundation
 import FoundationNetworking
 
 public struct HTTPWebDriver: WebDriver {
-    let rootURL : URL
+    let rootURL: URL
 
-    public static let defaultTimeout: TimeInterval = 5  // seconds
+    public static let defaultTimeout: TimeInterval = 5 // seconds
 
     public init(endpoint: URL) {
-        self.rootURL = endpoint
+        rootURL = endpoint
     }
 
-    // Send a WebDriverRequest to the web driver local service 
+    // Send a WebDriverRequest to the web driver local service
     // TODO: consider making this function async/awaitable
     @discardableResult
-    public func send<Request>(_ request: Request) throws -> Request.Response where Request : WebDriverRequest {
+    public func send<Request>(_ request: Request) throws -> Request.Response where Request: WebDriverRequest {
         // Create urlRequest with proper Url and method
         let url = Self.buildURL(base: rootURL, pathComponents: request.pathComponents, query: request.query)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
-        // TODO: Setting timeoutInterval causes a crash when sending the request on the CI machines. 
+        // TODO: Setting timeoutInterval causes a crash when sending the request on the CI machines.
         // https://linear.app/the-browser-company/issue/WIN-627/setting-timeoutinterval-on-urlrequest-makes-request-crash
-        //urlRequest.timeoutInterval = Self.defaultTimeout
+        // urlRequest.timeoutInterval = Self.defaultTimeout
 
         // Add the body if the WebDriverRequest type defines one
         if Request.Body.self != CodableNone.self {
@@ -52,7 +52,7 @@ public struct HTTPWebDriver: WebDriver {
         if !query.isEmpty {
             // Get the URL components
             var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-            
+
             // Convert dictionary to query items
             let queryItems = query.map { key, value in
                 URLQueryItem(name: key, value: value)

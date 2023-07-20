@@ -11,6 +11,7 @@ public class WinAppDriver: WebDriver {
         var process: Process
         var toStdinPipe: Pipe
     }
+
     var runningProcess: RunningProcess? = nil
 
     public init() throws {
@@ -26,7 +27,7 @@ public class WinAppDriver: WebDriver {
             let process = Process()
             let pipe = Pipe()
             process.executableURL = URL(fileURLWithPath: path)
-            process.arguments = [ Self.ip, String(Self.port) ]
+            process.arguments = [Self.ip, String(Self.port)]
             process.standardInput = pipe.fileHandleForReading
             process.standardOutput = nil
             runningProcess = RunningProcess(process: process, toStdinPipe: pipe)

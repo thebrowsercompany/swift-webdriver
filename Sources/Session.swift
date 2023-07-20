@@ -6,9 +6,9 @@ public class Session {
     let id: String
 
     // Process of the app being tested when launched directly (not through WinAppDriver)
-    var appProcess : Process?
+    var appProcess: Process?
 
-    init(in webDriver: some WebDriver, id: String){
+    init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver
         self.id = id
     }
@@ -18,7 +18,7 @@ public class Session {
         try! webDriver.send(deleteSessionRequest)
     }
 
-    struct DeleteSessionRequest : WebDriverRequest {
+    struct DeleteSessionRequest: WebDriverRequest {
         typealias ResponseValue = WebDriverNoResponseValue
 
         let sessionId: String

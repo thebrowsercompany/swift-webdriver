@@ -9,10 +9,10 @@ extension WebDriver {
     }
 }
 
-struct WebDriverStatusRequest : WebDriverRequest {
+struct WebDriverStatusRequest: WebDriverRequest {
     typealias Response = WebDriverStatus
 
-    var pathComponents: [String] { [ "status" ] }
+    var pathComponents: [String] { ["status"] }
     var method: HTTPMethod { .get }
     var body: Body { .init() }
 }
@@ -21,19 +21,15 @@ public struct WebDriverStatus: Codable {
     var build: Build?
     var os: OS?
 
-    struct Build : Codable {
+    struct Build: Codable {
         var revision: String?
         var time: String?
         var version: String?
     }
 
-    struct OS : Codable {
+    struct OS: Codable {
         var arch: String?
         var name: String?
         var version: String?
     }
 }
-
-
-
-

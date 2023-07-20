@@ -1,5 +1,5 @@
 /// Special keyboard keys in sendKeys and keys WebDriver commands
-public enum KeyCode : String {
+public enum KeyCode: String {
     case null = "\u{E000}"
     case cancel = "\u{E001}"
     case help = "\u{E002}"
