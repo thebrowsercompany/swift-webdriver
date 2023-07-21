@@ -6,7 +6,7 @@ internal func retryUntil<T>(_ timeout: TimeInterval, work: () throws -> T?) reth
     var nextTimeout: TimeInterval = 0.001 // Start at 1ms and double until we exhaust time.
 
     var result: T?
-    retryLoop: repeat {
+    repeat {
         result = try work()
         if let result = result {
             return result
@@ -17,7 +17,7 @@ internal func retryUntil<T>(_ timeout: TimeInterval, work: () throws -> T?) reth
             timeUsed += nextTimeout
             nextTimeout = min(nextTimeout * 2.0, timeout - timeUsed)
         } else {
-            break retryLoop
+            break
         }
     } while true
 
