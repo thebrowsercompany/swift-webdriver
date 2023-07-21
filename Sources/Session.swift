@@ -5,10 +5,6 @@ public class Session {
     let webDriver: any WebDriver
     let id: String
 
-    /// maxRetries
-    /// Maximum number of retry attempts for auto-retry functionality.
-    var maxRetries: Int = 3
-
     /// retryTimeout
     /// A TimeInterval specifying max time to spend retrying operations.
     var defaultRetryTimeout: TimeInterval = 1.0
