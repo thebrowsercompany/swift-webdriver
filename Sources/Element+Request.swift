@@ -1,3 +1,5 @@
+import Foundation
+
 extension Element {
     /// click() - simulate clicking this Element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
@@ -45,46 +47,50 @@ extension Element {
     /// Search for an element by name, starting from this element.
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byName name: String, withRetry: Bool = true) -> Element? {
-        findElement(using: "name", value: name, withRetry: withRetry)
+    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(using: "name", value: name, retryTimeout: retryTimeout)
     }
 
     /// findElement(byAccessibilityId:)
     /// Search for an element in the accessibility tree, starting from this element
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byAccessibilityId id: String, withRetry: Bool = true) -> Element? {
-        findElement(using: "accessibility id", value: id, withRetry: withRetry)
+    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(using: "accessibility id", value: id, retryTimeout: retryTimeout)
     }
 
     /// findElement(byXPath:)
     /// Search for an element by xpath, starting from this element
     /// - Parameter byXPath: xpath of the element to search for
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byXPath xpath: String, withRetry: Bool = true) -> Element? {
-        findElement(using: "xpath", value: xpath, withRetry: withRetry)
+    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(using: "xpath", value: xpath, retryTimeout: retryTimeout)
     }
 
     /// findElement(byClassName:)
     /// Search for an element by class name, starting from this element
     /// - Parameter byClassName: class name of the element to search for
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
-    public func findElement(byClassName className: String, withRetry: Bool = true) -> Element? {
-        findElement(using: "class name", value: className, withRetry: withRetry)
+    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(using: "class name", value: className, retryTimeout: retryTimeout)
     }
 
     // Helper for findElement functions above
-    private func findElement(using: String, value: String, withRetry: Bool) -> Element? {
-        session.findElement(startingAt: self, using: using, value: value, withRetry: withRetry)
+    private func findElement(using: String, value: String, retryTimeout: TimeInterval?) -> Element? {
+        session.findElement(startingAt: self, using: using, value: value, retryTimeout: retryTimeout)
     }
 
     /// getAttribute(name:)

@@ -50,74 +50,74 @@ extension Session {
     /// Search for an element by name, starting from the root.
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
-    /// - Parameter withRetry: whether or not to automatically retry on failure.
-    ///   Default is true; see Session.maxRetries.
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byName name: String, withRetry: Bool = true) -> Element? {
-        findElement(startingAt: nil, using: "name", value: name, withRetry: withRetry)
+    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
     }
 
     /// findElement(byAccessibilityId:)
     /// Search for an element in the accessibility tree, starting from the root.
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
-    /// - Parameter withRetry: whether or not to automatically retry on failure.
-    ///   Default is true; see Session.maxRetries.
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byAccessibilityId id: String, withRetry: Bool = true) -> Element? {
-        findElement(startingAt: nil, using: "accessibility id", value: id, withRetry: withRetry)
+    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
     }
 
     /// findElement(byXPath:)
     /// Search for an element by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for
-    /// - Parameter withRetry: whether or not to automatically retry on failure.
-    ///   Default is true; see Session.maxRetries.
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byXPath xpath: String, withRetry: Bool = true) -> Element? {
-        findElement(startingAt: nil, using: "xpath", value: xpath, withRetry: withRetry)
+    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
     }
 
     /// findElement(byClassName:)
     /// Search for an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for
-    /// - Parameter withRetry: whether or not to automatically retry on failure.
-    ///   Default is true; see Session.maxRetries.
+    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byClassName className: String, withRetry: Bool = true) -> Element? {
-        findElement(startingAt: nil, using: "class name", value: className, withRetry: withRetry)
+    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) -> Element? {
+        findElement(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
     }
 
     // Helper for findElement functions above
-    internal func findElement(startingAt element: Element?, using: String, value: String, withRetry: Bool) -> Element? {
+    internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) -> Element? {
         let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
 
-        let maxRetries = withRetry ? self.maxRetries : 1
-        for i in 1...maxRetries {
+        let timeout = retryTimeout ?? defaultRetryTimeout
+        var timeUsed: TimeInterval = 0.0
+        var nextTimeout: TimeInterval = 0.001 // Start at 1ms and double until we exhaust time.
+        repeat {
             let responseValue: Session.ElementRequest.ResponseValue
             do {
                 responseValue = try webDriver.send(elementRequest).value!
+                return Element(in: self, id: responseValue.ELEMENT)
             } catch let error as WebDriverError {
                 if error.status == .noSuchElement {
-                    if i < maxRetries {
-                        Thread.sleep(forTimeInterval: self.retryTimeout)
+                    if timeUsed < timeout {
+                        Thread.sleep(forTimeInterval: nextTimeout)
+                        timeUsed += nextTimeout
+                        nextTimeout *= 2.0
                     }
-                    continue
                 } else {
-                    fatalError("Unhandled error.")
+                    fatalError("Unhandled error: \(String(describing: error.status))")
                 }
             } catch {
-                fatalError("Unknown error.")
+                fatalError("Unexpected error: \(error)")
             }
-            return Element(in: self, id: responseValue.ELEMENT)
-        }
+        } while timeUsed < timeout
+
         return nil
     }
 

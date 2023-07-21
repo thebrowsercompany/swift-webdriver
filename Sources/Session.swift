@@ -10,11 +10,8 @@ public class Session {
     var maxRetries: Int = 3
 
     /// retryTimeout
-    /// A TimeInterval specifying number of seconds to wait between attempts.
-    var retryTimeout: TimeInterval = 1.0
-
-    // Process of the app being tested when launched directly (not through WinAppDriver)
-    var appProcess: Process? // TODO: This seems to be unused.
+    /// A TimeInterval specifying max time to spend retrying operations.
+    var defaultRetryTimeout: TimeInterval = 1.0
 
     init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver

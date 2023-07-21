@@ -87,7 +87,7 @@ class NotepadTests: XCTestCase {
         let notepad = Notepad(winAppDriver: Self.winAppDriver)
 
         // Check that "New Tab" menu item is not present yet
-        XCTAssertNil(notepad.session.findElement(byName: "New Tab", withRetry: false))
+        XCTAssertNil(notepad.session.findElement(byName: "New Tab", retryTimeout: 0.0))
 
         // Move the mouse to center of "File" menu and click to open menu
         notepad.moveToCenterOf(byName: "File")
