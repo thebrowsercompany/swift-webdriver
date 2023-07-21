@@ -95,30 +95,22 @@ extension Session {
     internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) -> Element? {
         let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
 
-        let timeout = retryTimeout ?? defaultRetryTimeout
-        var timeUsed: TimeInterval = 0.0
-        var nextTimeout: TimeInterval = 0.001 // Start at 1ms and double until we exhaust time.
-        repeat {
+        let element = retryUntil(retryTimeout ?? defaultRetryTimeout, work: {
             let responseValue: Session.ElementRequest.ResponseValue
             do {
                 responseValue = try webDriver.send(elementRequest).value!
                 return Element(in: self, id: responseValue.ELEMENT)
             } catch let error as WebDriverError {
                 if error.status == .noSuchElement {
-                    if timeUsed < timeout {
-                        Thread.sleep(forTimeInterval: nextTimeout)
-                        timeUsed += nextTimeout
-                        nextTimeout *= 2.0
-                    }
+                    return nil
                 } else {
                     fatalError("Unhandled error: \(String(describing: error.status))")
                 }
             } catch {
                 fatalError("Unexpected error: \(error)")
             }
-        } while timeUsed < timeout
-
-        return nil
+        })
+        return element
     }
 
     struct ElementRequest: WebDriverRequest {
