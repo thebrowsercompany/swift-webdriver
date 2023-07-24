@@ -277,7 +277,7 @@ extension Session {
             body = .init(value: value)
         }
 
-        var pathComponents: [String] { ["session", session.id, "value"] }
+        var pathComponents: [String] { ["session", session.id, "keys"] }
         var method: HTTPMethod { .post }
         var body: Body
 
