@@ -83,6 +83,9 @@ class APIToRequestMappingTests: XCTestCase {
         }
         element.sendKeys(value: ["a", "b", "c"])
 
+        mockWebDriver.expect(path: "session/mySession/keys", method: .post)
+        session.sendKeys(value: ["d", "e", "f"])
+
         // Account for session deinitializer
         mockWebDriver.expect(path: "session/mySession", method: .delete)
     }
