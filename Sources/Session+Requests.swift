@@ -267,22 +267,22 @@ extension Session {
             var button: MouseButton
         }
     }
-    
-    struct KeysRequest : WebDriverRequest {
+
+    struct KeysRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
-        
+
         let session: Session
         init(_ session: Session, value: [String]) {
             self.session = session
             body = .init(value: value)
         }
 
-        var pathComponents: [String] { [ "session", session.id, "value"] }
+        var pathComponents: [String] { ["session", session.id, "value"] }
         var method: HTTPMethod { .post }
         var body: Body
 
-        struct Body : Codable {
+        struct Body: Codable {
             var value: [String]
         }
-    }  
+    }
 }
