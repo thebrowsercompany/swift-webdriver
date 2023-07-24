@@ -268,6 +268,11 @@ extension Session {
         }
     }
 
+    public func sendKeys(value: [String]) {
+        let keysRequest = KeysRequest(self, value: value)
+        try! webDriver.send(keysRequest)
+    }
+
     struct KeysRequest: WebDriverRequest {
         typealias ResponseValue = CodableNone
 
