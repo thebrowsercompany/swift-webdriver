@@ -13,7 +13,7 @@ extension URLSession {
             } else if let data = data, let response = response as? HTTPURLResponse {
                 completion(.success((data, response)))
             } else {
-                fatalError("unexpected result from URLSessionDataTask")
+                fatalError("Unexpected result from URLSessionDataTask.")
             }
         }
     }

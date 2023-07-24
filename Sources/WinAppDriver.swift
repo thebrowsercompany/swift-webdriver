@@ -21,7 +21,7 @@ public class WinAppDriver: WebDriver {
         // CI machines start it using a GitHub action before running the tests
         // to get around https://linear.app/the-browser-company/issue/WIN-569/winappdriver-does-not-work-on-ci
         if !isProcessRunning(withName: "WinAppDriver.exe") {
-            print("WinAppDriver is not running, start it!")
+            print("Starting WinAppDriver...")
             let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
 
             let process = Process()
@@ -34,10 +34,10 @@ public class WinAppDriver: WebDriver {
             do {
                 try runningProcess!.process.run()
             } catch {
-                fatalError("Could not start WinAppDriver!")
+                fatalError("Could not start WinAppDriver; is it installed?")
             }
         } else {
-            print("WinAppDriver is already running")
+            print("WinAppDriver is already running.")
         }
     }
 

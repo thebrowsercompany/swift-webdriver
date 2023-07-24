@@ -80,7 +80,6 @@ class NotepadTests: XCTestCase {
     // e.g., by attempting to get the window handle from the session
     public func testDismissNewFileDialog() {
         let notepad = Notepad(winAppDriver: Self.winAppDriver, appArguments: [UUID().uuidString], appWorkingDir: NSTemporaryDirectory())
-        Thread.sleep(forTimeInterval: 1) // Needed until WIN-496
         notepad.dismissNewFileDialog()
     }
 
@@ -88,7 +87,7 @@ class NotepadTests: XCTestCase {
         let notepad = Notepad(winAppDriver: Self.winAppDriver)
 
         // Check that "New Tab" menu item is not present yet
-        XCTAssertNil(notepad.session.findElement(byName: "New Tab"))
+        XCTAssertNil(notepad.session.findElement(byName: "New Tab", retryTimeout: 0.0))
 
         // Move the mouse to center of "File" menu and click to open menu
         notepad.moveToCenterOf(byName: "File")

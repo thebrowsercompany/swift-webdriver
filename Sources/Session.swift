@@ -5,8 +5,9 @@ public class Session {
     let webDriver: any WebDriver
     let id: String
 
-    // Process of the app being tested when launched directly (not through WinAppDriver)
-    var appProcess: Process?
+    /// retryTimeout
+    /// A TimeInterval specifying max time to spend retrying operations.
+    var defaultRetryTimeout: TimeInterval = 1.0
 
     init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver
