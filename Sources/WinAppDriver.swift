@@ -43,7 +43,7 @@ public class WinAppDriver: WebDriver {
 
     deinit {
         // WinAppDriver responds waits for a key to return
-        if let runningProcess = runningProcess {
+        if let runningProcess {
             try? runningProcess.toStdinPipe.fileHandleForWriting.write(contentsOf: "\n".data(using: .utf8)!)
             runningProcess.process.terminate()
         }
