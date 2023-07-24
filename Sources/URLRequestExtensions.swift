@@ -10,7 +10,7 @@ extension URLSession {
         dataTask(with: request) { data, response, error in
             if let error {
                 completion(.failure(error))
-            } else if let data = data, let response = response as? HTTPURLResponse {
+            } else if let data, let response = response as? HTTPURLResponse {
                 completion(.success((data, response)))
             } else {
                 fatalError("Unexpected result from URLSessionDataTask.")

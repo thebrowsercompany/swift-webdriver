@@ -8,7 +8,7 @@ internal func retryUntil<T>(_ timeout: TimeInterval, work: () throws -> T?) reth
     var result: T?
     repeat {
         result = try work()
-        if let result = result {
+        if let result {
             return result
         }
 

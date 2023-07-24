@@ -124,7 +124,7 @@ extension Session {
         }
 
         var pathComponents: [String] {
-            if let element = element {
+            if let element {
                 return ["session", session.id, "element", element.id, "element"]
             } else {
                 return ["session", session.id, "element"]

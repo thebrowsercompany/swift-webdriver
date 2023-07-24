@@ -1,0 +1,44 @@
+# General Options
+--swiftversion 5.9
+
+# File Options
+#--exclude 
+
+# Format Options
+
+--allman false
+--binarygrouping none
+--closingparen balanced
+--commas always
+--conflictmarkers reject
+--decimalgrouping none
+--elseposition same-line
+--exponentcase lowercase
+--exponentgrouping disabled
+--fractiongrouping disabled
+--fragment false
+--header ignore
+--hexgrouping none
+--hexliteralcase lowercase
+--ifdef no-indent
+--importgrouping alphabetized
+--indent 4
+--indentcase false
+# make sure this matches .swiftlint
+--maxwidth 180
+--nospaceoperators ..<,...
+--octalgrouping none
+--operatorfunc no-space
+--selfrequired 
+--stripunusedargs closure-only
+--trailingclosures
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters before-first
+
+# Rules
+--disable hoistAwait
+--disable hoistPatternLet
+--disable hoistTry
+--disable wrapMultilineStatementBraces
+--disable extensionAccessControl
