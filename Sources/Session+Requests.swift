@@ -267,4 +267,37 @@ extension Session {
             var button: MouseButton
         }
     }
+
+    /// sendKeys(:) - send key strokes to the session
+    /// - Parameter value: key strokes to send
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
+    public func sendKeys(value: [String]) {
+        let keysRequest = KeysRequest(self, value: value)
+        try! webDriver.send(keysRequest)
+    }
+
+    /// Send keys to the session
+    /// This overload takes a single string for simplicity
+    public func sendKeys(value: String) {
+        let keysRequest = KeysRequest(self, value: [value])
+        try! webDriver.send(keysRequest)
+    }
+
+    struct KeysRequest: WebDriverRequest {
+        typealias ResponseValue = CodableNone
+
+        let session: Session
+        init(_ session: Session, value: [String]) {
+            self.session = session
+            body = .init(value: value)
+        }
+
+        var pathComponents: [String] { ["session", session.id, "keys"] }
+        var method: HTTPMethod { .post }
+        var body: Body
+
+        struct Body: Codable {
+            var value: [String]
+        }
+    }
 }
