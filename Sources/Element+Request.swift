@@ -171,6 +171,33 @@ extension Element {
         }
     }
 
+    /// displayed - Determine if an element is currently displayed.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
+    public var displayed: Bool {
+        let displayedRequest = DisplayedRequest(element: self)
+        return try! webDriver.send(displayedRequest).value
+    }
+
+    struct DisplayedRequest: WebDriverRequest {
+        private let element: Element
+
+        init(element: Element) {
+            self.element = element
+        }
+
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "displayed"] }
+        var method: HTTPMethod { .get }
+        var body: Body = .init()
+
+        // Override the whole Response struct instead of just ResponseValue
+        // because the value property is a boolean instead of a struct
+        // and Bool does not conform to Codable.
+        struct Response: Codable {
+            // We don't care about the session id and other fields
+            let value: Bool
+        }
+    }
+
     /// Send keys to an element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public func sendKeys(value: [String]) {
