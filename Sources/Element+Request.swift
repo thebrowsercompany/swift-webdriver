@@ -174,13 +174,11 @@ extension Element {
     /// displayed - Determine if an element is currently displayed.
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
     public var displayed: Bool {
-        let locationRequest = LocationRequest(element: self)
-        return try! webDriver.send(locationRequest).value!
+        let displayedRequest = DisplayedRequest(element: self)
+        return try! webDriver.send(displayedRequest).value
     }
 
     struct DisplayedRequest: WebDriverRequest {
-        typealias ResponseValue = Bool
-
         private let element: Element
 
         init(element: Element) {
@@ -190,6 +188,14 @@ extension Element {
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "displayed"] }
         var method: HTTPMethod { .get }
         var body: Body = .init()
+
+        // Override the whole Response struct instead of just ResponseValue
+        // because the value property is a boolean instead of a struct
+        // and Bool does not conform to Codable.
+        struct Response: Codable {
+            // Don't care about session id, other fields
+            let value: Bool
+        }
     }
 
     /// Send keys to an element
