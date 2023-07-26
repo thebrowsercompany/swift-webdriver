@@ -171,6 +171,27 @@ extension Element {
         }
     }
 
+    /// displayed - Determine if an element is currently displayed.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
+    public var displayed: Bool {
+        let locationRequest = LocationRequest(element: self)
+        return try! webDriver.send(locationRequest).value!
+    }
+
+    struct DisplayedRequest: WebDriverRequest {
+        typealias ResponseValue = Bool
+
+        private let element: Element
+
+        init(element: Element) {
+            self.element = element
+        }
+
+        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "displayed"] }
+        var method: HTTPMethod { .get }
+        var body: Body = .init()
+    }
+
     /// Send keys to an element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public func sendKeys(value: [String]) {
