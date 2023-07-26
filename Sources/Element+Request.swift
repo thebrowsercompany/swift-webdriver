@@ -193,7 +193,7 @@ extension Element {
         // because the value property is a boolean instead of a struct
         // and Bool does not conform to Codable.
         struct Response: Codable {
-            // Don't care about session id, other fields
+            // We don't care about the session id and other fields
             let value: Bool
         }
     }
