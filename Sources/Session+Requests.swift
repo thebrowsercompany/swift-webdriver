@@ -95,7 +95,7 @@ extension Session {
     internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) -> Element? {
         let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
 
-        let element = retryUntil(retryTimeout ?? defaultRetryTimeout, work: {
+        let element = retryUntil(retryTimeout ?? defaultRetryTimeout) {
             let responseValue: Session.ElementRequest.ResponseValue
             do {
                 responseValue = try webDriver.send(elementRequest).value!
@@ -109,7 +109,7 @@ extension Session {
             } catch {
                 fatalError("Unexpected error: \(error)")
             }
-        })
+        }
         return element
     }
 
