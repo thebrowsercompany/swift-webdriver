@@ -5,7 +5,7 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public func click(retryTimeout: TimeInterval? = nil) {
         let clickRequest = ClickRequest(element: self)
-        retryUntil(retryTimeout ?? session.defaultRetryTimeout, work: {
+        retryUntil(retryTimeout ?? session.defaultRetryTimeout) {
             do {
                 try webDriver.send(clickRequest)
                 return true
@@ -18,7 +18,7 @@ extension Element {
             } catch {
                 fatalError("Unexpected error: \(error)")
             }
-        })
+        }
     }
 
     struct ClickRequest: WebDriverRequest {
