@@ -3,9 +3,22 @@ import Foundation
 extension Element {
     /// click() - simulate clicking this Element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
-    public func click() {
+    public func click(retryTimeout: TimeInterval? = nil) {
         let clickRequest = ClickRequest(element: self)
-        try! webDriver.send(clickRequest)
+        retryUntil(retryTimeout ?? session.defaultRetryTimeout, work: {
+            do {
+                try webDriver.send(clickRequest)
+                return true
+            } catch let error as WebDriverError {
+                if error.status == .elementNotInteractable {
+                    return false
+                } else {
+                    fatalError("Unhandled error: \(String(describing: error.status))")
+                }
+            } catch {
+                fatalError("Unexpected error: \(error)")
+            }
+        })
     }
 
     struct ClickRequest: WebDriverRequest {
