@@ -1,22 +1,31 @@
 import Foundation
 
-// Represents a Session in the WinAppDriver API
+// Represents a Session in the WinAppDriver API.
 public class Session {
     let webDriver: any WebDriver
     let id: String
-
-    /// retryTimeout
-    /// A TimeInterval specifying max time to spend retrying operations.
-    var defaultRetryTimeout: TimeInterval = 1.0
 
     init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver
         self.id = id
     }
 
-    deinit {
+    /// delete
+    /// Attempts to delete the session.
+    func delete() throws {
         let deleteSessionRequest = DeleteSessionRequest(sessionId: id)
-        try! webDriver.send(deleteSessionRequest)
+        try webDriver.send(deleteSessionRequest)
+    }
+
+    deinit {
+        // TODO: Get rid of this deinit and make callers use Session.delete
+        // and handle/propegate exceptions. For now this is challenging to
+        // untangle, and unlikely to actually throw.
+        do { try delete() } catch let error as WebDriverError {
+            fatalError("Error in Session.delete: \(error)")
+        } catch {
+            fatalError("Unknown error in Session.delete.")
+        }
     }
 
     struct DeleteSessionRequest: WebDriverRequest {

@@ -19,22 +19,22 @@ class SessionTests: XCTestCase {
 
     // Test methods
 
-    public func testTitle() {
-        let title = Self.session.title
+    public func testTitle() throws {
+        let title = try Self.session.title
         XCTAssertEqual(title, "System Information")
     }
 
-    public func testScreenshot() {
-        let data: Data = Self.session.makePNGScreenshot()
+    public func testScreenshot() throws {
+        let data: Data = try Self.session.makePNGScreenshot()
         XCTAssert(isPNG(data: data))
     }
 
-    public func testMaximizeAndRestore() {
-        guard let element = Self.session.findElement(byName: "Maximize") else {
+    public func testMaximizeAndRestore() throws {
+        guard let element = try Self.session.findElement(byName: "Maximize") else {
             XCTAssert(false, "Maximize button not found")
             return
         }
-        element.click()
-        element.click()
+        try element.click()
+        try element.click()
     }
 }

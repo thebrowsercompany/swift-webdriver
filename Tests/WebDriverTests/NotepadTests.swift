@@ -6,7 +6,7 @@ class Notepad {
     let session: Session
     var editor: Element?
 
-    init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) {
+    init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
         session = winAppDriver.newSession(
             app: "\(windowsDir)\\System32\\notepad.exe",
@@ -17,17 +17,17 @@ class Notepad {
 
         // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
         // Instead, grab the editor here as the active element
-        editor = session.activeElement
+        editor = try session.activeElement
     }
 
-    func dismissNewFileDialog() {
-        let dismissButton = session.findElement(byName: "No")
+    func dismissNewFileDialog() throws {
+        let dismissButton = try? session.findElement(byName: "No")
         XCTAssertNotNil(dismissButton, "Dismiss New File dialog: Button \"no\" was not found")
-        dismissButton?.click()
+        try dismissButton!.click()
     }
 
-    func moveToCenterOf(byName name: String) {
-        guard let element = session.findElement(byName: name) else {
+    func moveToCenterOf(byName name: String) throws {
+        guard let element = try? session.findElement(byName: name) else {
             XCTFail("Can't find element \(name)")
             return
         }
@@ -36,26 +36,26 @@ class Notepad {
         XCTAssert(size.width > 0)
         XCTAssert(size.height > 0)
 
-        session.moveTo(element: element, xOffset: size.width / 2, yOffset: size.height / 2)
+        try session.moveTo(element: element, xOffset: size.width / 2, yOffset: size.height / 2)
     }
 
-    func click(button: MouseButton = .left) {
-        session.click(button: button)
+    func click(button: MouseButton = .left) throws {
+        try session.click(button: button)
     }
 
-    func typeInEditor(keys: [String]) {
+    func typeInEditor(keys: [String]) throws {
         if editor == nil {
-            editor = session.findElement(byName: "Text Editor")
+            editor = try session.findElement(byName: "Text Editor")
             if editor == nil {
-                editor = session.findElement(byClassName: "Edit")
+                editor = try session.findElement(byClassName: "Edit")
             }
         }
         XCTAssertNotNil(editor)
-        editor!.sendKeys(value: keys)
+        try editor!.sendKeys(value: keys)
     }
 
-    func close() {
-        session.findElement(byName: "close")?.click()
+    func close() throws {
+        try session.findElement(byName: "close")?.click()
     }
 }
 
@@ -75,24 +75,24 @@ class NotepadTests: XCTestCase {
     // TODO: implement a way to check that notepad has the correct name and working directory
     // TODO: implement a way to confirm that the dialog was dismissed and notepad exited,
     // e.g., by attempting to get the window handle from the session
-    public func testDismissNewFileDialog() {
-        let notepad = Notepad(winAppDriver: Self.winAppDriver, appArguments: [UUID().uuidString], appWorkingDir: NSTemporaryDirectory())
-        notepad.dismissNewFileDialog()
+    public func testDismissNewFileDialog() throws {
+        let notepad = try Notepad(winAppDriver: Self.winAppDriver, appArguments: [UUID().uuidString], appWorkingDir: NSTemporaryDirectory())
+        try notepad.dismissNewFileDialog()
     }
 
-    public func testOpenFileMenuWithMouse() {
-        let notepad = Notepad(winAppDriver: Self.winAppDriver)
+    public func testOpenFileMenuWithMouse() throws {
+        let notepad = try Notepad(winAppDriver: Self.winAppDriver)
 
         // Check that "New Tab" menu item is not present yet
-        XCTAssertNil(notepad.session.findElement(byName: "New Tab", retryTimeout: 0.0))
+        XCTAssertNil(try notepad.session.findElement(byName: "New Tab", retryTimeout: 0.0))
 
         // Move the mouse to center of "File" menu and click to open menu
-        notepad.moveToCenterOf(byName: "File")
-        notepad.click()
+        try notepad.moveToCenterOf(byName: "File")
+        try notepad.click()
 
         // Check that "New tab" (win11 Notepad) or just "New" (win10 Notepad) is now present
-        guard let _ = notepad.session.findElement(byName: "New tab") else {
-            guard let _ = notepad.session.findElement(byName: "New") else {
+        guard let _ = try notepad.session.findElement(byName: "New tab") else {
+            guard let _ = try notepad.session.findElement(byName: "New") else {
                 // TODO: this does not pass in Win10 Notepad - Re-enable when moving to Win11 CI runners
                 // XCTFail("Neither 'New' or 'New tab' element were found")
                 return
@@ -101,12 +101,12 @@ class NotepadTests: XCTestCase {
         }
     }
 
-    public func testTypingTwoLines() {
-        let notepad = Notepad(winAppDriver: Self.winAppDriver)
-        notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCode.enter.rawValue, "Another line"])
+    public func testTypingTwoLines() throws {
+        let notepad = try Notepad(winAppDriver: Self.winAppDriver)
+        try notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCode.enter.rawValue, "Another line"])
         // TODO: the following does not pass in Win10 Notepad - Re-enable when moving to Win11 CI runners
         // XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))
-        notepad.typeInEditor(keys: [KeyCode.control.rawValue, "a", KeyCode.control.rawValue, KeyCode.delete.rawValue])
-        notepad.close()
+        try notepad.typeInEditor(keys: [KeyCode.control.rawValue, "a", KeyCode.control.rawValue, KeyCode.delete.rawValue])
+        try notepad.close()
     }
 }

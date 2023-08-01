@@ -39,8 +39,7 @@ public struct HTTPWebDriver: WebDriver {
         return res
     }
 
-    // Utility function to build a URL from its parts
-    // Inpired by GPT4
+    // Utility function to build a URL from its parts; inspired by GPT4.
     private static func buildURL(base: URL, pathComponents: [String], query: [String: String] = [:]) -> URL {
         var url = base
 
