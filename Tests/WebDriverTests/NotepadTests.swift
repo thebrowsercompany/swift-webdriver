@@ -60,15 +60,12 @@ class Notepad {
 }
 
 class NotepadTests: XCTestCase {
-    // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test
     static var winAppDriver: WinAppDriver!
 
-    // Called once before all the tests in this class
     override public class func setUp() {
         winAppDriver = try! WinAppDriver()
     }
 
-    // Called once after all tests in this class have run
     override public class func tearDown() {
         winAppDriver = nil
     }

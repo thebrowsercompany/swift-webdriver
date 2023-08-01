@@ -4,10 +4,12 @@ import XCTest
 class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
 
-    // Called once before all the tests in this class
     override public class func setUp() {
-        // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test
-        winAppDriver = try! WinAppDriver()
+         winAppDriver = try! WinAppDriver()
+    }
+
+    override public class func tearDown() {
+        winAppDriver = nil
     }
 
     // test that status returns reasonable answers

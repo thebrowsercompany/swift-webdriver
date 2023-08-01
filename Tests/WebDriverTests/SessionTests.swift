@@ -5,19 +5,15 @@ import XCTest
 class SessionTests: XCTestCase {
     static var session: Session!
 
-    // Called once before all the tests in this class
     override public class func setUp() {
-        // Use a single WinAppDriver process to avoid incurring the process start/end cost for every test
         let winAppDriver = try! WinAppDriver()
 
-        // We don't store webDriver as session maintains it alive
+        // We don't store webDriver as session maintains a reference.
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
         session = winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
     }
 
-    // Called once after all tests in this class have run
     override public class func tearDown() {
-        // Force the destruction of the session
         session = nil
     }
 
