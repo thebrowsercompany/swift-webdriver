@@ -63,7 +63,7 @@ class NotepadTests: XCTestCase {
     static var winAppDriver: WinAppDriver!
 
     override public class func setUp() {
-        winAppDriver = try! WinAppDriver()
+        XCTAssertNoThrow(winAppDriver = try WinAppDriver())
     }
 
     override public class func tearDown() {
