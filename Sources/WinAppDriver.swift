@@ -27,7 +27,8 @@ public class WinAppDriver: WebDriver {
                 startupInfo.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
 
                 var processInfo = PROCESS_INFORMATION()
-                guard CreateProcessW(nil,
+                guard CreateProcessW(
+                    nil,
                     UnsafeMutablePointer<WCHAR>(mutating: commandLine),
                     nil,
                     nil,
@@ -36,11 +37,12 @@ public class WinAppDriver: WebDriver {
                     nil,
                     nil,
                     &startupInfo,
-                    &processInfo) else {
-                        let error = GetLastError()
-                        printAndFlush("CreateProcessW failed: \(error)")
-                        throw WinAppDriverError.win32Error(lastError: Int(error))
-                    }
+                    &processInfo
+                ) else {
+                    let error = GetLastError()
+                    printAndFlush("CreateProcessW failed: \(error)")
+                    throw WinAppDriverError.win32Error(lastError: Int(error))
+                }
 
                 wadProcessInfo = processInfo
             }

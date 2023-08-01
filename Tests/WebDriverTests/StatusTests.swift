@@ -5,7 +5,7 @@ class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
 
     override public class func setUp() {
-         winAppDriver = try! WinAppDriver()
+        winAppDriver = try! WinAppDriver()
     }
 
     override public class func tearDown() {
