@@ -1,6 +1,6 @@
-struct WebDriverError: Codable, Error {
+struct WebDriverError: Decodable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
-    enum Status: Int, Codable {
+    enum Status: Int, Decodable {
         case success = 0
         case noSuchDriver = 6
         case noSuchElement = 7
@@ -33,9 +33,28 @@ struct WebDriverError: Codable, Error {
     var status: Status?
     var value: Value
 
-    struct Value: Codable {
+    struct Value: Decodable {
         var error: String
         var message: String
-        var stacktrace: String?
+    }
+
+    enum CodingKeys: CodingKey {
+        case status
+        case value
+    }
+
+    // Custom initializer to allow for failure to decode the Status field.
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        status = try? container.decodeIfPresent(Status.self, forKey: .status)
+        value = try container.decode(Value.self, forKey: .value)
+
+        // If we failed to decode the Status, decode as an int and append to the error
+        // description. This is simply to help us identify new Status-es that we should
+        // add to the enum.
+        if status == nil {
+            let unknownStatus = try container.decode(Int.self, forKey: .status)
+            value.error.append(contentsOf: " (err \(unknownStatus))")
+        }
     }
 }
