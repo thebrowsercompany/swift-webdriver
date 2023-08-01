@@ -71,11 +71,11 @@ class APIToRequestMappingTests: XCTestCase {
 
         mockWebDriver
             .expect(path: "session/mySession/element/myElement/location", method: .get, type: Element.LocationRequest.self) { WebDriverResponse(value: .init(x: 10, y: -20)) }
-        XCTAssert(element.location == (x: 10, y: -20))
+        XCTAssert(try element.location == (x: 10, y: -20))
 
         mockWebDriver
             .expect(path: "session/mySession/element/myElement/size", method: .get, type: Element.SizeRequest.self) { WebDriverResponse(value: .init(width: 100, height: 200)) }
-        XCTAssert(element.size == (width: 100, height: 200))
+        XCTAssert(try element.size == (width: 100, height: 200))
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Element.KeysRequest.self) {
             XCTAssertEqual($0.value, ["a", "b", "c"])

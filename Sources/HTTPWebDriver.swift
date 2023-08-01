@@ -26,7 +26,7 @@ public struct HTTPWebDriver: WebDriver {
         if Request.Body.self != CodableNone.self {
             urlRequest.addValue("content-encoding", forHTTPHeaderField: "json")
             urlRequest.addValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
-            urlRequest.httpBody = try! JSONEncoder().encode(request.body)
+            urlRequest.httpBody = try JSONEncoder().encode(request.body)
         }
 
         // Send the request and decode result or error

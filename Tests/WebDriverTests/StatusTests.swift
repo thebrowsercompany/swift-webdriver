@@ -13,8 +13,8 @@ class StatusTest: XCTestCase {
     }
 
     // test that status returns reasonable answers
-    func testStatus() {
-        let status = try! Self.winAppDriver.status
+    func testStatus() throws {
+        let status = try Self.winAppDriver.status
 
         // Check that we got a version number
         XCTAssert(status?.build?.version != nil)

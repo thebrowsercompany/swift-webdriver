@@ -8,10 +8,10 @@ extension WinAppDriver {
     /// - appWorkingDir: working directory to run the app in
     /// - waitForAppLaunch: time to wait to the app to launch in seconds, 0 by default
     /// - Returns: new Session instance
-    public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) -> Session {
+    public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) throws -> Session {
         let args = appArguments?.joined(separator: " ")
         let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
-        return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+        return Session(in: self, id: try send(newSessionRequest).sessionId!)
     }
 
     struct NewSessionRequest: WebDriverRequest {

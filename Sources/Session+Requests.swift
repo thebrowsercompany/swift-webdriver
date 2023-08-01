@@ -6,7 +6,7 @@ extension Session {
     public var title: String {
         get throws {
             let sessionTitleRequest = TitleRequest(self)
-            return try! webDriver.send(sessionTitleRequest).value!
+            return try webDriver.send(sessionTitleRequest).value!
         }
     }
 

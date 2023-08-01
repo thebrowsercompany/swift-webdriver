@@ -33,7 +33,7 @@ class MockWebDriver: WebDriver {
             }
 
             let response = try handler(requestBody)
-            return Response.self == CodableNone.self ? nil : try! JSONEncoder().encode(response)
+            return Response.self == CodableNone.self ? nil : try JSONEncoder().encode(response)
         }))
     }
 

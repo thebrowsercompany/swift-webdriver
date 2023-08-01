@@ -136,9 +136,11 @@ extension Element {
     /// location - return x, y location of the element relative to the screen top left corner
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidlocation
     public var location: (x: Int, y: Int) {
-        let locationRequest = LocationRequest(element: self)
-        let responseValue = try! webDriver.send(locationRequest).value!
-        return (responseValue.x, responseValue.y)
+        get throws {
+            let locationRequest = LocationRequest(element: self)
+            let responseValue = try webDriver.send(locationRequest).value!
+            return (responseValue.x, responseValue.y)
+        }
     }
 
     struct LocationRequest: WebDriverRequest {
@@ -161,10 +163,12 @@ extension Element {
     /// size - return width, height of the element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidsize
     public var size: (width: Int, height: Int) {
-        let sizeRequest = SizeRequest(element: self)
-        let response = try! webDriver.send(sizeRequest)
-        let responseValue = response.value!
-        return (responseValue.width, responseValue.height)
+        get throws {
+            let sizeRequest = SizeRequest(element: self)
+            let response = try webDriver.send(sizeRequest)
+            let responseValue = response.value!
+            return (responseValue.width, responseValue.height)
+        }
     }
 
     struct SizeRequest: WebDriverRequest {

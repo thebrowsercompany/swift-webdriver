@@ -10,7 +10,7 @@ class SessionTests: XCTestCase {
 
         // We don't store webDriver as session maintains a reference.
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
+        session = try! winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
     }
 
     override public class func tearDown() {

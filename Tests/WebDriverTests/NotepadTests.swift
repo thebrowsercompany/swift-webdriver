@@ -8,7 +8,7 @@ class Notepad {
 
     init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = winAppDriver.newSession(
+        session = try winAppDriver.newSession(
             app: "\(windowsDir)\\System32\\notepad.exe",
 
             appArguments: appArguments,
@@ -32,7 +32,7 @@ class Notepad {
             return
         }
 
-        let size = element.size
+        let size = try element.size
         XCTAssert(size.width > 0)
         XCTAssert(size.height > 0)
 
