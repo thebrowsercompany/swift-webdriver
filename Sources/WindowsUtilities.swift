@@ -13,10 +13,7 @@ func isProcessRunning(withName processName: String) -> Bool {
         }
     } while bytesReturned == DWORD(processIds.count * MemoryLayout<DWORD>.size)
 
-    let processCount = Int(bytesReturned) / MemoryLayout<DWORD>.size
-
-    for i in 0..<processCount {
-        let processId = processIds[i]
+    for processId in processIds {
         guard let processHandle = OpenProcess(DWORD(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ), false, processId) else {
             continue
         }
@@ -28,7 +25,6 @@ func isProcessRunning(withName processName: String) -> Bool {
         var processNameBuffer: [WCHAR] = Array(repeating: 0, count: Int(MAX_PATH))
         if K32GetModuleBaseNameW(processHandle, nil, &processNameBuffer, DWORD(processNameBuffer.count)) > 0 {
             let processNameString = String(decodingCString: processNameBuffer, as: UTF16.self)
-
             if processNameString.lowercased() == processName.lowercased() {
                 return true
             }

@@ -1,51 +1,59 @@
 import Foundation
 import WinSDK
 
+enum WinAppDriverError: Error {
+    case win32Error(lastError: Int)
+}
+
 public class WinAppDriver: WebDriver {
     static let ip = "127.0.0.1"
     static let port = 4723
 
     let httpWebDriver: HTTPWebDriver
 
-    struct RunningProcess {
-        var process: Process
-        var toStdinPipe: Pipe
-    }
-
-    var runningProcess: RunningProcess? = nil
+    private var wadProcessInfo: PROCESS_INFORMATION?
 
     public init() throws {
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(Self.ip):\(Self.port)")!)
 
-        // We start WinAppDriver only if its process is not already started
-        // CI machines start it using a GitHub action before running the tests
-        // to get around https://linear.app/the-browser-company/issue/WIN-569/winappdriver-does-not-work-on-ci
+        // Ensure WinAppDriver is running.
         if !isProcessRunning(withName: "WinAppDriver.exe") {
-            print("Starting WinAppDriver...")
             let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
+            let commandLine = ["\"\(path)\"", Self.ip, String(Self.port)].joined(separator: " ")
+            try commandLine.withCString(encodedAs: UTF16.self) { commandLine throws in
+                var startupInfo = STARTUPINFOW()
+                startupInfo.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
 
-            let process = Process()
-            let pipe = Pipe()
-            process.executableURL = URL(fileURLWithPath: path)
-            process.arguments = [Self.ip, String(Self.port)]
-            process.standardInput = pipe.fileHandleForReading
-            process.standardOutput = nil
-            runningProcess = RunningProcess(process: process, toStdinPipe: pipe)
-            do {
-                try runningProcess!.process.run()
-            } catch {
-                fatalError("Could not start WinAppDriver; is it installed?")
+                var processInfo = PROCESS_INFORMATION()
+                guard CreateProcessW(
+                    nil,
+                    UnsafeMutablePointer<WCHAR>(mutating: commandLine),
+                    nil,
+                    nil,
+                    false,
+                    DWORD(CREATE_NEW_CONSOLE),
+                    nil,
+                    nil,
+                    &startupInfo,
+                    &processInfo
+                ) else {
+                    throw WinAppDriverError.win32Error(lastError: Int(GetLastError()))
+                }
+
+                wadProcessInfo = processInfo
             }
-        } else {
-            print("WinAppDriver is already running.")
         }
     }
 
     deinit {
-        // WinAppDriver responds waits for a key to return
-        if let runningProcess {
-            try? runningProcess.toStdinPipe.fileHandleForWriting.write(contentsOf: "\n".data(using: .utf8)!)
-            runningProcess.process.terminate()
+        if let wadProcessInfo {
+            CloseHandle(wadProcessInfo.hThread)
+
+            if !TerminateProcess(wadProcessInfo.hProcess, 0) {
+                let error = GetLastError()
+                assertionFailure("TerminateProcess failed with error \(error).")
+            }
+            CloseHandle(wadProcessInfo.hProcess)
         }
     }
 

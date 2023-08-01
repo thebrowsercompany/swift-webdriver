@@ -10,11 +10,6 @@ extension WinAppDriver {
     /// - Returns: new Session instance
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) -> Session {
         let args = appArguments?.joined(separator: " ")
-
-        print("Starting: \(app)")
-        print("Arguments: \(args as String? ?? "(None)")")
-        printAndFlush("Working Dir: \(appWorkingDir as String? ?? "(None)")")
-
         let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
         return Session(in: self, id: try! send(newSessionRequest).sessionId!)
     }
