@@ -62,7 +62,7 @@ class MockWebDriver: WebDriver {
     /// Queues an expected request
     // This overload ignores the incoming request body and returns a default response.
     func expect(path: String, method: HTTPMethod) {
-        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in WebDriverResponse<CodableNone>() }
+        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in WebDriverResponse<CodableNone>(value: CodableNone()) }
     }
 
     @discardableResult

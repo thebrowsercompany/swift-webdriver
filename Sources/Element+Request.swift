@@ -34,7 +34,7 @@ extension Element {
     public var text: String {
         get throws {
             let textRequest = TextRequest(element: self)
-            return try webDriver.send(textRequest).value!
+            return try webDriver.send(textRequest).value
         }
     }
 
@@ -110,7 +110,7 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidattributename
     public func getAttribute(name: String) throws -> String {
         let attributeRequest = AttributeRequest(self, name: name)
-        return try webDriver.send(attributeRequest).value!
+        return try webDriver.send(attributeRequest).value
     }
 
     struct AttributeRequest: WebDriverRequest {
@@ -134,7 +134,7 @@ extension Element {
     public var location: (x: Int, y: Int) {
         get throws {
             let locationRequest = LocationRequest(element: self)
-            let responseValue = try webDriver.send(locationRequest).value!
+            let responseValue = try webDriver.send(locationRequest).value
             return (responseValue.x, responseValue.y)
         }
     }
@@ -162,7 +162,7 @@ extension Element {
         get throws {
             let sizeRequest = SizeRequest(element: self)
             let response = try webDriver.send(sizeRequest)
-            let responseValue = response.value!
+            let responseValue = response.value
             return (responseValue.width, responseValue.height)
         }
     }

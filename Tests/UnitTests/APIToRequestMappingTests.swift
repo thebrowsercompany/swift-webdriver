@@ -36,25 +36,25 @@ class APIToRequestMappingTests: XCTestCase {
             XCTAssertEqual($0.elementId, "myElement")
             XCTAssertEqual($0.xOffset, 30)
             XCTAssertEqual($0.yOffset, 0)
-            return WebDriverResponse<CodableNone>()
+            return WebDriverResponse<CodableNone>(value: CodableNone())
         }
         try session.moveTo(element: element, xOffset: 30, yOffset: 0)
 
         mockWebDriver.expect(path: "session/mySession/click", method: .post, type: Session.ButtonRequest.self) {
             XCTAssertEqual($0.button, .left)
-            return WebDriverResponse<CodableNone>()
+            return WebDriverResponse<CodableNone>(value: CodableNone())
         }
         try session.click(button: .left)
 
         mockWebDriver.expect(path: "session/mySession/buttondown", method: .post, type: Session.ButtonRequest.self) {
             XCTAssertEqual($0.button, .right)
-            return WebDriverResponse<CodableNone>()
+            return WebDriverResponse<CodableNone>(value: CodableNone())
         }
         try session.buttonDown(button: .right)
 
         mockWebDriver.expect(path: "session/mySession/buttonup", method: .post, type: Session.ButtonRequest.self) {
             XCTAssertEqual($0.button, .right)
-            return WebDriverResponse<CodableNone>()
+            return WebDriverResponse<CodableNone>(value: CodableNone())
         }
         try session.buttonUp(button: .right)
 
@@ -79,7 +79,7 @@ class APIToRequestMappingTests: XCTestCase {
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Element.KeysRequest.self) {
             XCTAssertEqual($0.value, ["a", "b", "c"])
-            return WebDriverResponse<CodableNone>()
+            return WebDriverResponse<CodableNone>(value: CodableNone())
         }
         try element.sendKeys(value: ["a", "b", "c"])
 

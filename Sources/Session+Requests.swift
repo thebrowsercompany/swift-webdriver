@@ -6,7 +6,7 @@ extension Session {
     public var title: String {
         get throws {
             let sessionTitleRequest = TitleRequest(self)
-            return try webDriver.send(sessionTitleRequest).value!
+            return try webDriver.send(sessionTitleRequest).value
         }
     }
 
@@ -31,7 +31,7 @@ extension Session {
     public func makePNGScreenshot() throws -> Data {
         let screenshotRequest = ScreenshotRequest(self)
 
-        let base64: String = try webDriver.send(screenshotRequest).value!
+        let base64: String = try webDriver.send(screenshotRequest).value
         return Data(base64Encoded: base64)!
     }
 
@@ -100,7 +100,7 @@ extension Session {
         let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
             let responseValue: Session.ElementRequest.ResponseValue
             do {
-                responseValue = try webDriver.send(elementRequest).value!
+                responseValue = try webDriver.send(elementRequest).value
                 return Element(in: self, id: responseValue.ELEMENT)
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
@@ -145,13 +145,13 @@ extension Session {
     public var activeElement: Element? {
         get throws {
             let activeElementRequest = ActiveElementRequest(self)
-            var value: Session.ActiveElementRequest.ResponseValue?
+            var value: Session.ActiveElementRequest.ResponseValue
             do {
                 value = try webDriver.send(activeElementRequest).value
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
             }
-            return Element(in: self, id: value!.ELEMENT)
+            return Element(in: self, id: value.ELEMENT)
         }
     }
 

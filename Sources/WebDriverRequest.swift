@@ -29,11 +29,8 @@ public enum HTTPMethod: String {
 
 // Response to a WebDriver request with a response value.
 public struct WebDriverResponse<Value>: Codable where Value: Codable {
-    public var value: Value?
+    public var value: Value
 }
-
-// For WebDriver requests with no expected response.
-public struct WebDriverNoResponse: Codable {}
 
 // For WebDriver requests whose response lacks a value field.
 public struct WebDriverResponseNoValue: Codable {
