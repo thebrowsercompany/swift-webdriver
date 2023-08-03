@@ -1,60 +1,44 @@
-struct WebDriverError: Decodable, Error {
+struct WebDriverError: Codable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
-    enum Status: Int, Decodable {
-        case success = 0
-        case noSuchDriver = 6
-        case noSuchElement = 7
-        case noSuchFrame = 8
-        case unknownCommand = 9
-        case staleElementReference = 10
-        case elementNotVisible = 11
-        case invalidElementState = 12
-        case unknownError = 13
-        case elementIsNotSelectable = 15
-        case javaScriptError = 17
-        case xPathLookupError = 19
-        case timeout = 21
-        case noSuchWindow = 23
-        case invalidCookieDomain = 24
-        case unableToSetCookie = 25
-        case unexpectedAlertOpen = 26
-        case noAlertOpenError = 27
-        case scriptTimeout = 28
-        case invalidElementCoordinates = 29
-        case imeNotAvailable = 30
-        case imeEngineActivationFailed = 31
-        case invalidSelector = 32
-        case sessionNotCreatedException = 33
-        case moveTargetOutOfBounds = 34
-        case invalidArgument = 100 // WinAppDriver returns when passing an incorrect window handle to attach to
-        case elementNotInteractable = 105 // WinAppDriver returns when an element command could not be completed because the element is not pointer- or keyboard interactable.
+
+    struct Status: Codable, Hashable, RawRepresentable {
+        var rawValue: Int
+
+        static let success = Self(rawValue: 0)
+        static let noSuchDriver = Self(rawValue: 6)
+        static let noSuchElement = Self(rawValue: 7)
+        static let noSuchFrame = Self(rawValue: 8)
+        static let unknownCommand = Self(rawValue: 9)
+        static let staleElementReference = Self(rawValue: 10)
+        static let elementNotVisible = Self(rawValue: 11)
+        static let invalidElementState = Self(rawValue: 12)
+        static let unknownError = Self(rawValue: 13)
+        static let elementIsNotSelectable = Self(rawValue: 15)
+        static let javaScriptError = Self(rawValue: 17)
+        static let xPathLookupError = Self(rawValue: 19)
+        static let timeout = Self(rawValue: 21)
+        static let noSuchWindow = Self(rawValue: 23)
+        static let invalidCookieDomain = Self(rawValue: 24)
+        static let unableToSetCookie = Self(rawValue: 25)
+        static let unexpectedAlertOpen = Self(rawValue: 26)
+        static let noAlertOpenError = Self(rawValue: 27)
+        static let scriptTimeout = Self(rawValue: 28)
+        static let invalidElementCoordinates = Self(rawValue: 29)
+        static let imeNotAvailable = Self(rawValue: 30)
+        static let imeEngineActivationFailed = Self(rawValue: 31)
+        static let invalidSelector = Self(rawValue: 32)
+        static let sessionNotCreatedException = Self(rawValue: 33)
+        static let moveTargetOutOfBounds = Self(rawValue: 34)
+        static let invalidArgument = Self(rawValue: 100) // WinAppDriver returns when passing an incorrect window handle to attach to.
+        static let elementNotInteractable =
+            Self(rawValue: 105) // WinAppDriver returns when an element command could not be completed because the element is not pointer- or keyboard interactable.
     }
 
-    var status: Status?
-    var value: Value
-
-    struct Value: Decodable {
+    struct Value: Codable {
         var error: String
         var message: String
     }
 
-    enum CodingKeys: CodingKey {
-        case status
-        case value
-    }
-
-    // Custom initializer to allow for failure to decode the Status field.
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        status = try? container.decodeIfPresent(Status.self, forKey: .status)
-        value = try container.decode(Value.self, forKey: .value)
-
-        // If we failed to decode the Status, decode as an int and append to the error
-        // description. This is simply to help us identify new Status-es that we should
-        // add to the enum.
-        if status == nil {
-            let unknownStatus = try container.decode(Int.self, forKey: .status)
-            value.error.append(contentsOf: " (err \(unknownStatus))")
-        }
-    }
+    var status: Status
+    var value: Value
 }
