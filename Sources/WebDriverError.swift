@@ -37,6 +37,7 @@ struct WebDriverError: Codable, Error {
     struct Value: Codable {
         var error: String
         var message: String
+        var stacktrace: String?
     }
 
     var status: Status
