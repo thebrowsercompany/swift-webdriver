@@ -21,9 +21,10 @@ class Notepad {
     }
 
     func dismissNewFileDialog() throws {
-        let dismissButton = try? session.findElement(byName: "No")
-        XCTAssertNotNil(dismissButton, "Dismiss New File dialog: Button \"no\" was not found")
-        try dismissButton!.click()
+        guard let dismissButton = try? session.findElement(byName: "No") else {
+            return XCTFail("Dismiss New File dialog: Button \"no\" was not found")
+        }
+        try dismissButton.click()
     }
 
     func moveToCenterOf(byName name: String) throws {

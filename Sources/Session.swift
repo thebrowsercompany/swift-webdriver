@@ -10,6 +10,10 @@ public class Session {
         self.id = id
     }
 
+    /// retryTimeout
+    /// A TimeInterval specifying max time to spend retrying operations.
+    var defaultRetryTimeout: TimeInterval = 1.0
+
     /// delete
     /// Attempts to delete the session.
     func delete() throws {

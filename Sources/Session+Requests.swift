@@ -102,12 +102,8 @@ extension Session {
             do {
                 responseValue = try webDriver.send(elementRequest).value!
                 return Element(in: self, id: responseValue.ELEMENT)
-            } catch let error as WebDriverError {
-                if error.status == .noSuchElement {
-                    return nil
-                } else {
-                    throw error
-                }
+            } catch let error as WebDriverError where error.status == .noSuchElement {
+                return nil
             }
         }
         return element
@@ -152,12 +148,8 @@ extension Session {
             var value: Session.ActiveElementRequest.ResponseValue?
             do {
                 value = try webDriver.send(activeElementRequest).value
-            } catch let error as WebDriverError {
-                if error.status == .noSuchElement {
-                    return nil
-                } else {
-                    throw error
-                }
+            } catch let error as WebDriverError where error.status == .noSuchElement {
+                return nil
             }
             return Element(in: self, id: value!.ELEMENT)
         }

@@ -5,16 +5,12 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public func click(retryTimeout: TimeInterval? = nil) throws {
         let clickRequest = ClickRequest(element: self)
-        try retryUntil(retryTimeout ?? defaultRetryTimeout) {
+        try retryUntil(retryTimeout ?? session.defaultRetryTimeout) {
             do {
                 try webDriver.send(clickRequest)
                 return true
-            } catch let error as WebDriverError {
-                if error.status == .elementNotInteractable {
-                    return false
-                } else {
-                    throw error
-                }
+            } catch let error as WebDriverError where error.status == .elementNotInteractable {
+                return false
             }
         }
     }

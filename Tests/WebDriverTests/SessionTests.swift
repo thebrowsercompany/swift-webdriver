@@ -6,13 +6,13 @@ class SessionTests: XCTestCase {
     static var session: Session!
 
     override public class func setUp() {
-        var winAppDriver: WinAppDriver? = nil
-        XCTAssertNoThrow(winAppDriver = try WinAppDriver())
-        XCTAssertNotNil(winAppDriver)
+        guard let winAppDriver = try? WinAppDriver() else {
+            return XCTFail("Failed to start WinAppDriver")
+        }
 
         // We don't store webDriver as session maintains a reference.
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        XCTAssertNoThrow(session = try winAppDriver!.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe"))
+        XCTAssertNoThrow(session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe"))
     }
 
     override public class func tearDown() {

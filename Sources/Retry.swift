@@ -1,9 +1,5 @@
 import Foundation
 
-/// retryTimeout
-/// A TimeInterval specifying max time to spend retrying operations.
-var defaultRetryTimeout: TimeInterval = 1.0
-
 // Retry the given work using exponential backoff until we use the allocated time or work returns non-nil.
 internal func retryUntil<T>(_ timeout: TimeInterval, work: () throws -> T?) rethrows -> T? {
     var timeUsed: TimeInterval = 0.0
