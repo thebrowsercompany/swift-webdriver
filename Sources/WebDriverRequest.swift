@@ -1,6 +1,8 @@
 import Foundation
 import FoundationNetworking
 
+public struct CodableNone: Codable {}
+
 public protocol WebDriverRequest {
     associatedtype Body: Codable = CodableNone
     associatedtype ResponseValue: Codable = CodableNone
@@ -19,27 +21,21 @@ extension WebDriverRequest {
     public var query: [String: String] { [:] }
 }
 
-public struct CodableNone: Codable {}
-
 public enum HTTPMethod: String {
     case get = "GET"
     case delete = "DELETE"
     case post = "POST"
 }
 
-// Response to a WebDriver request
-// All fields are optional because the response returned by WebDriver might be missing them, e.g.,
-// - deleteSession request returns no sessionId and no value
-// - element click request returns a sessionId but no value
-// - etc.
+// Response to a WebDriver request with a response value.
 public struct WebDriverResponse<Value>: Codable where Value: Codable {
-    public var sessionId: String?
-    public var status: Int?
     public var value: Value?
 }
 
+// For WebDriver requests with no expected response.
 public struct WebDriverNoResponse: Codable {}
 
-public struct WebDriverNoResponseValue: Codable {
+// For WebDriver requests whose response lacks a value field.
+public struct WebDriverResponseNoValue: Codable {
     public init(from decoder: Decoder) throws {}
 }

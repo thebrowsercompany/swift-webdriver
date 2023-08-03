@@ -1,6 +1,10 @@
 import Foundation
 import WinSDK
 
+public struct SessionResponse: Codable {
+    public var sessionId: String
+}
+
 extension WinAppDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - app: location of the exe for the app to test
@@ -11,11 +15,11 @@ extension WinAppDriver {
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) throws -> Session {
         let args = appArguments?.joined(separator: " ")
         let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
-        return Session(in: self, id: try send(newSessionRequest).sessionId!)
+        return Session(in: self, id: try send(newSessionRequest).sessionId)
     }
 
     struct NewSessionRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
+        typealias Response = SessionResponse
 
         init(app: String, appArguments: String?, appWorkingDir: String?, waitForAppLaunch: Int?) {
             body.desiredCapabilities = .init(app: app, appArguments: appArguments, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
@@ -33,6 +37,7 @@ extension WinAppDriver {
             var appWorkingDir: String?
             var waitForAppLaunch: Int?
             let experimentalWebDriver = true
+
             enum CodingKeys: String, CodingKey {
                 case app
                 case appArguments
@@ -52,13 +57,13 @@ extension WinAppDriver {
     /// Creates a new session attached to an existing app top level window
     /// - Parameter appTopLevelWindowHandle: the window handle
     /// - Returns: new Session instance
-    public func newSession(appTopLevelWindowHandle: UInt) -> Session {
+    public func newSession(appTopLevelWindowHandle: UInt) throws -> Session {
         let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
-        return Session(in: self, id: try! send(newSessionRequest).sessionId!)
+        return Session(in: self, id: try send(newSessionRequest).sessionId)
     }
 
     struct NewSessionAttachRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
+        typealias Response = SessionResponse
 
         init(appTopLevelWindowHandle: UInt) {
             let appTopLevelWindowHexHandle = String(appTopLevelWindowHandle, radix: 16)

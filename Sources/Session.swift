@@ -5,9 +5,12 @@ public class Session {
     let webDriver: any WebDriver
     let id: String
 
+    private var valid: Bool
+
     init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver
         self.id = id
+        valid = true
     }
 
     /// retryTimeout
@@ -17,23 +20,25 @@ public class Session {
     /// delete
     /// Attempts to delete the session.
     func delete() throws {
+        guard valid else {
+            return
+        }
+
         let deleteSessionRequest = DeleteSessionRequest(sessionId: id)
         try webDriver.send(deleteSessionRequest)
+        valid = false
     }
 
     deinit {
-        // TODO: Get rid of this deinit and make callers use Session.delete
-        // and handle/propegate exceptions. For now this is challenging to
-        // untangle, and unlikely to actually throw.
         do { try delete() } catch let error as WebDriverError {
-            fatalError("Error in Session.delete: \(error)")
+            assertionFailure("Error in Session.delete: \(error)")
         } catch {
-            fatalError("Unknown error in Session.delete.")
+            assertionFailure("Unknown error in Session.delete.")
         }
     }
 
     struct DeleteSessionRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
+        typealias ResponseValue = WebDriverResponseNoValue
 
         let sessionId: String
         var pathComponents: [String] { ["session", sessionId] }

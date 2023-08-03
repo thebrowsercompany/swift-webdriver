@@ -16,7 +16,7 @@ extension Element {
     }
 
     struct ClickRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverNoResponseValue
+        typealias ResponseValue = WebDriverResponseNoValue
 
         private let element: Element
 
