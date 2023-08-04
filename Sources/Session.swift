@@ -5,12 +5,11 @@ public class Session {
     let webDriver: any WebDriver
     public let id: String
 
-    private var valid: Bool
+    private var deleted: Bool = false
 
     init(in webDriver: some WebDriver, id: String) {
         self.webDriver = webDriver
         self.id = id
-        valid = true
     }
 
     /// retryTimeout
@@ -20,13 +19,13 @@ public class Session {
     /// delete
     /// Attempts to delete the session.
     public func delete() throws {
-        guard valid else {
+        guard !deleted else {
             return
         }
 
         let deleteSessionRequest = DeleteSessionRequest(sessionId: id)
         try webDriver.send(deleteSessionRequest)
-        valid = false
+        deleted = true
     }
 
     deinit {
