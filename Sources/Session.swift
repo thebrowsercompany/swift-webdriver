@@ -3,7 +3,7 @@ import Foundation
 // Represents a Session in the WinAppDriver API.
 public class Session {
     let webDriver: any WebDriver
-    let id: String
+    public let id: String
 
     private var valid: Bool
 
@@ -19,7 +19,7 @@ public class Session {
 
     /// delete
     /// Attempts to delete the session.
-    func delete() throws {
+    public func delete() throws {
         guard valid else {
             return
         }

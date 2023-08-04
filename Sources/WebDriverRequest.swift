@@ -30,6 +30,10 @@ public enum HTTPMethod: String {
 // Response to a WebDriver request with a response value.
 public struct WebDriverResponse<Value>: Codable where Value: Codable {
     public var value: Value
+
+    enum CodingKeys: String, CodingKey {
+        case value
+    }
 }
 
 // For WebDriver requests whose response lacks a value field.

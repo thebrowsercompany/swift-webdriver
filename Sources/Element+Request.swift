@@ -9,7 +9,7 @@ extension Element {
             do {
                 try webDriver.send(clickRequest)
                 return true
-            } catch let error as WebDriverError where error.status == .elementNotInteractable {
+            } catch let error as WebDriverError where error.status == .winAppDriver_elementNotInteractable {
                 return false
             }
         }

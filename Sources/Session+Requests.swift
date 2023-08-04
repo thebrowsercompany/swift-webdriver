@@ -32,7 +32,12 @@ extension Session {
         let screenshotRequest = ScreenshotRequest(self)
 
         let base64: String = try webDriver.send(screenshotRequest).value
-        return Data(base64Encoded: base64)!
+        guard let data = Data(base64Encoded: base64) else {
+            let codingPath = [WebDriverResponse<String>.CodingKeys.value]
+            let description = "Invalid Base64 string while decoding screenshot response."
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: codingPath, debugDescription: description))
+        }
+        return data
     }
 
     struct ScreenshotRequest: WebDriverRequest {
