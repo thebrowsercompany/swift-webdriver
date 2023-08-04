@@ -4,12 +4,6 @@ import WinSDK
 public enum WinAppDriverError: Error {
     // Exposes any underlying win32 errors that may surface as a result of process management.
     case win32Error(lastError: Int)
-
-    // Attempting to attach to existing driver, but no existing WinAppDriver process was found.
-    case processNotFound
-
-    // Attempting to launch WinAppDriver, but it's already running.
-    case alreadyRunning
 }
 
 public class WinAppDriver: WebDriver {
@@ -29,23 +23,12 @@ public class WinAppDriver: WebDriver {
         self.ip = ip
         self.port = port
 
-        // On local hosts, we can check if the process is running.
-        if ip == WinAppDriver.defaultIp {
-            guard isProcessRunning(withName: Self.processsName) else {
-                throw WinAppDriverError.processNotFound
-            }
-        }
-
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
     }
 
-    public init() throws {
-        ip = WinAppDriver.defaultIp
-        port = WinAppDriver.defaultPort
-
-        guard !isProcessRunning(withName: Self.processsName) else {
-            throw WinAppDriverError.alreadyRunning
-        }
+    public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
+        self.ip = WinAppDriver.defaultIp
+        self.port = WinAppDriver.defaultPort
 
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
 
