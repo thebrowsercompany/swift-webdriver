@@ -12,12 +12,8 @@ class SessionTests: XCTestCase {
             let winAppDriver = try WinAppDriver()
             let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
             session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
-        } catch let error as WinAppDriverError {
-            setupError = error
-        } catch let error as WebDriverError {
-            setupError = error
         } catch {
-            assertionFailure("Unexpected error thrown.")
+            setupError = error
         }
     }
 

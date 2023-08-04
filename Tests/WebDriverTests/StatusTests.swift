@@ -3,15 +3,13 @@ import XCTest
 
 class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
-    static var setupError: WinAppDriverError?
+    static var setupError: Error?
 
     override public class func setUp() {
         do {
             winAppDriver = try WinAppDriver()
-        } catch let error as WinAppDriverError {
-            setupError = error
         } catch {
-            assertionFailure("Unexpected error thrown.")
+            setupError = error
         }
     }
 
