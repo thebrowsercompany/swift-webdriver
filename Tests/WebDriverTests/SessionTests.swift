@@ -19,7 +19,6 @@ class SessionTests: XCTestCase {
         } catch {
             assertionFailure("Unexpected error thrown.")
         }
-
     }
 
     override public func setUpWithError() throws {

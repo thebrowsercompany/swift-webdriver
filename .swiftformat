@@ -2,7 +2,7 @@
 --swiftversion 5.9
 
 # File Options
-#--exclude 
+--exclude .build/
 
 # Format Options
 
@@ -29,7 +29,7 @@
 --nospaceoperators ..<,...
 --octalgrouping none
 --operatorfunc no-space
---selfrequired 
+--selfrequired
 --stripunusedargs closure-only
 --trailingclosures
 --wraparguments before-first
