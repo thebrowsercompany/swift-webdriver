@@ -4,15 +4,28 @@ import XCTest
 
 class SessionTests: XCTestCase {
     static var session: Session!
+    static var setupError: Error?
 
     override public class func setUp() {
-        guard let winAppDriver = try? WinAppDriver() else {
-            return XCTFail("Failed to start WinAppDriver")
+        do {
+            // We don't store webDriver as session maintains a reference.
+            let winAppDriver = try WinAppDriver()
+            let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
+            session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
+        } catch let error as WinAppDriverError {
+            setupError = error
+        } catch let error as WebDriverError {
+            setupError = error
+        } catch {
+            assertionFailure("Unexpected error thrown.")
         }
 
-        // We don't store webDriver as session maintains a reference.
-        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        XCTAssertNoThrow(session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe"))
+    }
+
+    override public func setUpWithError() throws {
+        if let setupError = Self.setupError {
+            throw setupError
+        }
     }
 
     override public class func tearDown() {
