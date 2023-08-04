@@ -26,7 +26,7 @@ public struct HTTPWebDriver: WebDriver {
         if Request.Body.self != CodableNone.self {
             urlRequest.addValue("content-encoding", forHTTPHeaderField: "json")
             urlRequest.addValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
-            urlRequest.httpBody = try! JSONEncoder().encode(request.body)
+            urlRequest.httpBody = try JSONEncoder().encode(request.body)
         }
 
         // Send the request and decode result or error
@@ -39,8 +39,7 @@ public struct HTTPWebDriver: WebDriver {
         return res
     }
 
-    // Utility function to build a URL from its parts
-    // Inpired by GPT4
+    // Utility function to build a URL from its parts; inspired by GPT4.
     private static func buildURL(base: URL, pathComponents: [String], query: [String: String] = [:]) -> URL {
         var url = base
 

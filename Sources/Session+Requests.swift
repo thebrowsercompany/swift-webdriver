@@ -4,8 +4,10 @@ extension Session {
     /// title - the session title, usually the hwnd title
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public var title: String {
-        let sessionTitleRequest = TitleRequest(self)
-        return try! webDriver.send(sessionTitleRequest).value!
+        get throws {
+            let sessionTitleRequest = TitleRequest(self)
+            return try webDriver.send(sessionTitleRequest).value
+        }
     }
 
     struct TitleRequest: WebDriverRequest {
@@ -26,11 +28,16 @@ extension Session {
     /// Take a screenshot of the current page.
     /// - Returns: The screenshot Data.
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
-    public func makePNGScreenshot() -> Data {
+    public func makePNGScreenshot() throws -> Data {
         let screenshotRequest = ScreenshotRequest(self)
 
-        let base64: String = try! webDriver.send(screenshotRequest).value!
-        return Data(base64Encoded: base64)!
+        let base64: String = try webDriver.send(screenshotRequest).value
+        guard let data = Data(base64Encoded: base64) else {
+            let codingPath = [WebDriverResponse<String>.CodingKeys.value]
+            let description = "Invalid Base64 string while decoding screenshot response."
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: codingPath, debugDescription: description))
+        }
+        return data
     }
 
     struct ScreenshotRequest: WebDriverRequest {
@@ -50,64 +57,58 @@ extension Session {
     /// Search for an element by name, starting from the root.
     /// - Parameter byName: name of the element to search for
     ///  (https://learn.microsoft.com/en-us/windows/win32/winauto/inspect-objects)
-    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) -> Element? {
-        findElement(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
+    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
     }
 
     /// findElement(byAccessibilityId:)
     /// Search for an element in the accessibility tree, starting from the root.
     /// - Parameter byAccessiblityId: accessibiilty id of the element to search for
-    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) -> Element? {
-        findElement(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
+    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
     }
 
     /// findElement(byXPath:)
     /// Search for an element by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for
-    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) -> Element? {
-        findElement(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
+    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
     }
 
     /// findElement(byClassName:)
     /// Search for an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for
-    /// - Parameter retryTimeout: Optional value to override Session.defaultRetryTimeout.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
-    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) -> Element? {
-        findElement(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
+    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
     }
 
-    // Helper for findElement functions above
-    internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) -> Element? {
+    // Helper for findElement functions above.
+    internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
         let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
 
-        let element = retryUntil(retryTimeout ?? defaultRetryTimeout) {
+        let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
             let responseValue: Session.ElementRequest.ResponseValue
             do {
-                responseValue = try webDriver.send(elementRequest).value!
+                responseValue = try webDriver.send(elementRequest).value
                 return Element(in: self, id: responseValue.ELEMENT)
-            } catch let error as WebDriverError {
-                if error.status == .noSuchElement {
-                    return nil
-                } else {
-                    fatalError("Unhandled error: \(String(describing: error.status))")
-                }
-            } catch {
-                fatalError("Unexpected error: \(error)")
+            } catch let error as WebDriverError where error.status == .noSuchElement {
+                return nil
             }
         }
         return element
@@ -147,20 +148,16 @@ extension Session {
     /// Find active (focused) element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
     public var activeElement: Element? {
-        let activeElementRequest = ActiveElementRequest(self)
-        var value: Session.ActiveElementRequest.ResponseValue?
-        do {
-            value = try webDriver.send(activeElementRequest).value
-        } catch let error as WebDriverError {
-            if error.status == .noSuchElement {
+        get throws {
+            let activeElementRequest = ActiveElementRequest(self)
+            var value: Session.ActiveElementRequest.ResponseValue
+            do {
+                value = try webDriver.send(activeElementRequest).value
+            } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
-            } else {
-                fatalError()
             }
-        } catch {
-            fatalError()
+            return Element(in: self, id: value.ELEMENT)
         }
-        return Element(in: self, id: value!.ELEMENT)
     }
 
     struct ActiveElementRequest: WebDriverRequest {
@@ -184,9 +181,9 @@ extension Session {
     ///   - element: if not nil the top left of the element provides the origin
     ///   - xOffset: x offset from the left of the element
     ///   - yOffset: y offset from the top of the element
-    public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) {
+    public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) throws {
         let moveToRequest = MoveToRequest(self, element: element, xOffset: xOffset, yOffset: yOffset)
-        try! webDriver.send(moveToRequest)
+        try webDriver.send(moveToRequest)
     }
 
     struct MoveToRequest: WebDriverRequest {
@@ -226,25 +223,25 @@ extension Session {
     /// click(:) - click one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
-    public func click(button: MouseButton = .left) {
+    public func click(button: MouseButton = .left) throws {
         let clickRequest = ButtonRequest(self, buttonRequestAction: .click, button: button)
-        try! webDriver.send(clickRequest)
+        try webDriver.send(clickRequest)
     }
 
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
-    public func buttonDown(button: MouseButton = .left) {
+    public func buttonDown(button: MouseButton = .left) throws {
         let buttonDownRequest = ButtonRequest(self, buttonRequestAction: .buttonDown, button: button)
-        try! webDriver.send(buttonDownRequest)
+        try webDriver.send(buttonDownRequest)
     }
 
     /// buttonUp(:) - release one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
-    public func buttonUp(button: MouseButton = .left) {
+    public func buttonUp(button: MouseButton = .left) throws {
         let buttonUpRequest = ButtonRequest(self, buttonRequestAction: .buttonUp, button: button)
-        try! webDriver.send(buttonUpRequest)
+        try webDriver.send(buttonUpRequest)
     }
 
     struct ButtonRequest: WebDriverRequest {
@@ -271,16 +268,16 @@ extension Session {
     /// sendKeys(:) - send key strokes to the session
     /// - Parameter value: key strokes to send
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
-    public func sendKeys(value: [String]) {
+    public func sendKeys(value: [String]) throws {
         let keysRequest = KeysRequest(self, value: value)
-        try! webDriver.send(keysRequest)
+        try webDriver.send(keysRequest)
     }
 
     /// Send keys to the session
     /// This overload takes a single string for simplicity
-    public func sendKeys(value: String) {
+    public func sendKeys(value: String) throws {
         let keysRequest = KeysRequest(self, value: [value])
-        try! webDriver.send(keysRequest)
+        try webDriver.send(keysRequest)
     }
 
     struct KeysRequest: WebDriverRequest {

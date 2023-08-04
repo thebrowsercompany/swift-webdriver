@@ -5,7 +5,7 @@ class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
 
     override public class func setUp() {
-        winAppDriver = try! WinAppDriver()
+        XCTAssertNoThrow(winAppDriver = try WinAppDriver())
     }
 
     override public class func tearDown() {
@@ -13,8 +13,8 @@ class StatusTest: XCTestCase {
     }
 
     // test that status returns reasonable answers
-    func testStatus() {
-        let status = try! Self.winAppDriver.status
+    func testStatus() throws {
+        let status = try Self.winAppDriver.status
 
         // Check that we got a version number
         XCTAssert(status?.build?.version != nil)

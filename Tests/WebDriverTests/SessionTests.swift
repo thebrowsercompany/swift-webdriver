@@ -6,11 +6,13 @@ class SessionTests: XCTestCase {
     static var session: Session!
 
     override public class func setUp() {
-        let winAppDriver = try! WinAppDriver()
+        guard let winAppDriver = try? WinAppDriver() else {
+            return XCTFail("Failed to start WinAppDriver")
+        }
 
         // We don't store webDriver as session maintains a reference.
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
+        XCTAssertNoThrow(session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe"))
     }
 
     override public class func tearDown() {
@@ -19,22 +21,22 @@ class SessionTests: XCTestCase {
 
     // Test methods
 
-    public func testTitle() {
-        let title = Self.session.title
+    public func testTitle() throws {
+        let title = try Self.session.title
         XCTAssertEqual(title, "System Information")
     }
 
-    public func testScreenshot() {
-        let data: Data = Self.session.makePNGScreenshot()
+    public func testScreenshot() throws {
+        let data: Data = try Self.session.makePNGScreenshot()
         XCTAssert(isPNG(data: data))
     }
 
-    public func testMaximizeAndRestore() {
-        guard let element = Self.session.findElement(byName: "Maximize") else {
+    public func testMaximizeAndRestore() throws {
+        guard let element = try Self.session.findElement(byName: "Maximize") else {
             XCTAssert(false, "Maximize button not found")
             return
         }
-        element.click()
-        element.click()
+        try element.click()
+        try element.click()
     }
 }

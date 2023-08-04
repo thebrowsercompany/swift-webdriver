@@ -15,12 +15,12 @@ class MockWebDriver: WebDriver {
     var expectations: [Expectation] = []
 
     deinit {
-        // We should have met all of our expectations
+        // We should have met all of our expectations.
         XCTAssertEqual(expectations.count, 0)
     }
 
-    /// Queues an expected request and specifies its response handler
-    // This overload is the most generic for any incoming body type and outgoing response type.
+    /// Queues an expected request and specifies its response handler.
+    /// This overload is the most generic for any incoming body type and outgoing response type.
     func expect<RequestBody: Codable, Response: Codable>(path: String, method: HTTPMethod, handler: @escaping (RequestBody) throws -> Response) {
         expectations.append(Expectation(path: path, method: method, handler: {
             let requestBody: RequestBody
@@ -33,19 +33,19 @@ class MockWebDriver: WebDriver {
             }
 
             let response = try handler(requestBody)
-            return Response.self == CodableNone.self ? nil : try! JSONEncoder().encode(response)
+            return Response.self == CodableNone.self ? nil : try JSONEncoder().encode(response)
         }))
     }
 
-    /// Queues an expected request and specifies its response handler
-    // This overload uses a Request.Type for easier type inference.
+    /// Queues an expected request and specifies its response handler.
+    /// This overload uses a Request.Type for easier type inference.
     func expect<Request: WebDriverRequest>(path: String, method: HTTPMethod, type: Request.Type, handler: @escaping (Request.Body) throws -> Request.Response) {
         expect(path: path, method: method) {
             (requestBody: Request.Body) -> Request.Response in try handler(requestBody)
         }
     }
 
-    /// Queues an expected request and specifies its response handler and outoing response type
+    /// Queues an expected request and specifies its response handler and outoing response type.
     /// This overload ignores the incoming request body.
     func expect<Request: WebDriverRequest>(path: String, method: HTTPMethod, type: Request.Type, handler: @escaping () throws -> Request.Response) {
         expect(path: path, method: method) {
@@ -53,16 +53,18 @@ class MockWebDriver: WebDriver {
         }
     }
 
-    /// Queues an expected request and specifies its response handler
-    // This overload ignores the incoming request body.
+    /// Queues an expected request and specifies its response handler.
+    /// This overload ignores the incoming request body.
     func expect<Response: Codable>(path: String, method: HTTPMethod, handler: @escaping () throws -> Response) {
         expect(path: path, method: method) { (_: CodableNone) -> Response in try handler() }
     }
 
     /// Queues an expected request
-    // This overload ignores the incoming request body and returns a default response.
+    /// This overload ignores the incoming request body and returns a default response.
     func expect(path: String, method: HTTPMethod) {
-        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in WebDriverResponse<CodableNone>() }
+        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in
+            WebDriverResponse(value: CodableNone())
+        }
     }
 
     @discardableResult

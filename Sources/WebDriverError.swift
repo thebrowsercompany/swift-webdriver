@@ -1,41 +1,46 @@
-struct WebDriverError: Codable, Error {
+public struct WebDriverError: Codable, Error {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
-    enum Status: Int, Codable {
-        case success = 0
-        case noSuchDriver = 6
-        case noSuchElement = 7
-        case noSuchFrame = 8
-        case unknownCommand = 9
-        case staleElementReference = 10
-        case elementNotVisible = 11
-        case invalidElementState = 12
-        case unknownError = 13
-        case elementIsNotSelectable = 15
-        case javaScriptError = 17
-        case xPathLookupError = 19
-        case timeout = 21
-        case noSuchWindow = 23
-        case invalidCookieDomain = 24
-        case unableToSetCookie = 25
-        case unexpectedAlertOpen = 26
-        case noAlertOpenError = 27
-        case scriptTimeout = 28
-        case invalidElementCoordinates = 29
-        case imeNotAvailable = 30
-        case imeEngineActivationFailed = 31
-        case invalidSelector = 32
-        case sessionNotCreatedException = 33
-        case moveTargetOutOfBounds = 34
-        case invalidArgument = 100 // WinAppDriver returns when passing an incorrect window handle to attach to
-        case elementNotInteractable = 105 // WinAppDriver returns when an element command could not be completed because the element is not pointer- or keyboard interactable.
+
+    public struct Status: Codable, Hashable, RawRepresentable {
+        public var rawValue: Int
+
+        public static let success = Self(rawValue: 0)
+        public static let noSuchDriver = Self(rawValue: 6)
+        public static let noSuchElement = Self(rawValue: 7)
+        public static let noSuchFrame = Self(rawValue: 8)
+        public static let unknownCommand = Self(rawValue: 9)
+        public static let staleElementReference = Self(rawValue: 10)
+        public static let elementNotVisible = Self(rawValue: 11)
+        public static let invalidElementState = Self(rawValue: 12)
+        public static let unknownError = Self(rawValue: 13)
+        public static let elementIsNotSelectable = Self(rawValue: 15)
+        public static let javaScriptError = Self(rawValue: 17)
+        public static let xPathLookupError = Self(rawValue: 19)
+        public static let timeout = Self(rawValue: 21)
+        public static let noSuchWindow = Self(rawValue: 23)
+        public static let invalidCookieDomain = Self(rawValue: 24)
+        public static let unableToSetCookie = Self(rawValue: 25)
+        public static let unexpectedAlertOpen = Self(rawValue: 26)
+        public static let noAlertOpenError = Self(rawValue: 27)
+        public static let scriptTimeout = Self(rawValue: 28)
+        public static let invalidElementCoordinates = Self(rawValue: 29)
+        public static let imeNotAvailable = Self(rawValue: 30)
+        public static let imeEngineActivationFailed = Self(rawValue: 31)
+        public static let invalidSelector = Self(rawValue: 32)
+        public static let sessionNotCreatedException = Self(rawValue: 33)
+        public static let moveTargetOutOfBounds = Self(rawValue: 34)
+
+        public init?(rawValue: Int) {
+            self.rawValue = rawValue
+        }
     }
 
-    var status: Status?
-    var value: Value
-
-    struct Value: Codable {
-        var error: String
-        var message: String
-        var stacktrace: String?
+    public struct Value: Codable {
+        public var error: String
+        public var message: String
+        public var stacktrace: String?
     }
+
+    public var status: Status
+    public var value: Value
 }
