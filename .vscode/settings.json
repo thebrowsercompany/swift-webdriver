@@ -1,4 +1,0 @@
-{
-    "lldb.library": "C:\\Program Files\\Swift\\Toolchains\\0.0.0+Asserts\\usr\\bin\\liblldb.dll",
-    "lldb.launch.expressions": "native"
-}
