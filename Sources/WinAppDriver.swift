@@ -71,6 +71,7 @@ public class WinAppDriver: WebDriver {
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
             CloseHandle(wadProcessInfo.hProcess)
+            Thread.sleep(forTimeInterval: 1.0)
         }
     }
 
