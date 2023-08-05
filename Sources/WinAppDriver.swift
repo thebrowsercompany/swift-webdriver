@@ -6,6 +6,14 @@ public enum WinAppDriverError: Error {
     case win32Error(lastError: Int)
 }
 
+fileprivate var nextId = 0
+fileprivate func getNextDebugId() -> Int {
+    let id = nextId
+    nextId = nextId + 1
+    return id
+}
+
+
 public class WinAppDriver: WebDriver {
     public static let defaultIp = "127.0.0.1"
     public static let defaultPort = 4723
@@ -19,20 +27,28 @@ public class WinAppDriver: WebDriver {
 
     private var wadProcessInfo: PROCESS_INFORMATION?
 
+    private let debugId: Int
+
     public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) throws {
+        self.debugId = getNextDebugId()
+
         self.ip = ip
         self.port = port
 
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+
+        print("-> WinAppDriver #\(debugId): init"); fflush(stdout)
     }
 
     public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
+        self.debugId = getNextDebugId()
+        print("-> WinAppDriver #\(debugId): init"); fflush(stdout)
+
+
         self.ip = ip
         self.port = port
 
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
-
-        Thread.sleep(forTimeInterval: 1.0)
 
         let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
         let commandLine = ["\"\(path)\"", ip, String(port)].joined(separator: " ")
@@ -57,10 +73,14 @@ public class WinAppDriver: WebDriver {
             }
 
             wadProcessInfo = processInfo
+
+            Thread.sleep(forTimeInterval: 1.0)
+            print("-> WinAppDriver #\(debugId): started \(path)"); fflush(stdout)
         }
     }
 
     deinit {
+        print("-> WinAppDriver #\(debugId): deinit"); fflush(stdout)
         if let wadProcessInfo {
             CloseHandle(wadProcessInfo.hThread)
 
@@ -68,12 +88,15 @@ public class WinAppDriver: WebDriver {
                 let error = GetLastError()
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
+            print("-> WinAppDriver #\(debugId): deinit: terminated process"); fflush(stdout)
             CloseHandle(wadProcessInfo.hProcess)
         }
     }
 
     @discardableResult
     public func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
-        try httpWebDriver.send(request)
+        print("-> WinAppDriver #\(debugId): send \(request)"); fflush(stdout)
+
+        return try httpWebDriver.send(request)
     }
 }
