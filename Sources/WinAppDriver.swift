@@ -27,10 +27,12 @@ public class WinAppDriver: WebDriver {
     }
 
     public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
-        self.ip = WinAppDriver.defaultIp
-        self.port = WinAppDriver.defaultPort
+        self.ip = ip
+        self.port = port
 
         httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+
+        Thread.sleep(forTimeInterval: 1.0)
 
         let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
         let commandLine = ["\"\(path)\"", ip, String(port)].joined(separator: " ")
