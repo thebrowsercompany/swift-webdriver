@@ -71,12 +71,15 @@ public class WinAppDriver: WebDriver {
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
             CloseHandle(wadProcessInfo.hProcess)
+
+            // Add a short delay to let process cleanup happen before we try
+            // to launch another instance.
             Thread.sleep(forTimeInterval: 1.0)
         }
     }
 
     @discardableResult
     public func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
-        return try httpWebDriver.send(request)
+        try httpWebDriver.send(request)
     }
 }
