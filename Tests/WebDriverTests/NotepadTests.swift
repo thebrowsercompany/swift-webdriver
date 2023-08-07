@@ -10,7 +10,6 @@ class Notepad {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
         session = try winAppDriver.newSession(
             app: "\(windowsDir)\\System32\\notepad.exe",
-
             appArguments: appArguments,
             appWorkingDir: appWorkingDir
         )
@@ -62,9 +61,20 @@ class Notepad {
 
 class NotepadTests: XCTestCase {
     static var winAppDriver: WinAppDriver!
+    static var setupError: Error?
 
     override public class func setUp() {
-        XCTAssertNoThrow(winAppDriver = try WinAppDriver())
+        do {
+            winAppDriver = try WinAppDriver()
+        } catch {
+            setupError = error
+        }
+    }
+
+    override public func setUpWithError() throws {
+        if let setupError = Self.setupError {
+            throw setupError
+        }
     }
 
     override public class func tearDown() {

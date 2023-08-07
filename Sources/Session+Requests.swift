@@ -103,7 +103,7 @@ extension Session {
         let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
 
         let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
-            let responseValue: Session.ElementRequest.ResponseValue
+            let responseValue: ElementRequest.ResponseValue
             do {
                 responseValue = try webDriver.send(elementRequest).value
                 return Element(in: self, id: responseValue.ELEMENT)

@@ -3,9 +3,20 @@ import XCTest
 
 class StatusTest: XCTestCase {
     static var winAppDriver: WinAppDriver!
+    static var setupError: Error?
 
     override public class func setUp() {
-        XCTAssertNoThrow(winAppDriver = try WinAppDriver())
+        do {
+            winAppDriver = try WinAppDriver()
+        } catch {
+            setupError = error
+        }
+    }
+
+    override public func setUpWithError() throws {
+        if let setupError = Self.setupError {
+            throw setupError
+        }
     }
 
     override public class func tearDown() {
