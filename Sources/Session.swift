@@ -37,7 +37,7 @@ public class Session {
     }
 
     struct DeleteSessionRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverResponseNoValue
+        typealias Response = WebDriverResponseNoValue
 
         let sessionId: String
         var pathComponents: [String] { ["session", sessionId] }
