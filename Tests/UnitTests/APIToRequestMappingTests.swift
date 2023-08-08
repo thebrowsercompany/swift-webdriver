@@ -83,7 +83,10 @@ class APIToRequestMappingTests: XCTestCase {
         }
         try element.sendKeys(value: ["a", "b", "c"])
 
-        mockWebDriver.expect(path: "session/mySession/keys", method: .post)
+        mockWebDriver.expect(path: "session/mySession/keys", method: .post, type: Session.KeysRequest.self) {
+            XCTAssertEqual($0.value, ["d", "e", "f"])
+            return WebDriverResponseNoValue()
+        }
         try session.sendKeys(value: ["d", "e", "f"])
 
         // Account for session deinitializer
