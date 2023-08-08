@@ -50,12 +50,20 @@ class Notepad {
                 editor = try session.findElement(byClassName: "Edit")
             }
         }
-        XCTAssertNotNil(editor)
-        try editor!.sendKeys(value: keys)
+
+        guard let editor else {
+            XCTFail("Failed to find element named 'Text Editor' or of class 'Edit'")
+            return
+        }
+        try editor.sendKeys(value: keys)
     }
 
     func close() throws {
-        try session.findElement(byName: "close")?.click()
+        guard let closeButton = try session.findElement(byName: "Close") else {
+            XCTFail("Failed to find element named 'Close'")
+            return
+        }
+        try closeButton.click()
     }
 }
 
