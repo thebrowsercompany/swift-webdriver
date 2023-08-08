@@ -32,12 +32,12 @@ public class Session {
         do { try delete() } catch let error as WebDriverError {
             assertionFailure("Error in Session.delete: \(error)")
         } catch {
-            assertionFailure("Unknown error in Session.delete.")
+            assertionFailure("Unexpected error in Session.delete: \(error)")
         }
     }
 
     struct DeleteSessionRequest: WebDriverRequest {
-        typealias ResponseValue = WebDriverResponseNoValue
+        typealias Response = WebDriverResponseNoValue
 
         let sessionId: String
         var pathComponents: [String] { ["session", sessionId] }
