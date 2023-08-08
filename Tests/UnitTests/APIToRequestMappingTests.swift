@@ -79,7 +79,7 @@ class APIToRequestMappingTests: XCTestCase {
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Element.KeysRequest.self) {
             XCTAssertEqual($0.value, ["a", "b", "c"])
-            return WebDriverResponse(value: CodableNone())
+            return WebDriverResponseNoValue()
         }
         try element.sendKeys(value: ["a", "b", "c"])
 

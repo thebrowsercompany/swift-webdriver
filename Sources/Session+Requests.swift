@@ -281,7 +281,7 @@ extension Session {
     }
 
     struct KeysRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
+        typealias Response = WebDriverResponseNoValue
 
         let session: Session
         init(_ session: Session, value: [String]) {

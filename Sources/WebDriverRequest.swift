@@ -37,6 +37,4 @@ public struct WebDriverResponse<Value>: Codable where Value: Codable {
 }
 
 // For WebDriver requests whose response lacks a value field.
-public struct WebDriverResponseNoValue: Codable {
-    public init(from decoder: Decoder) throws {}
-}
+public struct WebDriverResponseNoValue: Codable {}
