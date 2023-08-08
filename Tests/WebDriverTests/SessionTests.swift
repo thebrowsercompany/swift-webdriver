@@ -41,10 +41,32 @@ class SessionTests: XCTestCase {
 
     public func testMaximizeAndRestore() throws {
         guard let element = try Self.session.findElement(byName: "Maximize") else {
-            XCTAssert(false, "Maximize button not found")
+            XCTFail("Maximize button not found")
             return
         }
         try element.click()
         try element.click()
+    }
+
+    public func testKeysAndAttributes() throws {
+        let findWhatEditBoxAutomationId = "204"
+        guard let element = try Self.session.findElement(byAccessibilityId: findWhatEditBoxAutomationId) else {
+            XCTFail("'Find what:' element not found")
+            return
+        }
+        try element.click()
+
+        guard try element.getAttribute(name: "HasKeyboardFocus").lowercased() == "true" else {
+            XCTFail("Element does not have keyboard focus")
+            return
+        }
+        try Self.session.sendKeys(value: ["B", "I", "O", "S", KeyCode.returnKey.rawValue])
+
+        // It takes some time for focus to move.
+        Thread.sleep(forTimeInterval: 1)
+        guard try element.getAttribute(name: "HasKeyboardFocus").lowercased() == "false" else {
+            XCTFail("Element still has keyboard focus")
+            return
+        }
     }
 }

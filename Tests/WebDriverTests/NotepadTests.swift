@@ -28,7 +28,7 @@ class Notepad {
 
     func moveToCenterOf(byName name: String) throws {
         guard let element = try? session.findElement(byName: name) else {
-            XCTFail("Can't find element \(name)")
+            XCTFail("Can't find element named '\(name)'")
             return
         }
 
