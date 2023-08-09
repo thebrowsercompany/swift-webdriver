@@ -187,7 +187,7 @@ extension Session {
     }
 
     struct MoveToRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
+        typealias Response = WebDriverResponseNoValue
 
         let session: Session
         let element: Element?
@@ -245,7 +245,7 @@ extension Session {
     }
 
     struct ButtonRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
+        typealias Response = WebDriverResponseNoValue
 
         let session: Session
         let buttonRequestAction: ButtonRequestAction
