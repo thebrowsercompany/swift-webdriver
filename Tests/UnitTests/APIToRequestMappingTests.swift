@@ -77,14 +77,18 @@ class APIToRequestMappingTests: XCTestCase {
             .expect(path: "session/mySession/element/myElement/size", method: .get, type: Element.SizeRequest.self) { WebDriverResponse(value: .init(width: 100, height: 200)) }
         XCTAssert(try element.size == (width: 100, height: 200))
 
+        let keys = ["a", "b", "c"]
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Element.KeysRequest.self) {
-            XCTAssertEqual($0.value, ["a", "b", "c"])
-            return WebDriverResponse(value: CodableNone())
+            XCTAssertEqual($0.value, keys)
+            return WebDriverResponseNoValue()
         }
-        try element.sendKeys(value: ["a", "b", "c"])
+        try element.sendKeys(value: keys)
 
-        mockWebDriver.expect(path: "session/mySession/keys", method: .post)
-        try session.sendKeys(value: ["d", "e", "f"])
+        mockWebDriver.expect(path: "session/mySession/keys", method: .post, type: Session.KeysRequest.self) {
+            XCTAssertEqual($0.value, keys)
+            return WebDriverResponseNoValue()
+        }
+        try session.sendKeys(value: keys)
 
         // Account for session deinitializer
         mockWebDriver.expect(path: "session/mySession", method: .delete)

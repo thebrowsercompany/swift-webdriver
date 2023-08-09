@@ -228,7 +228,7 @@ extension Element {
     }
 
     struct KeysRequest: WebDriverRequest {
-        typealias ResponseValue = CodableNone
+        typealias Response = WebDriverResponseNoValue
 
         private let element: Element
 

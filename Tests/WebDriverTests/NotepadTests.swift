@@ -20,18 +20,12 @@ class Notepad {
     }
 
     func dismissNewFileDialog() throws {
-        guard let dismissButton = try? session.findElement(byName: "No") else {
-            return XCTFail("Dismiss New File dialog: Button \"no\" was not found")
-        }
+        let dismissButton = try XCTUnwrap(session.findElement(byName: "No"), "Dismiss New File dialog: Button \"no\" was not found")
         try dismissButton.click()
     }
 
     func moveToCenterOf(byName name: String) throws {
-        guard let element = try? session.findElement(byName: name) else {
-            XCTFail("Can't find element \(name)")
-            return
-        }
-
+        let element = try XCTUnwrap(session.findElement(byName: name), "Can't find element named '\(name)'")
         let size = try element.size
         XCTAssert(size.width > 0)
         XCTAssert(size.height > 0)
@@ -50,12 +44,14 @@ class Notepad {
                 editor = try session.findElement(byClassName: "Edit")
             }
         }
-        XCTAssertNotNil(editor)
-        try editor!.sendKeys(value: keys)
+
+        let editor = try XCTUnwrap(editor, "Failed to find element named 'Text Editor' or of class 'Edit'")
+        try editor.sendKeys(value: keys)
     }
 
     func close() throws {
-        try session.findElement(byName: "close")?.click()
+        let closeButton = try XCTUnwrap(session.findElement(byName: "Close"), "Failed to find element named 'Close'")
+        try closeButton.click()
     }
 }
 
