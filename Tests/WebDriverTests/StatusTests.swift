@@ -25,14 +25,14 @@ class StatusTest: XCTestCase {
 
     // test that status returns reasonable answers
     func testStatus() throws {
-        let status = try Self.winAppDriver.status
+        let status = try XCTUnwrap(Self.winAppDriver.status)
 
         // Check that we got a version number
-        XCTAssert(status?.build?.version != nil)
-        XCTAssert(status?.build?.version != String())
+        XCTAssertNotNil(status.build?.version)
+        XCTAssertNotEqual(status.build?.version, String())
 
         // Check the returned date format
-        if let dateString = status?.build?.time {
+        if let dateString = status.build?.time {
             let dateFormatter = DateFormatter()
             dateFormatter.locale = Locale(identifier: "en_US_POSIX")
             dateFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
@@ -41,6 +41,6 @@ class StatusTest: XCTestCase {
         }
 
         // and that the OS is windows
-        XCTAssert(status?.os?.name == "windows")
+        XCTAssert(status.os?.name == "windows")
     }
 }
