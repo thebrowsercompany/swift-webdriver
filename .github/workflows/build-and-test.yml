@@ -16,51 +16,11 @@ jobs:
     - name: Install Swift
       uses: compnerd/gha-setup-swift@main
       with:
-        branch: development
-        tag: DEVELOPMENT-SNAPSHOT-2023-05-20-a
-
-    # long file path support needed for building tests, the dependencies
-    # that SPM checks out end up having paths which are too long. this can't
-    # be locally set bc the SPM checkouts aren't part of this repo
-    - name: Configure long file path
-      shell: pwsh
-      run: git config --system core.longpaths true
-
-    - name: Enable crash dump in Registry
-      working-directory: ${{ github.workspace }}
-      shell: pwsh
-      run: |
-        curl -H "Authorization: token ${{ inputs.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v4.raw" -O -L https://api.github.com/repos/thebrowsercompany/infra/contents/resources/windows/ErrorReporting.reg
-        regedit.exe /s ErrorReporting.reg
+        branch: swift-5.8-release
+        tag: 5.8-RELEASE
 
     - name: Build
-      uses: ./.github/actions/windows-run-and-flush
-      with:
-        cmd-exec: swift
-        working-directory: ${{ github.workspace }}
-        cmd-args: "build ${{ runner.debug && '--verbose' || '' }} --disable-keychain --build-tests"
+      run: swift build --verbose --build-tests
 
     - name: Test
-      timeout-minutes: 10
-      uses: ./.github/actions/windows-run-and-flush
-      with:
-        cmd-exec: swift
-        working-directory: ${{ github.workspace }}
-        cmd-args: "test ${{ runner.debug && '--verbose' || '' }} --disable-keychain --skip-build"
-
-    - name: Take screenshot
-      if: failure()
-      continue-on-error: true
-      shell: pwsh
-      run: |
-        ${{ github.workspace }}\scripts\screenshot.ps1 ${{ github.workspace }}\screenshot.png
-
-    - uses: actions/upload-artifact@v3
-      if: failure()
-      with:
-        name: screenshot
-        path: ${{ github.workspace }}\screenshot.png
-
-    - uses: ./.github/actions/windows-swift-teardown
-      with:
-        working-directory: ${{ github.workspace }}
+      run: swift test --verbose --skip-build
