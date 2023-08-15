@@ -40,7 +40,7 @@ class SessionTests: XCTestCase {
     }
 
     public func testScreenshot() throws {
-        let data: Data = try Self.session.makePNGScreenshot()
+        let data: Data = try Self.session.screenshot()
         XCTAssert(isPNG(data: data))
     }
 
