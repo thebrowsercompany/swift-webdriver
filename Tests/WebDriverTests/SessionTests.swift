@@ -26,8 +26,6 @@ class SessionTests: XCTestCase {
         if let setupError = Self.setupError {
             throw setupError
         }
-
-        continueAfterFailure = false
     }
 
     override public class func tearDown() {
