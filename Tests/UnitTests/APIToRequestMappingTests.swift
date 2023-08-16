@@ -17,7 +17,7 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssertEqual(try session.title, "mySession.title")
 
         mockWebDriver.expect(path: "session/mySession/screenshot", method: .get) { WebDriverResponse(value: base64TestImage) }
-        let data: Data = try session.makePNGScreenshot()
+        let data: Data = try session.screenshot()
         XCTAssert(isPNG(data: data))
 
         mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Session.ElementRequest.self) {

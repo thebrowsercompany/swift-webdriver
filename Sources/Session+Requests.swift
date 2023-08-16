@@ -26,9 +26,9 @@ extension Session {
 
     /// screenshot()
     /// Take a screenshot of the current page.
-    /// - Returns: The screenshot Data.
+    /// - Returns: The screenshot data as a PNG file.
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
-    public func makePNGScreenshot() throws -> Data {
+    public func screenshot() throws -> Data {
         let screenshotRequest = ScreenshotRequest(self)
 
         let base64: String = try webDriver.send(screenshotRequest).value
