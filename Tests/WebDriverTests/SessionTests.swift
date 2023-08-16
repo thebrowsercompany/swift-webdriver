@@ -3,6 +3,11 @@ import TestsCommon
 import XCTest
 
 class SessionTests: XCTestCase {
+    enum AccessibilityIds {
+        static let findWhatEditBox = "204"
+        static let searchSelectedCategoryOnlyCheckbox = "206"
+    }
+
     static var session: Session!
     static var setupError: Error?
 
@@ -45,18 +50,18 @@ class SessionTests: XCTestCase {
         try element.click()
     }
 
-    public func testKeysAndAttributes() throws {
-        continueAfterFailure = false
+    public func testAttributes() throws {
+        let element = try XCTUnwrap(Self.session.findElement(byAccessibilityId: AccessibilityIds.searchSelectedCategoryOnlyCheckbox))
+        try XCTAssertEqual(element.getAttribute(name: "HasKeyboardFocus").lowercased(), "false")
 
-        let findWhatEditBoxAutomationId = "204"
-        let element = try XCTUnwrap(Self.session.findElement(byAccessibilityId: findWhatEditBoxAutomationId))
         try element.click()
+        try XCTAssertEqual(element.getAttribute(name: "HasKeyboardFocus").lowercased(), "true")
+    }
 
-        try XCTAssertEqual(element.getAttribute(name: "HasKeyboardFocus").lowercased(), "true", "Element does not have keyboard focus")
-        try Self.session.sendKeys(value: ["B", "I", "O", "S", KeyCode.returnKey.rawValue])
-
-        // It takes some time for focus to move.
-        Thread.sleep(forTimeInterval: 1)
-        try XCTAssertEqual(element.getAttribute(name: "HasKeyboardFocus").lowercased(), "false", "Element still has keyboard focus")
+    public func testKeys() throws {
+        let element = try XCTUnwrap(Self.session.findElement(byAccessibilityId: AccessibilityIds.findWhatEditBox))
+        try element.click()
+        try Self.session.sendKeys(value: ["B", "I", "O", "S"])
+        XCTAssertEqual(try element.text, "BIOS")
     }
 }
