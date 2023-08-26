@@ -13,7 +13,7 @@ public protocol WebDriverRequest {
     var body: Body { get }
 }
 
-extension WebDriverRequest where ResponseValue = CodableNone {
+extension WebDriverRequest where Body == CodableNone {
     var body: Body { .init() }
 }
 

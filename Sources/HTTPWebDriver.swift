@@ -13,8 +13,8 @@ public struct HTTPWebDriver: WebDriver {
     // Send a WebDriverRequest to the web driver local service
     // TODO: consider making this function async/awaitable
     @discardableResult
-    public func send<Request>(_ request: Request) throws -> Request.Response where Request: WebDriverRequest {
-        let urlRequest = Self.buildURLRequest(request)
+    public func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
+        let urlRequest = try buildURLRequest(request)
 
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
@@ -24,7 +24,7 @@ public struct HTTPWebDriver: WebDriver {
         return try JSONDecoder().decode(Request.Response.self, from: responseData)
     }
 
-    private static func buildURLRequest<Request>(_ request: Request) throws -> URLRequest {
+    private func buildURLRequest<Request: WebDriverRequest>(_ request: Request) throws -> URLRequest {
         var url = rootURL
         for pathComponent in request.pathComponents {
             url.appendPathComponent(pathComponent)
