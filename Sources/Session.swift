@@ -42,6 +42,5 @@ public class Session {
         let sessionId: String
         var pathComponents: [String] { ["session", sessionId] }
         var method: HTTPMethod { .delete }
-        var body: Body { .init() }
     }
 }
