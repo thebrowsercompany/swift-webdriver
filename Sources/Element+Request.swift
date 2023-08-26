@@ -4,10 +4,10 @@ extension Element {
     /// click() - simulate clicking this Element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public func click(retryTimeout: TimeInterval? = nil) throws {
-        let clickRequest = ClickRequest(element: self)
+        let request = ClickRequest(session: session.id, element: id)
         try retryUntil(retryTimeout ?? session.defaultRetryTimeout) {
             do {
-                try webDriver.send(clickRequest)
+                try webDriver.send(request)
                 return true
             } catch let error as WebDriverError where error.status == .winAppDriver_elementNotInteractable {
                 return false
@@ -18,13 +18,10 @@ extension Element {
     struct ClickRequest: WebDriverRequest {
         typealias Response = WebDriverResponseNoValue
 
-        private let element: Element
+        var session: String
+        var element: String
 
-        init(element: Element) {
-            self.element = element
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "click"] }
+        var pathComponents: [String] { ["session", session, "element", element, "click"] }
         var method: HTTPMethod { .post }
     }
 
@@ -32,21 +29,18 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidtext
     public var text: String {
         get throws {
-            let textRequest = TextRequest(element: self)
-            return try webDriver.send(textRequest).value
+            let request = TextRequest(session: session.id, element: id)
+            return try webDriver.send(request).value
         }
     }
 
     struct TextRequest: WebDriverRequest {
         typealias ResponseValue = String
 
-        private let element: Element
+        var session: String
+        var element: String
 
-        init(element: Element) {
-            self.element = element
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "text"] }
+        var pathComponents: [String] { ["session", session, "element", element, "text"] }
         var method: HTTPMethod { .get }
     }
 
@@ -107,22 +101,18 @@ extension Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidattributename
     public func getAttribute(name: String) throws -> String {
-        let attributeRequest = AttributeRequest(self, name: name)
-        return try webDriver.send(attributeRequest).value
+        let request = AttributeRequest(session: session.id, element: id, attribute: name)
+        return try webDriver.send(request).value
     }
 
     struct AttributeRequest: WebDriverRequest {
         typealias ResponseValue = String
 
-        let element: Element
-        let name: String
+        var session: String
+        var element: String
+        var attribute: String
 
-        init(_ element: Element, name: String) {
-            self.element = element
-            self.name = name
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "attribute", name] }
+        var pathComponents: [String] { ["session", session, "element", element, "attribute", attribute] }
         var method: HTTPMethod { .get }
     }
 
@@ -130,20 +120,17 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidlocation
     public var location: (x: Int, y: Int) {
         get throws {
-            let locationRequest = LocationRequest(element: self)
-            let responseValue = try webDriver.send(locationRequest).value
+            let request = LocationRequest(session: session.id, element: id)
+            let responseValue = try webDriver.send(request).value
             return (responseValue.x, responseValue.y)
         }
     }
 
     struct LocationRequest: WebDriverRequest {
-        private let element: Element
+        var session: String
+        var element: String
 
-        init(element: Element) {
-            self.element = element
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "location"] }
+        var pathComponents: [String] { ["session", session, "element", element, "location"] }
         var method: HTTPMethod { .get }
 
         struct ResponseValue: Codable {
@@ -156,21 +143,17 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidsize
     public var size: (width: Int, height: Int) {
         get throws {
-            let sizeRequest = SizeRequest(element: self)
-            let response = try webDriver.send(sizeRequest)
-            let responseValue = response.value
+            let request = SizeRequest(session: session.id, element: id)
+            let responseValue = try webDriver.send(request).value
             return (responseValue.width, responseValue.height)
         }
     }
 
     struct SizeRequest: WebDriverRequest {
-        private let element: Element
+        var session: String
+        var element: String
 
-        init(element: Element) {
-            self.element = element
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "size"] }
+        var pathComponents: [String] { ["session", session, "element", element, "size"] }
         var method: HTTPMethod { .get }
 
         struct ResponseValue: Codable {
@@ -183,19 +166,16 @@ extension Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
     public var displayed: Bool {
         get throws {
-            let displayedRequest = DisplayedRequest(element: self)
-            return try webDriver.send(displayedRequest).value
+            let request = DisplayedRequest(session: session.id, element: id)
+            return try webDriver.send(request).value
         }
     }
 
     struct DisplayedRequest: WebDriverRequest {
-        private let element: Element
+        var session: String
+        var element: String
 
-        init(element: Element) {
-            self.element = element
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "displayed"] }
+        var pathComponents: [String] { ["session", session, "element", element, "displayed"] }
         var method: HTTPMethod { .get }
 
         // Override the whole Response struct instead of just ResponseValue
@@ -210,30 +190,24 @@ extension Element {
     /// Send keys to an element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public func sendKeys(value: [String]) throws {
-        let keysRequest = KeysRequest(element: self, value: value)
-        try webDriver.send(keysRequest)
+        let request = KeysRequest(session: session.id, element: id, value: value)
+        try webDriver.send(request)
     }
 
     /// Send keys to an element
     /// This overload takes a single string for simplicity
-    public func sendKeys(value: String) throws {
-        let keysRequest = KeysRequest(element: self, value: [value])
-        try webDriver.send(keysRequest)
-    }
+    public func sendKeys(value: String) throws { try sendKeys(value: [value]) }
 
     struct KeysRequest: WebDriverRequest {
         typealias Response = WebDriverResponseNoValue
 
-        private let element: Element
+        var session: String
+        var element: String
+        var value: [String]
 
-        init(element: Element, value: [String]) {
-            self.element = element
-            body = .init(value: value)
-        }
-
-        var pathComponents: [String] { ["session", element.session.id, "element", element.id, "value"] }
+        var pathComponents: [String] { ["session", session, "element", element, "value"] }
         var method: HTTPMethod { .post }
-        var body: Body
+        var body: Body { Body(value: value) }
 
         struct Body: Codable {
             var value: [String]

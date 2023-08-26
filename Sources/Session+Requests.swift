@@ -5,21 +5,17 @@ extension Session {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public var title: String {
         get throws {
-            let sessionTitleRequest = TitleRequest(self)
-            return try webDriver.send(sessionTitleRequest).value
+            let request = TitleRequest(session: id)
+            return try webDriver.send(request).value
         }
     }
 
     struct TitleRequest: WebDriverRequest {
         typealias ResponseValue = String
 
-        private let session: Session
+        var session: String
 
-        init(_ session: Session) {
-            self.session = session
-        }
-
-        var pathComponents: [String] { ["session", session.id, "title"] }
+        var pathComponents: [String] { ["session", session, "title"] }
         var method: HTTPMethod { .get }
     }
 
@@ -28,9 +24,9 @@ extension Session {
     /// - Returns: The screenshot data as a PNG file.
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
     public func screenshot() throws -> Data {
-        let screenshotRequest = ScreenshotRequest(self)
+        let request = ScreenshotRequest(session: id)
 
-        let base64: String = try webDriver.send(screenshotRequest).value
+        let base64: String = try webDriver.send(request).value
         guard let data = Data(base64Encoded: base64) else {
             let codingPath = [WebDriverResponse<String>.CodingKeys.value]
             let description = "Invalid Base64 string while decoding screenshot response."
@@ -42,12 +38,9 @@ extension Session {
     struct ScreenshotRequest: WebDriverRequest {
         typealias ResponseValue = String
 
-        private let session: Session
-        init(_ session: Session) {
-            self.session = session
-        }
+        var session: String
 
-        var pathComponents: [String] { ["session", session.id, "screenshot"] }
+        var pathComponents: [String] { ["session", session, "screenshot"] }
         var method: HTTPMethod { .get }
     }
 
@@ -98,12 +91,11 @@ extension Session {
 
     // Helper for findElement functions above.
     internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
-        let elementRequest = ElementRequest(self, startingAt: element, using: using, value: value)
+        let request = ElementRequest(session: id, element: element?.id, using: using, value: value)
 
         let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
-            let responseValue: ElementRequest.ResponseValue
             do {
-                responseValue = try webDriver.send(elementRequest).value
+                let responseValue = try webDriver.send(request).value
                 return Element(in: self, id: responseValue.element)
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
@@ -113,25 +105,21 @@ extension Session {
     }
 
     struct ElementRequest: WebDriverRequest {
-        let session: Session
-        let element: Element?
-
-        init(_ session: Session, startingAt element: Element?, using strategy: String, value: String) {
-            self.session = session
-            self.element = element
-            body = .init(using: strategy, value: value)
-        }
+        var session: String
+        var element: String?
+        var using: String
+        var value: String
 
         var pathComponents: [String] {
             if let element {
-                return ["session", session.id, "element", element.id, "element"]
+                return ["session", session, "element", element, "element"]
             } else {
-                return ["session", session.id, "element"]
+                return ["session", session, "element"]
             }
         }
 
         var method: HTTPMethod { .post }
-        var body: Body
+        var body: Body { .init(using: using, value: value) }
 
         struct Body: Codable {
             var using: String
@@ -151,25 +139,20 @@ extension Session {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
     public var activeElement: Element? {
         get throws {
-            let activeElementRequest = ActiveElementRequest(self)
-            var value: Session.ActiveElementRequest.ResponseValue
+            let request = ActiveElementRequest(session: id)
             do {
-                value = try webDriver.send(activeElementRequest).value
+                let value = try webDriver.send(request).value
+                return Element(in: self, id: value.element)
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
             }
-            return Element(in: self, id: value.element)
         }
     }
 
     struct ActiveElementRequest: WebDriverRequest {
-        let session: Session
+        var session: String
 
-        init(_ session: Session) {
-            self.session = session
-        }
-
-        var pathComponents: [String] { ["session", session.id, "element", "active"] }
+        var pathComponents: [String] { ["session", session, "element", "active"] }
         var method: HTTPMethod { .post }
 
         struct ResponseValue: Codable {
@@ -187,32 +170,29 @@ extension Session {
     ///   - xOffset: x offset from the left of the element
     ///   - yOffset: y offset from the top of the element
     public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) throws {
-        let moveToRequest = MoveToRequest(self, element: element, xOffset: xOffset, yOffset: yOffset)
-        try webDriver.send(moveToRequest)
+        precondition(element?.session == nil || element?.session === self)
+        let request = MoveToRequest(session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset)
+        try webDriver.send(request)
     }
 
     struct MoveToRequest: WebDriverRequest {
         typealias Response = WebDriverResponseNoValue
 
-        let session: Session
-        let element: Element?
+        var session: String
+        var element: String?
+        var xOffset: Int
+        var yOffset: Int
 
-        init(_ session: Session, element: Element?, xOffset: Int, yOffset: Int) {
-            self.session = session
-            self.element = element
-            body = .init(elementId: element?.id ?? "", xOffset: xOffset, yOffset: yOffset)
-        }
-
-        var pathComponents: [String] { ["session", session.id, "moveto"] }
+        var pathComponents: [String] { ["session", session, "moveto"] }
         var method: HTTPMethod { .post }
-        var body: Body
+        var body: Body { .init(element: element, xOffset: xOffset, yOffset: yOffset) }
 
         struct Body: Codable {
-            var elementId: String
+            var element: String?
             var xOffset: Int
             var yOffset: Int
             enum CodingKeys: String, CodingKey {
-                case elementId = "element"
+                case element = "element"
                 case xOffset = "xoffset"
                 case yOffset = "yoffset"
             }
@@ -229,41 +209,36 @@ extension Session {
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
     public func click(button: MouseButton = .left) throws {
-        let clickRequest = ButtonRequest(self, buttonRequestAction: .click, button: button)
-        try webDriver.send(clickRequest)
+        let request = ButtonRequest(session: id, action: .click, button: button)
+        try webDriver.send(request)
     }
 
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
     public func buttonDown(button: MouseButton = .left) throws {
-        let buttonDownRequest = ButtonRequest(self, buttonRequestAction: .buttonDown, button: button)
-        try webDriver.send(buttonDownRequest)
+        let request = ButtonRequest(session: id, action: .buttonDown, button: button)
+        try webDriver.send(request)
     }
 
     /// buttonUp(:) - release one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
     public func buttonUp(button: MouseButton = .left) throws {
-        let buttonUpRequest = ButtonRequest(self, buttonRequestAction: .buttonUp, button: button)
-        try webDriver.send(buttonUpRequest)
+        let request = ButtonRequest(session: id, action: .buttonUp, button: button)
+        try webDriver.send(request)
     }
 
     struct ButtonRequest: WebDriverRequest {
         typealias Response = WebDriverResponseNoValue
 
-        let session: Session
-        let buttonRequestAction: ButtonRequestAction
+        var session: String
+        var action: ButtonRequestAction
+        var button: MouseButton
 
-        init(_ session: Session, buttonRequestAction: ButtonRequestAction, button: MouseButton) {
-            self.session = session
-            body = .init(button: button)
-            self.buttonRequestAction = buttonRequestAction
-        }
-
-        var pathComponents: [String] { ["session", session.id, buttonRequestAction.rawValue] }
+        var pathComponents: [String] { ["session", session, action.rawValue] }
         var method: HTTPMethod { .post }
-        var body: Body
+        var body: Body { .init(button: button) }
 
         struct Body: Codable {
             var button: MouseButton
@@ -274,29 +249,25 @@ extension Session {
     /// - Parameter value: key strokes to send
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
     public func sendKeys(value: [String]) throws {
-        let keysRequest = KeysRequest(self, value: value)
-        try webDriver.send(keysRequest)
+        let request = KeysRequest(session: id, value: value)
+        try webDriver.send(request)
     }
 
     /// Send keys to the session
     /// This overload takes a single string for simplicity
     public func sendKeys(value: String) throws {
-        let keysRequest = KeysRequest(self, value: [value])
-        try webDriver.send(keysRequest)
+        return try sendKeys(value: [value])
     }
 
     struct KeysRequest: WebDriverRequest {
         typealias Response = WebDriverResponseNoValue
 
-        let session: Session
-        init(_ session: Session, value: [String]) {
-            self.session = session
-            body = .init(value: value)
-        }
+        var session: String
+        var value: [String]
 
-        var pathComponents: [String] { ["session", session.id, "keys"] }
+        var pathComponents: [String] { ["session", session, "keys"] }
         var method: HTTPMethod { .post }
-        var body: Body
+        var body: Body { .init(value: value) }
 
         struct Body: Codable {
             var value: [String]
