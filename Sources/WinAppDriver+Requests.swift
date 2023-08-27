@@ -1,10 +1,6 @@
 import Foundation
 import WinSDK
 
-public struct SessionResponse: Codable {
-    public var sessionId: String
-}
-
 extension WinAppDriver {
     /// newSession(app:) - Creates a new WinAppDriver session
     /// - app: location of the exe for the app to test
@@ -13,44 +9,14 @@ extension WinAppDriver {
     /// - waitForAppLaunch: time to wait to the app to launch in seconds, 0 by default
     /// - Returns: new Session instance
     public func newSession(app: String, appArguments: [String]? = nil, appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) throws -> Session {
-        let args = appArguments?.joined(separator: " ")
-        let newSessionRequest = NewSessionRequest(app: app, appArguments: args, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
-        return Session(in: self, id: try send(newSessionRequest).sessionId)
-    }
-
-    struct NewSessionRequest: WebDriverRequest {
-        typealias Response = SessionResponse
-
-        init(app: String, appArguments: String?, appWorkingDir: String?, waitForAppLaunch: Int?) {
-            body.desiredCapabilities = .init(app: app, appArguments: appArguments, appWorkingDir: appWorkingDir, waitForAppLaunch: waitForAppLaunch)
-        }
-
-        var pathComponents: [String] { ["session"] }
-        var method: HTTPMethod { .post }
-        var body: Body = .init()
-
-        struct RequiredCapabilities: Codable {}
-
-        struct DesiredCapabilities: Codable {
-            var app: String?
-            var appArguments: String?
-            var appWorkingDir: String?
-            var waitForAppLaunch: Int?
-            let experimentalWebDriver = true
-
-            enum CodingKeys: String, CodingKey {
-                case app
-                case appArguments
-                case appWorkingDir
-                case waitForAppLaunch = "ms:waitForAppLaunch"
-                case experimentalWebDriver = "ms:experimental-webdriver"
-            }
-        }
-
-        struct Body: Codable {
-            var requiredCapabilities: RequiredCapabilities?
-            var desiredCapabilities: DesiredCapabilities = .init()
-        }
+        let capabilities = ExtensionCapabilities()
+        capabilities.app = app
+        capabilities.appArguments = appArguments?.joined(separator: " ")
+        capabilities.appWorkingDir = appWorkingDir
+        capabilities.waitForAppLaunch = waitForAppLaunch
+        let request = NewSessionRequest(desiredCapabilities: capabilities)
+        let response = try send(request)
+        return Session(in: self, id: response.sessionId, capabilities: response.value)
     }
 
     /// newSession(appTopLevelWindowHandle:)
@@ -58,34 +24,10 @@ extension WinAppDriver {
     /// - Parameter appTopLevelWindowHandle: the window handle
     /// - Returns: new Session instance
     public func newSession(appTopLevelWindowHandle: UInt) throws -> Session {
-        let newSessionRequest = NewSessionAttachRequest(appTopLevelWindowHandle: appTopLevelWindowHandle)
-        return Session(in: self, id: try send(newSessionRequest).sessionId)
-    }
-
-    struct NewSessionAttachRequest: WebDriverRequest {
-        typealias Response = SessionResponse
-
-        init(appTopLevelWindowHandle: UInt) {
-            let appTopLevelWindowHexHandle = String(appTopLevelWindowHandle, radix: 16)
-            body.desiredCapabilities = .init(appTopLevelWindowHexHandle: appTopLevelWindowHexHandle)
-        }
-
-        var pathComponents: [String] { ["session"] }
-        var method: HTTPMethod { .post }
-        var body: Body = .init()
-
-        struct RequiredCapabilities: Codable {}
-
-        struct DesiredCapabilities: Codable {
-            var appTopLevelWindowHexHandle: String?
-            enum CodingKeys: String, CodingKey {
-                case appTopLevelWindowHexHandle = "appTopLevelWindow"
-            }
-        }
-
-        struct Body: Codable {
-            var requiredCapabilities: RequiredCapabilities?
-            var desiredCapabilities: DesiredCapabilities = .init()
-        }
+        let capabilities = ExtensionCapabilities()
+        capabilities.appTopLevelWindow = String(appTopLevelWindowHandle, radix: 16)
+        let request = NewSessionRequest(desiredCapabilities: capabilities)
+        let response = try send(request)
+        return Session(in: self, id: try response.sessionId, capabilities: response.value)
     }
 }

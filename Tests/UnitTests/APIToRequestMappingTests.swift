@@ -9,7 +9,7 @@ let base64TestImage: String =
 class APIToRequestMappingTests: XCTestCase {
     func testSessionAndElement() throws {
         let mockWebDriver = MockWebDriver()
-        let session = Session(in: mockWebDriver, id: "mySession")
+        let session = Session(in: mockWebDriver, id: "mySession", capabilities: Capabilities())
         XCTAssertEqual(session.id, "mySession")
 
         // Session requests unit-tests
