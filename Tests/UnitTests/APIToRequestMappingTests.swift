@@ -23,12 +23,12 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Session.ElementRequest.self) {
             XCTAssertEqual($0.using, "name")
             XCTAssertEqual($0.value, "myElement.name")
-            return WebDriverResponse(value: .init(ELEMENT: "myElement"))
+            return WebDriverResponse(value: .init(element: "myElement"))
         }
         let element = try session.findElement(byName: "myElement.name")!
 
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Session.ActiveElementRequest.self) {
-            WebDriverResponse(value: .init(ELEMENT: "myElement"))
+            WebDriverResponse(value: .init(element: "myElement"))
         }
         _ = try session.activeElement!
 
