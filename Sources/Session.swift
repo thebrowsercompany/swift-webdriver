@@ -4,12 +4,14 @@ import Foundation
 public class Session {
     let webDriver: any WebDriver
     public let id: String
+    public let capabilities: Capabilities
 
     private var deleted: Bool = false
 
-    init(in webDriver: some WebDriver, id: String) {
+    init(in webDriver: some WebDriver, id: String, capabilities: Capabilities) {
         self.webDriver = webDriver
         self.id = id
+        self.capabilities = capabilities
     }
 
     /// retryTimeout

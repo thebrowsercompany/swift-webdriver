@@ -18,6 +18,11 @@ struct WebDriverStatusRequest: WebDriverRequest {
 }
 
 public struct WebDriverStatus: Codable {
+    // From WebDriver spec
+    var ready: Bool?
+    var message: String?
+
+    // From Selenium's legacy json protocol
     var build: Build?
     var os: OS?
 
