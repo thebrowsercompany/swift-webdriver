@@ -33,7 +33,7 @@ class APIToRequestMappingTests: XCTestCase {
         _ = try session.activeElement!
 
         mockWebDriver.expect(path: "session/mySession/moveto", method: .post, type: Session.MoveToRequest.self) {
-            XCTAssertEqual($0.elementId, "myElement")
+            XCTAssertEqual($0.element, "myElement")
             XCTAssertEqual($0.xOffset, 30)
             XCTAssertEqual($0.yOffset, 0)
             return WebDriverResponseNoValue()
