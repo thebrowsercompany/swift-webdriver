@@ -26,8 +26,9 @@ public struct HTTPWebDriver: WebDriver {
 
     private func buildURLRequest<Request: WebDriverRequest>(_ request: Request) throws -> URLRequest {
         var url = rootURL
-        for pathComponent in request.pathComponents {
-            url.appendPathComponent(pathComponent)
+        for (index, pathComponent) in request.pathComponents.enumerated() {
+            let last = index == request.pathComponents.count - 1
+            url.appendPathComponent(pathComponent, isDirectory: !last)
         }
 
         var urlRequest = URLRequest(url: url)
@@ -37,7 +38,6 @@ public struct HTTPWebDriver: WebDriver {
 
         // Add the body if the WebDriverRequest type defines one
         if Request.Body.self != CodableNone.self {
-            urlRequest.addValue("content-encoding", forHTTPHeaderField: "json")
             urlRequest.addValue("application/json;charset=UTF-8", forHTTPHeaderField: "content-type")
             urlRequest.httpBody = try JSONEncoder().encode(request.body)
         }
