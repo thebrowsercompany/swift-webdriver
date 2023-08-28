@@ -14,7 +14,6 @@ struct WebDriverStatusRequest: WebDriverRequest {
 
     var pathComponents: [String] { ["status"] }
     var method: HTTPMethod { .get }
-    var body: Body { .init() }
 }
 
 public struct WebDriverStatus: Codable {

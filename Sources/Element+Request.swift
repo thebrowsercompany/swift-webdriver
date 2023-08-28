@@ -26,7 +26,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "click"] }
         var method: HTTPMethod { .post }
-        var body: Body { .init() }
     }
 
     /// text - the element text
@@ -49,7 +48,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "text"] }
         var method: HTTPMethod { .get }
-        var body: Body { .init() }
     }
 
     /// findElement(byName:)
@@ -126,7 +124,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "attribute", name] }
         var method: HTTPMethod { .get }
-        var body: Body = .init()
     }
 
     /// location - return x, y location of the element relative to the screen top left corner
@@ -148,7 +145,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "location"] }
         var method: HTTPMethod { .get }
-        var body: Body = .init()
 
         struct ResponseValue: Codable {
             let x: Int
@@ -176,7 +172,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "size"] }
         var method: HTTPMethod { .get }
-        var body: Body { .init() }
 
         struct ResponseValue: Codable {
             let width: Int
@@ -202,7 +197,6 @@ extension Element {
 
         var pathComponents: [String] { ["session", element.session.id, "element", element.id, "displayed"] }
         var method: HTTPMethod { .get }
-        var body: Body = .init()
 
         // Override the whole Response struct instead of just ResponseValue
         // because the value property is a boolean instead of a struct

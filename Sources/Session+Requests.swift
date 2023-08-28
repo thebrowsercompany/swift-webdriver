@@ -21,7 +21,6 @@ extension Session {
 
         var pathComponents: [String] { ["session", session.id, "title"] }
         var method: HTTPMethod { .get }
-        var body: Body { .init() }
     }
 
     /// screenshot()
@@ -50,7 +49,6 @@ extension Session {
 
         var pathComponents: [String] { ["session", session.id, "screenshot"] }
         var method: HTTPMethod { .get }
-        var body: Body { .init() }
     }
 
     /// findElement(byName:)
@@ -173,7 +171,6 @@ extension Session {
 
         var pathComponents: [String] { ["session", session.id, "element", "active"] }
         var method: HTTPMethod { .post }
-        var body: Body = .init()
 
         struct ResponseValue: Codable {
             var element: String
