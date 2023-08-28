@@ -106,7 +106,7 @@ extension Session {
             let responseValue: ElementRequest.ResponseValue
             do {
                 responseValue = try webDriver.send(elementRequest).value
-                return Element(in: self, id: responseValue.ELEMENT)
+                return Element(in: self, id: responseValue.element)
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
             }
@@ -141,7 +141,11 @@ extension Session {
         }
 
         struct ResponseValue: Codable {
-            var ELEMENT: String
+            var element: String
+
+            enum CodingKeys: String, CodingKey {
+                case element = "ELEMENT"
+            }
         }
     }
 
@@ -156,7 +160,7 @@ extension Session {
             } catch let error as WebDriverError where error.status == .noSuchElement {
                 return nil
             }
-            return Element(in: self, id: value.ELEMENT)
+            return Element(in: self, id: value.element)
         }
     }
 
@@ -172,7 +176,11 @@ extension Session {
         var body: Body = .init()
 
         struct ResponseValue: Codable {
-            var ELEMENT: String
+            var element: String
+
+            enum CodingKeys: String, CodingKey {
+                case element = "ELEMENT"
+            }
         }
     }
 
