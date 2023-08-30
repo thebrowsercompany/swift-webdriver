@@ -82,8 +82,7 @@ class MockWebDriver: WebDriver {
         let responseData = try expectation.handler(requestBody)
         if Request.Response.self == CodableNone.self {
             return CodableNone() as! Request.Response
-        }
-        else {
+        } else {
             return try JSONDecoder().decode(Request.Response.self, from: responseData!)
         }
     }
