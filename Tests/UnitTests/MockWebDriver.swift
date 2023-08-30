@@ -62,8 +62,9 @@ class MockWebDriver: WebDriver {
     /// Queues an expected request
     /// This overload ignores the incoming request body and returns a default response.
     func expect(path: String, method: HTTPMethod) {
-        expect(path: path, method: method) { (_: CodableNone) -> WebDriverResponse<CodableNone> in
-            WebDriverResponse(value: CodableNone())
+        expect(path: path, method: method) {
+            (_: CodableNone) in
+            WebDriverRequests.ResponseWithValue(CodableNone())
         }
     }
 
@@ -79,7 +80,11 @@ class MockWebDriver: WebDriver {
             ? nil : try JSONEncoder().encode(request.body)
 
         let responseData = try expectation.handler(requestBody)
-
-        return try JSONDecoder().decode(Request.Response.self, from: responseData!)
+        if Request.Response.self == CodableNone.self {
+            return CodableNone() as! Request.Response
+        }
+        else {
+            return try JSONDecoder().decode(Request.Response.self, from: responseData!)
+        }
     }
 }
