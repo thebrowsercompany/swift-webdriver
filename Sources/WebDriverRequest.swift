@@ -5,8 +5,7 @@ public struct CodableNone: Codable {}
 
 public protocol WebDriverRequest {
     associatedtype Body: Codable = CodableNone
-    associatedtype ResponseValue: Codable = CodableNone
-    associatedtype Response: Codable = WebDriverResponse<ResponseValue>
+    associatedtype Response: Codable = CodableNone
 
     var pathComponents: [String] { get }
     var method: HTTPMethod { get }
@@ -14,7 +13,7 @@ public protocol WebDriverRequest {
 }
 
 extension WebDriverRequest where Body == CodableNone {
-    var body: Body { .init() }
+    public var body: Body { .init() }
 }
 
 public enum HTTPMethod: String {
@@ -22,15 +21,3 @@ public enum HTTPMethod: String {
     case delete = "DELETE"
     case post = "POST"
 }
-
-// Response to a WebDriver request with a response value.
-public struct WebDriverResponse<Value>: Codable where Value: Codable {
-    public var value: Value
-
-    enum CodingKeys: String, CodingKey {
-        case value
-    }
-}
-
-// For WebDriver requests whose response lacks a value field.
-public struct WebDriverResponseNoValue: Codable {}
