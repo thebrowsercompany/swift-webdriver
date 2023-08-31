@@ -106,21 +106,21 @@ public enum Requests {
     }
 
     public struct Session<Caps: Capabilities>: Request {
+        public var desiredCapabilities: Caps
         public var requiredCapabilities: Caps?
-        public var desiredCapabilities: Caps?
 
-        public init(requiredCapabilities: Caps? = nil, desiredCapabilities: Caps? = nil) {
+        public init(desiredCapabilities: Caps, requiredCapabilities: Caps? = nil) {
             self.requiredCapabilities = requiredCapabilities
             self.desiredCapabilities = desiredCapabilities
         }
 
         public var pathComponents: [String] { ["session"] }
         public var method: HTTPMethod { .post }
-        public var body: Body { .init(requiredCapabilities: requiredCapabilities, desiredCapabilities: desiredCapabilities) }
+        public var body: Body { .init(desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities) }
 
         public struct Body: Codable {
+            public var desiredCapabilities: Caps
             public var requiredCapabilities: Caps?
-            public var desiredCapabilities: Caps?
         }
 
         public struct Response: Codable {

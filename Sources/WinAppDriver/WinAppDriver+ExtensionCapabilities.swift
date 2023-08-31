@@ -11,6 +11,19 @@ extension WinAppDriver {
 
         public override init() { super.init() }
 
+        public convenience init(app: String, appArguments: [String] = [], appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) {
+            self.init()
+            self.app = app
+            self.appArguments = appArguments.isEmpty ? nil : buildCommandLineArgsString(args: appArguments)
+            self.appWorkingDir = appWorkingDir
+            self.waitForAppLaunch = waitForAppLaunch
+        }
+
+        public convenience init(appTopLevelWindowHandle: UInt) {
+            self.init()
+            appTopLevelWindow = String(appTopLevelWindowHandle, radix: 16)
+        }
+
         // Swift can't synthesize init(from:) for subclasses of Codable classes
         public required init(from decoder: Decoder) throws {
             try super.init(from: decoder)

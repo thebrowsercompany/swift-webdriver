@@ -16,7 +16,9 @@ class SessionTests: XCTestCase {
             // We don't store webDriver as session maintains a reference.
             let winAppDriver = try WinAppDriver()
             let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-            session = try winAppDriver.newSession(app: "\(windowsDir)\\System32\\msinfo32.exe")
+            let capabilities = WinAppDriver.ExtensionCapabilities(
+                app: "\(windowsDir)\\System32\\msinfo32.exe")
+            session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
         } catch {
             setupError = error
         }
