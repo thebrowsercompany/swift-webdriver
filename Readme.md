@@ -42,7 +42,7 @@ The `setUp()` method of the `XCTestCase` class instantiates the WinAppDriver usi
 
 Implementations of the bindings are in the `Sources` folder. `WinAppDriver.swift`, `Session.swift`, `Element.swift` implement the corresponding object structs or classes. Files with the same names followed by `+requests` implement the actual bindings as extensions of these structs or classes.
 
-Each binding consist of a request struct conforming to the `WebDriverRequest` protocol and specializing the request, and of a method of the appropriate object instantiating that struct and passing it to `WebDriver.send<Request>(:)`. This encapsulates the specifics of the underlying http requests to that function.
+Each binding consist of a request struct conforming to the `Request` protocol and specializing the request, and of a method of the appropriate object instantiating that struct and passing it to `WebDriver.send<Request>(:)`. This encapsulates the specifics of the underlying http requests to that function.
 
 ## Building and running the project
 

@@ -7,7 +7,6 @@ let base64TestImage: String =
 
 /// Tests how usage of high-level Session/Element APIs map to lower-level requests
 class APIToRequestMappingTests: XCTestCase {
-    private typealias Requests = WebDriverRequests
     private typealias ResponseWithValue = Requests.ResponseWithValue
 
     func testSessionAndElement() throws {

@@ -90,7 +90,7 @@ public class WinAppDriver: WebDriver {
         capabilities.appArguments = appArguments?.joined(separator: " ")
         capabilities.appWorkingDir = appWorkingDir
         capabilities.waitForAppLaunch = waitForAppLaunch
-        let response = try send(WebDriverRequests.Session(desiredCapabilities: capabilities))
+        let response = try send(Requests.Session(desiredCapabilities: capabilities))
         return Session(in: self, id: response.sessionId, capabilities: response.value)
     }
 
@@ -101,12 +101,12 @@ public class WinAppDriver: WebDriver {
     public func newSession(appTopLevelWindowHandle: UInt) throws -> Session {
         let capabilities = ExtensionCapabilities()
         capabilities.appTopLevelWindow = String(appTopLevelWindowHandle, radix: 16)
-        let response = try send(WebDriverRequests.Session(desiredCapabilities: capabilities))
+        let response = try send(Requests.Session(desiredCapabilities: capabilities))
         return Session(in: self, id: response.sessionId, capabilities: response.value)
     }
 
     @discardableResult
-    public func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
+    public func send<Req: Request>(_ request: Req) throws -> Req.Response {
         try httpWebDriver.send(request)
     }
 }

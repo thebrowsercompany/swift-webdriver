@@ -1,6 +1,8 @@
-public struct WebDriverError: Codable, Error {
-    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
+public struct ErrorResponse: Codable, Error {
+    public var status: Status
+    public var value: Value
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
     public struct Status: Codable, Hashable, RawRepresentable {
         public var rawValue: Int
 
@@ -30,7 +32,7 @@ public struct WebDriverError: Codable, Error {
         public static let sessionNotCreatedException = Self(rawValue: 33)
         public static let moveTargetOutOfBounds = Self(rawValue: 34)
 
-        public init?(rawValue: Int) {
+        public init(rawValue: Int) {
             self.rawValue = rawValue
         }
     }
@@ -40,7 +42,4 @@ public struct WebDriverError: Codable, Error {
         public var message: String
         public var stacktrace: String?
     }
-
-    public var status: Status
-    public var value: Value
 }

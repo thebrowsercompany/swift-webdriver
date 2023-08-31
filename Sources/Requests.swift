@@ -1,4 +1,4 @@
-public enum WebDriverRequests {
+public enum Requests {
     public struct ResponseWithValue<Value>: Codable where Value: Codable {
         public var value: Value
 
@@ -19,7 +19,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct ElementAttribute: WebDriverRequest {
+    public struct ElementAttribute: Request {
         public var session: String
         public var element: String
         public var attribute: String
@@ -30,7 +30,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    public struct ElementClick: WebDriverRequest {
+    public struct ElementClick: Request {
         public var session: String
         public var element: String
 
@@ -38,7 +38,7 @@ public enum WebDriverRequests {
         public var method: HTTPMethod { .post }
     }
 
-    public struct ElementDisplayed: WebDriverRequest {
+    public struct ElementDisplayed: Request {
         public var session: String
         public var element: String
 
@@ -52,7 +52,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct ElementValue: WebDriverRequest {
+    public struct ElementValue: Request {
         public var session: String
         public var element: String
         public var value: [String]
@@ -67,7 +67,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct ElementLocation: WebDriverRequest {
+    public struct ElementLocation: Request {
         public var session: String
         public var element: String
 
@@ -81,7 +81,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct ElementSize: WebDriverRequest {
+    public struct ElementSize: Request {
         public var session: String
         public var element: String
 
@@ -95,7 +95,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct ElementText: WebDriverRequest {
+    public struct ElementText: Request {
         public var session: String
         public var element: String
 
@@ -105,7 +105,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    public struct Session<Caps: Capabilities>: WebDriverRequest {
+    public struct Session<Caps: Capabilities>: Request {
         public var requiredCapabilities: Caps?
         public var desiredCapabilities: Caps?
 
@@ -129,7 +129,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct SessionActiveElement: WebDriverRequest {
+    public struct SessionActiveElement: Request {
         public var session: String
 
         public var pathComponents: [String] { ["session", session, "element", "active"] }
@@ -138,7 +138,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
-    public struct SessionButton: WebDriverRequest {
+    public struct SessionButton: Request {
         public var session: String
         public var action: Action
         public var button: MouseButton
@@ -158,14 +158,14 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct SessionDelete: WebDriverRequest {
+    public struct SessionDelete: Request {
         public var sessionId: String
 
         public var pathComponents: [String] { ["session", sessionId] }
         public var method: HTTPMethod { .delete }
     }
 
-    public struct SessionElement: WebDriverRequest {
+    public struct SessionElement: Request {
         public var session: String
         public var element: String? = nil
         public var using: String
@@ -190,7 +190,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
-    public struct SessionKeys: WebDriverRequest {
+    public struct SessionKeys: Request {
         public var session: String
         public var value: [String]
 
@@ -203,7 +203,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct SessionMoveTo: WebDriverRequest {
+    public struct SessionMoveTo: Request {
         public var session: String
         public var element: String?
         public var xOffset: Int
@@ -226,7 +226,7 @@ public enum WebDriverRequests {
         }
     }
 
-    public struct SessionScreenshot: WebDriverRequest {
+    public struct SessionScreenshot: Request {
         public var session: String
 
         public var pathComponents: [String] { ["session", session, "screenshot"] }
@@ -235,7 +235,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    public struct SessionTitle: WebDriverRequest {
+    public struct SessionTitle: Request {
         public var session: String
 
         public var pathComponents: [String] { ["session", session, "title"] }
@@ -244,7 +244,7 @@ public enum WebDriverRequests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    public struct Status: WebDriverRequest {
+    public struct Status: Request {
         public var pathComponents: [String] { ["status"] }
         public var method: HTTPMethod { .get }
 

@@ -15,12 +15,12 @@ public struct Element {
     /// click() - simulate clicking this Element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public func click(retryTimeout: TimeInterval? = nil) throws {
-        let request = WebDriverRequests.ElementClick(session: session.id, element: id)
+        let request = Requests.ElementClick(session: session.id, element: id)
         try retryUntil(retryTimeout ?? session.defaultRetryTimeout) {
             do {
                 try webDriver.send(request)
                 return true
-            } catch let error as WebDriverError where error.status == .winAppDriver_elementNotInteractable {
+            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
                 return false
             }
         }
@@ -30,7 +30,7 @@ public struct Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidtext
     public var text: String {
         get throws {
-            try webDriver.send(WebDriverRequests.ElementText(
+            try webDriver.send(Requests.ElementText(
                 session: session.id, element: id)).value
         }
     }
@@ -92,7 +92,7 @@ public struct Element {
     /// - calls fatalError for any other error
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidattributename
     public func getAttribute(name: String) throws -> String {
-        try webDriver.send(WebDriverRequests.ElementAttribute(
+        try webDriver.send(Requests.ElementAttribute(
             session: session.id, element: id, attribute: name)).value
     }
 
@@ -100,7 +100,7 @@ public struct Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidlocation
     public var location: (x: Int, y: Int) {
         get throws {
-            let responseValue = try webDriver.send(WebDriverRequests.ElementLocation(
+            let responseValue = try webDriver.send(Requests.ElementLocation(
                 session: session.id, element: id)).value
             return (responseValue.x, responseValue.y)
         }
@@ -110,7 +110,7 @@ public struct Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidsize
     public var size: (width: Int, height: Int) {
         get throws {
-            let responseValue = try webDriver.send(WebDriverRequests.ElementSize(
+            let responseValue = try webDriver.send(Requests.ElementSize(
                 session: session.id, element: id)).value
             return (responseValue.width, responseValue.height)
         }
@@ -120,7 +120,7 @@ public struct Element {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
     public var displayed: Bool {
         get throws {
-            try webDriver.send(WebDriverRequests.ElementDisplayed(
+            try webDriver.send(Requests.ElementDisplayed(
                 session: session.id, element: id)).value
         }
     }
@@ -128,7 +128,7 @@ public struct Element {
     /// Send keys to an element
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public func sendKeys(value: [String]) throws {
-        try webDriver.send(WebDriverRequests.ElementValue(
+        try webDriver.send(Requests.ElementValue(
             session: session.id, element: id, value: value))
     }
 
