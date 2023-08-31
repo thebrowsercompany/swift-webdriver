@@ -110,10 +110,10 @@ class NotepadTests: XCTestCase {
 
     public func testTypingTwoLines() throws {
         let notepad = try Notepad(winAppDriver: Self.winAppDriver)
-        try notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCode.enter.rawValue, "Another line"])
+        try notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCodes.enter, "Another line"])
         // TODO: the following does not pass in Win10 Notepad - Re-enable when moving to Win11 CI runners
         // XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))
-        try notepad.typeInEditor(keys: [KeyCode.control.rawValue, "a", KeyCode.control.rawValue, KeyCode.delete.rawValue])
+        try notepad.typeInEditor(keys: [KeyCodes.control, "a", KeyCodes.control, KeyCodes.delete])
         try notepad.close()
     }
 }
