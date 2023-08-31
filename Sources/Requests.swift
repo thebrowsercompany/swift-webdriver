@@ -122,6 +122,11 @@ public enum Requests {
             public var desiredCapabilities: Caps
             public var requiredCapabilities: Caps?
         }
+
+        public struct Response: Codable {
+            public var sessionId: String
+            public var value: Caps
+        }
     }
 
     public struct SessionActiveElement: Request {

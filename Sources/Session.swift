@@ -9,7 +9,7 @@ public class Session {
 
     public init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
         self.webDriver = webDriver
-        let response = try webDriver.send(WebDriverRequests.Session(
+        let response = try webDriver.send(Requests.Session(
             desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
         self.id = response.sessionId
         self.capabilities = response.value
