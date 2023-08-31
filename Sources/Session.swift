@@ -2,15 +2,22 @@ import Foundation
 
 /// Represents a Session in the WinAppDriver API.
 public class Session {
-    let webDriver: any WebDriver
+    public let webDriver: any WebDriver
     public let id: String
     public let capabilities: Capabilities
-
     private var deleted: Bool = false
 
-    init(in webDriver: some WebDriver, id: String, capabilities: Capabilities) {
+    public init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
         self.webDriver = webDriver
-        self.id = id
+        let response = try webDriver.send(WebDriverRequests.Session(
+            desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
+        self.id = response.sessionId
+        self.capabilities = response.value
+    }
+
+    public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities) {
+        self.webDriver = webDriver
+        self.id = existingId
         self.capabilities = capabilities
     }
 

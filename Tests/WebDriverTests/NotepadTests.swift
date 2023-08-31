@@ -8,11 +8,11 @@ class Notepad {
 
     init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        session = try winAppDriver.newSession(
+        let capabilities = WinAppDriver.ExtensionCapabilities(
             app: "\(windowsDir)\\System32\\notepad.exe",
             appArguments: appArguments,
-            appWorkingDir: appWorkingDir
-        )
+            appWorkingDir: appWorkingDir)
+        session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
 
         // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
         // Instead, grab the editor here as the active element

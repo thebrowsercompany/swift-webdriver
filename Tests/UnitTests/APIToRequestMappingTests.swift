@@ -11,8 +11,15 @@ class APIToRequestMappingTests: XCTestCase {
 
     func testSessionAndElement() throws {
         let mockWebDriver = MockWebDriver()
-        let session = Session(in: mockWebDriver, id: "mySession", capabilities: Capabilities())
+
+        mockWebDriver.expect(path: "session", method: .post, type: Requests.Session.self) {
+            let capabilities = Capabilities()
+            capabilities.platformName = "myPlatform"
+            return Requests.Session.Response(sessionId: "mySession", value: capabilities)
+        }
+        let session = try Session(webDriver: mockWebDriver, desiredCapabilities: Capabilities())
         XCTAssertEqual(session.id, "mySession")
+        XCTAssertEqual(session.capabilities.platformName, "myPlatform")
 
         // Session requests unit-tests
         mockWebDriver.expect(path: "session/mySession/title", method: .get) {
