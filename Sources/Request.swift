@@ -1,9 +1,4 @@
-import Foundation
-import FoundationNetworking
-
-public struct CodableNone: Codable {}
-
-public protocol WebDriverRequest {
+public protocol Request {
     associatedtype Body: Codable = CodableNone
     associatedtype Response: Codable = CodableNone
 
@@ -12,9 +7,11 @@ public protocol WebDriverRequest {
     var body: Body { get }
 }
 
-extension WebDriverRequest where Body == CodableNone {
+extension Request where Body == CodableNone {
     public var body: Body { .init() }
 }
+
+public struct CodableNone: Codable {}
 
 public enum HTTPMethod: String {
     case get = "GET"

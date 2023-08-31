@@ -22,7 +22,7 @@ public class Session {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public var title: String {
         get throws {
-            try webDriver.send(WebDriverRequests.SessionTitle(session: id)).value
+            try webDriver.send(Requests.SessionTitle(session: id)).value
         }
     }
 
@@ -32,9 +32,9 @@ public class Session {
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
     public func screenshot() throws -> Data {
         let base64: String = try webDriver.send(
-            WebDriverRequests.SessionScreenshot(session: id)).value
+            Requests.SessionScreenshot(session: id)).value
         guard let data = Data(base64Encoded: base64) else {
-            let codingPath = [WebDriverRequests.SessionScreenshot.Response.CodingKeys.value]
+            let codingPath = [Requests.SessionScreenshot.Response.CodingKeys.value]
             let description = "Invalid Base64 string while decoding screenshot response."
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: codingPath, debugDescription: description))
         }
@@ -88,12 +88,12 @@ public class Session {
 
     // Helper for findElement functions above.
     internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
-        let request = WebDriverRequests.SessionElement(session: id, element: element?.id, using: using, value: value)
+        let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
         let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
             do {
                 let responseValue = try webDriver.send(request).value
                 return Element(in: self, id: responseValue.element)
-            } catch let error as WebDriverError where error.status == .noSuchElement {
+            } catch let error as ErrorResponse where error.status == .noSuchElement {
                 return nil
             }
         }
@@ -105,9 +105,9 @@ public class Session {
     public var activeElement: Element? {
         get throws {
             do {
-                let response = try webDriver.send(WebDriverRequests.SessionActiveElement(session: id))
+                let response = try webDriver.send(Requests.SessionActiveElement(session: id))
                 return Element(in: self, id: response.value.element)
-            } catch let error as WebDriverError where error.status == .noSuchElement {
+            } catch let error as ErrorResponse where error.status == .noSuchElement {
                 return nil
             }
         }
@@ -120,7 +120,7 @@ public class Session {
     ///   - yOffset: y offset from the top of the element
     public func moveTo(element: Element? = nil, xOffset: Int = 0, yOffset: Int = 0) throws {
         precondition(element?.session == nil || element?.session === self)
-        try webDriver.send(WebDriverRequests.SessionMoveTo(
+        try webDriver.send(Requests.SessionMoveTo(
             session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset))
     }
 
@@ -128,7 +128,7 @@ public class Session {
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
     public func click(button: MouseButton = .left) throws {
-        try webDriver.send(WebDriverRequests.SessionButton(
+        try webDriver.send(Requests.SessionButton(
             session: id, action: .click, button: button))
     }
 
@@ -136,7 +136,7 @@ public class Session {
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
     public func buttonDown(button: MouseButton = .left) throws {
-        try webDriver.send(WebDriverRequests.SessionButton(
+        try webDriver.send(Requests.SessionButton(
             session: id, action: .buttonDown, button: button))
     }
 
@@ -144,7 +144,7 @@ public class Session {
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
     public func buttonUp(button: MouseButton = .left) throws {
-        try webDriver.send(WebDriverRequests.SessionButton(
+        try webDriver.send(Requests.SessionButton(
             session: id, action: .buttonUp, button: button))
     }
 
@@ -152,7 +152,7 @@ public class Session {
     /// - Parameter value: key strokes to send
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
     public func sendKeys(value: [String]) throws {
-        try webDriver.send(WebDriverRequests.SessionKeys(session: id, value: value))
+        try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
     /// Send keys to the session
@@ -165,13 +165,13 @@ public class Session {
     /// Attempts to delete the session.
     public func delete() throws {
         guard !deleted else { return }
-        try webDriver.send(WebDriverRequests.SessionDelete(sessionId: id))
+        try webDriver.send(Requests.SessionDelete(sessionId: id))
         deleted = true
     }
 
     deinit {
         do { try delete() }
-        catch let error as WebDriverError {
+        catch let error as ErrorResponse {
             assertionFailure("Error in Session.delete: \(error)")
         } catch {
             assertionFailure("Unexpected error in Session.delete: \(error)")

@@ -21,69 +21,68 @@ class MockWebDriver: WebDriver {
 
     /// Queues an expected request and specifies its response handler.
     /// This overload is the most generic for any incoming body type and outgoing response type.
-    func expect<RequestBody: Codable, Response: Codable>(path: String, method: HTTPMethod, handler: @escaping (RequestBody) throws -> Response) {
+    func expect<ReqBody: Codable, Res: Codable>(path: String, method: HTTPMethod, handler: @escaping (ReqBody) throws -> Res) {
         expectations.append(Expectation(path: path, method: method, handler: {
-            let requestBody: RequestBody
+            let requestBody: ReqBody
             if let requestBodyData = $0 {
-                requestBody = try JSONDecoder().decode(RequestBody.self, from: requestBodyData)
-            } else if RequestBody.self == CodableNone.self {
-                requestBody = CodableNone() as Any as! RequestBody
+                requestBody = try JSONDecoder().decode(ReqBody.self, from: requestBodyData)
+            } else if ReqBody.self == CodableNone.self {
+                requestBody = CodableNone() as Any as! ReqBody
             } else {
                 throw UnexpectedRequestBodyError()
             }
 
             let response = try handler(requestBody)
-            return Response.self == CodableNone.self ? nil : try JSONEncoder().encode(response)
+            return Res.self == CodableNone.self ? nil : try JSONEncoder().encode(response)
         }))
     }
 
     /// Queues an expected request and specifies its response handler.
     /// This overload uses a Request.Type for easier type inference.
-    func expect<Request: WebDriverRequest>(path: String, method: HTTPMethod, type: Request.Type, handler: @escaping (Request.Body) throws -> Request.Response) {
+    func expect<Req: Request>(path: String, method: HTTPMethod, type: Req.Type, handler: @escaping (Req.Body) throws -> Req.Response) {
         expect(path: path, method: method) {
-            (requestBody: Request.Body) -> Request.Response in try handler(requestBody)
+            (requestBody: Req.Body) -> Req.Response in try handler(requestBody)
         }
     }
 
     /// Queues an expected request and specifies its response handler and outoing response type.
     /// This overload ignores the incoming request body.
-    func expect<Request: WebDriverRequest>(path: String, method: HTTPMethod, type: Request.Type, handler: @escaping () throws -> Request.Response) {
+    func expect<Req: Request>(path: String, method: HTTPMethod, type: Req.Type, handler: @escaping () throws -> Req.Response) {
         expect(path: path, method: method) {
-            () -> Request.Response in try handler()
+            () -> Req.Response in try handler()
         }
     }
 
     /// Queues an expected request and specifies its response handler.
     /// This overload ignores the incoming request body.
-    func expect<Response: Codable>(path: String, method: HTTPMethod, handler: @escaping () throws -> Response) {
-        expect(path: path, method: method) { (_: CodableNone) -> Response in try handler() }
+    func expect<Res: Codable>(path: String, method: HTTPMethod, handler: @escaping () throws -> Res) {
+        expect(path: path, method: method) { (_: CodableNone) -> Res in try handler() }
     }
 
     /// Queues an expected request
     /// This overload ignores the incoming request body and returns a default response.
     func expect(path: String, method: HTTPMethod) {
         expect(path: path, method: method) {
-            (_: CodableNone) in
-            WebDriverRequests.ResponseWithValue(CodableNone())
+            (_: CodableNone) in CodableNone()
         }
     }
 
     @discardableResult
-    func send<Request: WebDriverRequest>(_ request: Request) throws -> Request.Response {
+    func send<Req: Request>(_ request: Req) throws -> Req.Response {
         XCTAssertNotEqual(expectations.count, 0)
 
         let expectation = expectations.remove(at: 0)
         XCTAssertEqual(request.pathComponents.joined(separator: "/"), expectation.path)
         XCTAssertEqual(request.method, expectation.method)
 
-        let requestBody: Data? = Request.Body.self == CodableNone.self
+        let requestBody: Data? = Req.Body.self == CodableNone.self
             ? nil : try JSONEncoder().encode(request.body)
 
         let responseData = try expectation.handler(requestBody)
-        if Request.Response.self == CodableNone.self {
-            return CodableNone() as! Request.Response
+        if Req.Response.self == CodableNone.self {
+            return CodableNone() as! Req.Response
         } else {
-            return try JSONDecoder().decode(Request.Response.self, from: responseData!)
+            return try JSONDecoder().decode(Req.Response.self, from: responseData!)
         }
     }
 }
