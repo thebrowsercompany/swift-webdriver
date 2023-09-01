@@ -24,3 +24,8 @@ public class Capabilities: Codable {
         case nativeEvents
     }
 }
+
+// Unfortunate workaround to allow the WinAppDriver.Capabilities name,
+// where we can't resolve the global scope Capabilities using WebDriver.Capabilities
+// because that is a protocol in addition to the module name.
+public typealias BaseCapabilities = Capabilities
