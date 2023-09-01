@@ -2,57 +2,56 @@
 
 [![Build & Test](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml)
 
-A Swift library for communicating with WebDriver endpoints such as WebDriver, Appium or WinAppDriver on Windows.
+A Swift library for UI automation of apps and browsers via communication with [WebDriver](https://w3c.github.io/webdriver/) endpoints, such as [Selenium](https://www.selenium.dev/), [Appium](http://appium.io/) or the [Windows Application Driver](https://github.com/microsoft/WinAppDriver).
 
-This library provides swift bindings wrapping the REST APIs ([documented here](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) supported by these servers, in the same spirit as provided in other languages such as Objective-C or C#. WebDriver was initially targeted at web page testing (HTML content), but WinAppDriver and Appium repurpose them for application testing. As such, they implement a subset of the protocol and exhibit some other small differences. 
+`webdriver-swift` is meant to support both the [Selenium legacy JSON wire protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) and its successor, the W3C-standard [WebDriver protocol](https://w3c.github.io/webdriver/), against any WebDriver endpoint. In practice, it has been developed and tested for WinAppDriver-based scenarios on Windows, and may have gaps in other environments.
 
-Documentation about using WinAppDriver for testing Windows applications, can be found on [this GitHub project](https://github.com/microsoft/WinAppDriver). The subset of APIs supported by WinAppDriver is described [here](https://github.com/microsoft/WinAppDriver/blob/master/Docs/SupportedAPIs.md).
+## Usage
 
-The Swift bindings implemented in this project are organized as methods or computed properties of the main objects defined by the API, such as WinAppDriver, Session and Element. This allows developers to write tests using the Swift language in a natural manner, without having to concern themselves with the underlying implementation as http requests. Here are a few examples of the API:
-
-```swift
-public class WebDriver {
-    public func newSession(app: String) -> Session
-}
-
-public class Session {
-    public var title: String
-    public func findElement(byName name: String) -> Element?
-}
-
-public class Element {
-    public func click() 
-}
-```
-
-A typical use of these bindings to implement a test that launches Notepad and clicks its `close` button would look like this:
+A `webdriver-swift` "Hello world" using `WinAppDriver` might look like this:
 
 ```swift
-let winAppDriver = WinAppDriver()
-let session = winAppDriver.newSession(app: "notepad.exe")
-session.findElement(byName: "close").click()
+let winAppDriver = WinAppDriver() // Requires WinAppDriver to be installed on the machine
+let session = Session(webDriver: winAppDriver, desiredCapabilities: WinAppDriver.Capabilities(app: "notepad.exe"))
+session.findElement(byName: "close")?.click()
 ```
-For additional examples, refere to folder `Test\WebDriverTests`.
+
+To use `webdriver-swift` in your project, add a reference to it in your `Package.swift` file as follows:
+
+```swift
+let package = Package(
+    name: "MyPackage",
+    dependencies: [
+        .package(url: "https://github.com/thebrowsercompany/webdriver-swift", branch: "main")
+    ],
+    targets: [
+        .testTarget(
+            name: "UITests",
+            dependencies: [
+                .product(name: "WebDriver", package: "webdriver-swift"),
+            ]
+        )
+    ]
+)
+```
+
+Build and run tests using `swift build` and `swift test`, or use the [Swift extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=sswg.swift-lang).
+
+For additional examples, refer to the `Tests\WebDriverTests` directory.
 
 ## Architecture
 
-Examples of usage of the APIs are in the `Tests\WebDriverTests` folder, including tests for common apps such as Notepad. They are written to be callable by [XCTest](https://developer.apple.com/documentation/xctest), Apple's testing framework.
+The library has two logical layers:
 
-The `setUp()` method of the `XCTestCase` class instantiates the WinAppDriver using `WinAppDriverProcess` and creates a testing session, passing it the location of the Windows app to launch as the test target. The target app will be launched and terminated for each test session.
+- **Wire layer**: The `WebDriver` and `Request` protocols and their implementations provide a strongly-typed representation for sending REST requests to WebDriver endpoints. Each request is represented by a struct under `Requests`. The library can be used and extended only at this layer if desired.
+- **Session API layer**: The `Session` and `Element` types provide an object-oriented representation of WebDriver concepts with straightforward functions for every supported command such as `findElement(id:)` and `click()`.
 
-Implementations of the bindings are in the `Sources` folder. `WinAppDriver.swift`, `Session.swift`, `Element.swift` implement the corresponding object structs or classes. Files with the same names followed by `+requests` implement the actual bindings as extensions of these structs or classes.
-
-Each binding consist of a request struct conforming to the `Request` protocol and specializing the request, and of a method of the appropriate object instantiating that struct and passing it to `WebDriver.send<Request>(:)`. This encapsulates the specifics of the underlying http requests to that function.
-
-## Building and running the project
-
-In VSCode, install the [Swift extension]( https://marketplace.visualstudio.com/items?itemName=sswg.swift-lang) to integrate with standard build and test IDE features, including the testing sidbar, in which tests can be run or debugged individually, by XCTestCase, or all at once.
-
-From the command line, use `swift build` and `swift test` to build and run tests. Refer to `swift test -help` for command parameters. 
+Where WebDriver endpoint-specific functionality is provided, such as for launching and using a WinAppDriver instance, the code is kept separate from generic WebDriver functionality as much as possible.
 
 ## Contributing
 
 We welcome contributions for:
-- Additional webdriver bindings
-- Better support for other platforms and webdriver endpoints
+- Additional command bindings from the WebDriver and Selenium legacy JSON wire protocols
+- Improved support for other platforms and WebDriver endpoints
+
 Please include tests with your submissions. Tests launching apps should rely only on GUI applications that ship with the Windows OS, such as notepad.
