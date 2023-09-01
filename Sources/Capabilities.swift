@@ -25,7 +25,7 @@ public class Capabilities: Codable {
     }
 }
 
-// Unfortunate workaround to allow the WinAppDriver.Capabilities name,
-// where we can't resolve the global scope Capabilities using WebDriver.Capabilities
-// because that is a protocol in addition to the module name.
+// Workaround to allow the WinAppDriver.Capabilities name,
+// where we can't resolve the global scope Capabilities using the module name,
+// as in WebDriver.Capabilities, because that resolves to the global scope protocol.
 public typealias BaseCapabilities = Capabilities
