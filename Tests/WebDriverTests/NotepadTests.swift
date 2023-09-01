@@ -8,7 +8,7 @@ class Notepad {
 
     init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        let capabilities = WinAppDriver.ExtensionCapabilities(
+        let capabilities = WinAppDriver.Capabilities(
             app: "\(windowsDir)\\System32\\notepad.exe",
             appArguments: appArguments,
             appWorkingDir: appWorkingDir)

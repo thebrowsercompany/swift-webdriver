@@ -1,6 +1,6 @@
 extension WinAppDriver {
     // See https://github.com/microsoft/WinAppDriver/blob/master/Docs/AuthoringTestScripts.md
-    public class ExtensionCapabilities: Capabilities {
+    public class Capabilities: BaseCapabilities {
         public var app: String?
         public var appArguments: String?
         public var appTopLevelWindow: String?
