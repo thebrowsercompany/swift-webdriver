@@ -138,14 +138,6 @@ public class Session {
             session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset))
     }
 
-    /// click(:) - click one of the mouse buttons
-    /// - Parameter button: see MouseButton enum
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
-    public func click(button: MouseButton = .left) throws {
-        try webDriver.send(Requests.SessionButton(
-            session: id, action: .click, button: button))
-    }
-
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
@@ -160,6 +152,20 @@ public class Session {
     public func buttonUp(button: MouseButton = .left) throws {
         try webDriver.send(Requests.SessionButton(
             session: id, action: .buttonUp, button: button))
+    }
+
+    /// click(:) - click one of the mouse buttons
+    /// - Parameter button: see MouseButton enum
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
+    public func click(button: MouseButton = .left) throws {
+        try webDriver.send(Requests.SessionButton(
+            session: id, action: .click, button: button))
+    }
+
+    /// Double clicks the mouse at the current location.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessioniddoubleclick
+    public func doubleClick() throws {
+        try webDriver.send(Requests.SessionDoubleClick(session: id))
     }
 
     /// Simulates starting a touch point at a coordinate in this session.
@@ -201,7 +207,7 @@ public class Session {
     /// Attempts to delete the session.
     public func delete() throws {
         guard !deleted else { return }
-        try webDriver.send(Requests.SessionDelete(sessionId: id))
+        try webDriver.send(Requests.SessionDelete(session: id))
         deleted = true
     }
 

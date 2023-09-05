@@ -167,16 +167,16 @@ public enum Requests {
     }
 
     public struct SessionDelete: Request {
-        public var sessionId: String
+        public var session: String
 
-        public var pathComponents: [String] { ["session", sessionId] }
+        public var pathComponents: [String] { ["session", session] }
         public var method: HTTPMethod { .delete }
     }
 
     public struct SessionDoubleClick: Request {
-        public var sessionId: String
+        public var session: String
 
-        public var pathComponents: [String] { ["session", sessionId, "doubleclick"] }
+        public var pathComponents: [String] { ["session", session, "doubleclick"] }
         public var method: HTTPMethod { .post }
     }
 
