@@ -184,6 +184,9 @@ public class Session {
     }
 
     /// Simulates scrolling via touch.
+    /// - Parameter element: The element providing the screen location where the scroll starts.
+    /// - Parameter xOffset: The x offset to scroll by, in pixels.
+    /// - Parameter yOffset: The y offset to scroll by, in pixels.
     public func touchScroll(element: Element? = nil, xOffset: Int, yOffset: Int) throws {
         precondition(element?.session == nil || element?.session === self)
         try webDriver.send(Requests.SessionTouchScroll(
