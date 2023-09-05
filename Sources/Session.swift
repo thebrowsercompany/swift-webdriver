@@ -33,6 +33,13 @@ public class Session {
         }
     }
 
+    /// Sets a a timeout value on this session.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtimeouts
+    public func setTimeout(type: String, duration: TimeInterval) throws {
+        try webDriver.send(
+            Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
+    }
+
     /// screenshot()
     /// Take a screenshot of the current page.
     /// - Returns: The screenshot data as a PNG file.

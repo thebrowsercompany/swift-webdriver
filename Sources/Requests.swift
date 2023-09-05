@@ -235,6 +235,21 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
+    public struct SessionTimeouts: Request {
+        public var session: String
+        public var type: String
+        public var ms: Double
+
+        public var pathComponents: [String] { ["session", session, "timeouts"] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(type: type, ms: ms) }
+
+        public struct Body: Codable {
+            public var type: String
+            public var ms: Double
+        }
+    }
+
     public struct SessionTitle: Request {
         public var session: String
 
