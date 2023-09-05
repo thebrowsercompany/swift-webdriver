@@ -26,6 +26,19 @@ public struct Element {
         }
     }
 
+    /// Simulates clicking this element via touch.
+    public func touchClick(kind: TouchClickKind = .single, retryTimeout: TimeInterval? = nil) throws {
+        let request = Requests.SessionTouchClick(session: session.id, kind: kind, element: id)
+        try retryUntil(retryTimeout ?? session.defaultRetryTimeout) {
+            do {
+                try webDriver.send(request)
+                return true
+            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
+                return false
+            }
+        }
+    }
+
     /// text - the element text
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidtext
     public var text: String {
@@ -135,4 +148,11 @@ public struct Element {
     /// Send keys to an element
     /// This overload takes a single string for simplicity
     public func sendKeys(value: String) throws { try sendKeys(value: [value]) }
+
+    /// Clears the text of an editable element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclear
+    public func clear() throws {
+        try webDriver.send(Requests.ElementClear(
+            session: session.id, element: id))
+    }
 }

@@ -162,6 +162,28 @@ public class Session {
             session: id, action: .buttonUp, button: button))
     }
 
+    /// Simulates starting a touch point at a coordinate in this session.
+    public func touchDown(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .down, x: x, y: y))
+    }
+
+    /// Simulates releasing a touch point at a coordinate in this session.
+    public func touchUp(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .up, x: x, y: y))
+    }
+
+    /// Simulates moving a touch point at a coordinate in this session.
+    public func touchMove(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .move, x: x, y: y))
+    }
+
+    /// Simulates scrolling via touch.
+    public func touchScroll(element: Element? = nil, xOffset: Int, yOffset: Int) throws {
+        precondition(element?.session == nil || element?.session === self)
+        try webDriver.send(Requests.SessionTouchScroll(
+            session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset))
+    }
+
     /// sendKeys(:) - send key strokes to the session
     /// - Parameter value: key strokes to send
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys

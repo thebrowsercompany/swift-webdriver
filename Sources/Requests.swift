@@ -30,6 +30,14 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
+    public struct ElementClear: Request {
+        public var session: String
+        public var element: String
+
+        public var pathComponents: [String] { ["session", session, "element", element, "clear"] }
+        public var method: HTTPMethod { .post }
+    }
+
     public struct ElementClick: Request {
         public var session: String
         public var element: String
@@ -165,6 +173,13 @@ public enum Requests {
         public var method: HTTPMethod { .delete }
     }
 
+    public struct SessionDoubleClick: Request {
+        public var sessionId: String
+
+        public var pathComponents: [String] { ["session", sessionId, "doubleclick"] }
+        public var method: HTTPMethod { .post }
+    }
+
     public struct SessionElement: Request {
         public var session: String
         public var element: String? = nil
@@ -247,6 +262,65 @@ public enum Requests {
         public struct Body: Codable {
             public var type: String
             public var ms: Double
+        }
+    }
+
+    public struct SessionTouchAt: Request {
+        public var session: String
+        public var action: Action
+        public var x: Int
+        public var y: Int
+
+        public var pathComponents: [String] { ["session", session, "touch", action.rawValue] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(x: x, y: y) }
+
+        public struct Body: Codable {
+            public var x: Int
+            public var y: Int
+        }
+
+        public enum Action: String, Codable {
+            case move
+            case down
+            case up
+        }
+    }
+
+    public struct SessionTouchClick: Request {
+        public var session: String
+        public var kind: TouchClickKind
+        public var element: String
+
+        public var pathComponents: [String] { ["session", session, "touch", kind.rawValue] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(element: element) }
+
+        public struct Body: Codable {
+            public var element: String
+        }
+    }
+
+    public struct SessionTouchScroll: Request {
+        public var session: String
+        public var element: String?
+        public var xOffset: Int
+        public var yOffset: Int
+
+        public var pathComponents: [String] { ["session", session, "touch", "scroll"] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(element: element, xOffset: xOffset, yOffset: yOffset) }
+
+        public struct Body: Codable {
+            public var element: String?
+            public var xOffset: Int
+            public var yOffset: Int
+
+            private enum CodableKeys: String, CodingKey {
+                case element = "element"
+                case xOffset = "xoffset"
+                case yOffset = "yoffset"
+            }
         }
     }
 
