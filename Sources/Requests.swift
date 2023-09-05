@@ -265,6 +265,15 @@ public enum Requests {
         }
     }
 
+    public struct SessionTitle: Request {
+        public var session: String
+
+        public var pathComponents: [String] { ["session", session, "title"] }
+        public var method: HTTPMethod { .get }
+
+        public typealias Response = ResponseWithValue<String>
+    }
+
     public struct SessionTouchAt: Request {
         public var session: String
         public var action: Action
@@ -322,15 +331,6 @@ public enum Requests {
                 case yOffset = "yoffset"
             }
         }
-    }
-
-    public struct SessionTitle: Request {
-        public var session: String
-
-        public var pathComponents: [String] { ["session", session, "title"] }
-        public var method: HTTPMethod { .get }
-
-        public typealias Response = ResponseWithValue<String>
     }
 
     public struct Status: Request {
