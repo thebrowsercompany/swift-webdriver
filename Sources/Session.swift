@@ -138,14 +138,6 @@ public class Session {
             session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset))
     }
 
-    /// click(:) - click one of the mouse buttons
-    /// - Parameter button: see MouseButton enum
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
-    public func click(button: MouseButton = .left) throws {
-        try webDriver.send(Requests.SessionButton(
-            session: id, action: .click, button: button))
-    }
-
     /// buttonDown(:) - press down one of the mouse buttons
     /// - Parameter button: see MouseButton enum
     /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
@@ -160,6 +152,45 @@ public class Session {
     public func buttonUp(button: MouseButton = .left) throws {
         try webDriver.send(Requests.SessionButton(
             session: id, action: .buttonUp, button: button))
+    }
+
+    /// click(:) - click one of the mouse buttons
+    /// - Parameter button: see MouseButton enum
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
+    public func click(button: MouseButton = .left) throws {
+        try webDriver.send(Requests.SessionButton(
+            session: id, action: .click, button: button))
+    }
+
+    /// Double clicks the mouse at the current location.
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessioniddoubleclick
+    public func doubleClick() throws {
+        try webDriver.send(Requests.SessionDoubleClick(session: id))
+    }
+
+    /// Simulates starting a touch point at a coordinate in this session.
+    public func touchDown(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .down, x: x, y: y))
+    }
+
+    /// Simulates releasing a touch point at a coordinate in this session.
+    public func touchUp(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .up, x: x, y: y))
+    }
+
+    /// Simulates moving a touch point at a coordinate in this session.
+    public func touchMove(x: Int, y: Int) throws {
+        try webDriver.send(Requests.SessionTouchAt(session: id, action: .move, x: x, y: y))
+    }
+
+    /// Simulates scrolling via touch.
+    /// - Parameter element: The element providing the screen location where the scroll starts.
+    /// - Parameter xOffset: The x offset to scroll by, in pixels.
+    /// - Parameter yOffset: The y offset to scroll by, in pixels.
+    public func touchScroll(element: Element? = nil, xOffset: Int, yOffset: Int) throws {
+        precondition(element?.session == nil || element?.session === self)
+        try webDriver.send(Requests.SessionTouchScroll(
+            session: id, element: element?.id, xOffset: xOffset, yOffset: yOffset))
     }
 
     /// sendKeys(:) - send key strokes to the session
@@ -179,7 +210,7 @@ public class Session {
     /// Attempts to delete the session.
     public func delete() throws {
         guard !deleted else { return }
-        try webDriver.send(Requests.SessionDelete(sessionId: id))
+        try webDriver.send(Requests.SessionDelete(session: id))
         deleted = true
     }
 
