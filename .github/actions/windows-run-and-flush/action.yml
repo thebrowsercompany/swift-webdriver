@@ -25,5 +25,6 @@ runs:
         # as well, and costs about 10m of wall time on CI.
         # See https://thebrowsercompany.slack.com/archives/C05PPA14338/p1693343561057779 for details.
         $proc.WaitForExit()
+        Write-Output "Process returned $($proc.ExitCode)"
         [Console]::Out.Flush()
         exit $proc.ExitCode
