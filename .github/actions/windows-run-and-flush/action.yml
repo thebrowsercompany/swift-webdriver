@@ -11,7 +11,7 @@ inputs:
     default: ""
   working-directory:
     required: false
-    default: ${{ github.workspace }}/Apps/BrowserWin
+    default: ${{ github.workspace }}
 
 runs:
   using: "composite"
