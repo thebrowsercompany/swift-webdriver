@@ -21,5 +21,6 @@ runs:
       shell: pwsh
       run: |
         & '${{ inputs.cmd-exec }}' '${{ inputs.cmd-args }}'
+        Write-Output "Flushing"
         [Console]::Out.Flush()
         exit $LASTEXITCODE
