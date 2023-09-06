@@ -20,11 +20,16 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: pwsh
       run: |
-        $proc = Start-Process -NoNewWindow -PassThru -FilePath ${{ inputs.cmd-exec }} -ArgumentList '${{ inputs.cmd-args }}'
-        # WaitForExit() below instead of -Wait'ing above because the latter waits for subprocesses
-        # as well, and costs about 10m of wall time on CI.
-        # See https://thebrowsercompany.slack.com/archives/C05PPA14338/p1693343561057779 for details.
-        $proc.WaitForExit()
-        Write-Output "Process returned $($proc.ExitCode)"
+        $process = [System.Diagnostics.Process]::new()
+        $process.StartInfo.FileName = '${{ inputs.cmd-exec }}'
+        $process.StartInfo.Arguments = '${{ inputs.cmd-args }}'
+        $process.StartInfo.CreateNoWindow = $true
+        if (-not $process.Start()) {
+          Write-Error "Failed to start process ${{ inputs.cmd-exec }} ${{ inputs.cmd-args }}"
+          exit 1
+        }
+
+        $process.WaitForExit()
+        Write-Output "Process returned $($process.ExitCode)"
         [Console]::Out.Flush()
-        exit $proc.ExitCode
+        exit $process.ExitCode
