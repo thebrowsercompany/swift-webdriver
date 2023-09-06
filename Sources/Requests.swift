@@ -19,6 +19,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidattributename
     public struct ElementAttribute: Request {
         public var session: String
         public var element: String
@@ -30,6 +31,7 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclear
     public struct ElementClear: Request {
         public var session: String
         public var element: String
@@ -38,6 +40,7 @@ public enum Requests {
         public var method: HTTPMethod { .post }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidclick
     public struct ElementClick: Request {
         public var session: String
         public var element: String
@@ -46,6 +49,7 @@ public enum Requests {
         public var method: HTTPMethod { .post }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementiddisplayed
     public struct ElementDisplayed: Request {
         public var session: String
         public var element: String
@@ -60,6 +64,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public struct ElementValue: Request {
         public var session: String
         public var element: String
@@ -75,6 +80,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidlocation
     public struct ElementLocation: Request {
         public var session: String
         public var element: String
@@ -89,6 +95,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidsize
     public struct ElementSize: Request {
         public var session: String
         public var element: String
@@ -103,6 +110,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidtext
     public struct ElementText: Request {
         public var session: String
         public var element: String
@@ -137,6 +145,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
     public struct SessionActiveElement: Request {
         public var session: String
 
@@ -146,6 +155,9 @@ public enum Requests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
     public struct SessionButton: Request {
         public var session: String
         public var action: Action
@@ -166,6 +178,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionid
     public struct SessionDelete: Request {
         public var session: String
 
@@ -173,6 +186,7 @@ public enum Requests {
         public var method: HTTPMethod { .delete }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessioniddoubleclick
     public struct SessionDoubleClick: Request {
         public var session: String
 
@@ -180,6 +194,8 @@ public enum Requests {
         public var method: HTTPMethod { .post }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelement
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelement
     public struct SessionElement: Request {
         public var session: String
         public var element: String? = nil
@@ -205,6 +221,7 @@ public enum Requests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
     public struct SessionKeys: Request {
         public var session: String
         public var value: [String]
@@ -218,6 +235,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidmoveto
     public struct SessionMoveTo: Request {
         public var session: String
         public var element: String?
@@ -241,6 +259,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
     public struct SessionScreenshot: Request {
         public var session: String
 
@@ -250,6 +269,7 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtimeouts
     public struct SessionTimeouts: Request {
         public var session: String
         public var type: String
@@ -265,6 +285,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtitle
     public struct SessionTitle: Request {
         public var session: String
 
@@ -274,6 +295,9 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchmove
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchdown
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchup
     public struct SessionTouchAt: Request {
         public var session: String
         public var action: Action
@@ -296,6 +320,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchclick
     public struct SessionTouchClick: Request {
         public var session: String
         public var kind: TouchClickKind
@@ -310,6 +335,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchscroll
     public struct SessionTouchScroll: Request {
         public var session: String
         public var element: String?
@@ -333,6 +359,7 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
     public struct Status: Request {
         public var pathComponents: [String] { ["status"] }
         public var method: HTTPMethod { .get }
