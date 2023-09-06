@@ -20,16 +20,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: pwsh
       run: |
-        $process = [System.Diagnostics.Process]::new()
-        $process.StartInfo.FileName = '${{ inputs.cmd-exec }}'
-        $process.StartInfo.Arguments = '${{ inputs.cmd-args }}'
-        $process.StartInfo.CreateNoWindow = $true
-        if (-not $process.Start()) {
-          Write-Error "Failed to start process ${{ inputs.cmd-exec }} ${{ inputs.cmd-args }}"
-          exit 1
-        }
-
-        $process.WaitForExit()
-        Write-Output "Process returned $($process.ExitCode)"
+        & '${{ inputs.cmd-exec }}' '${{ inputs.cmd-args }}'
         [Console]::Out.Flush()
-        exit $process.ExitCode
+        exit $LASTEXITCODE
