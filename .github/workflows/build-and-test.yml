@@ -10,17 +10,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Setup Visual Studio Development Environment
-      uses: compnerd/gha-setup-vsdevenv@main
-
-    - name: Install Swift
-      uses: compnerd/gha-setup-swift@main
-      with:
-        branch: swift-5.8-release
-        tag: 5.8-RELEASE
-
     - name: Build
-      run: swift build --verbose --build-tests
+      uses: ./.github/actions/windows-run-and-flush
+      with:
+        cmd-exec: find.exe
+        cmd-args: "-"
 
-    - name: Test
-      run: swift test --verbose --skip-build
+    - name: Postbuild
+      shell: cmd
+      run: echo "I'm running"
