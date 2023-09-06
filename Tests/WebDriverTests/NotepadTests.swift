@@ -37,7 +37,7 @@ class Notepad {
         try session.click(button: button)
     }
 
-    func typeInEditor(keys: [String]) throws {
+    func sendEditorKeys(_ keys: [KeyCode]) throws {
         if editor == nil {
             editor = try session.findElement(byName: "Text Editor")
             if editor == nil {
@@ -46,7 +46,7 @@ class Notepad {
         }
 
         let editor = try XCTUnwrap(editor, "Failed to find element named 'Text Editor' or of class 'Edit'")
-        try editor.sendKeys(value: keys)
+        try editor.sendKeys(keys)
     }
 
     func close() throws {
@@ -110,10 +110,13 @@ class NotepadTests: XCTestCase {
 
     public func testTypingTwoLines() throws {
         let notepad = try Notepad(winAppDriver: Self.winAppDriver)
-        try notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCodes.enter, "Another line"])
+        try notepad.sendEditorKeys(
+            KeyCode.typeTextUsingWindowsAltCodes("Typing...")
+            + [KeyCode.enter]
+            + KeyCode.typeTextUsingWindowsAltCodes("Another line"))
         // TODO: the following does not pass in Win10 Notepad - Re-enable when moving to Win11 CI runners
         // XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))
-        try notepad.typeInEditor(keys: [KeyCodes.control, "a", KeyCodes.control, KeyCodes.delete])
+        try notepad.sendEditorKeys(KeyCode.control(KeyCode.a) + [KeyCode.delete])
         try notepad.close()
     }
 }

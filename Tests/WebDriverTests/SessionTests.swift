@@ -63,7 +63,7 @@ class SessionTests: XCTestCase {
     public func testKeys() throws {
         let element = try XCTUnwrap(Self.session.findElement(byAccessibilityId: AccessibilityIds.findWhatEditBox))
         try element.click()
-        try Self.session.sendKeys(value: ["B", "I", "O", "S"])
+        try Self.session.sendKeys(KeyCode.typeTextUsingWindowsAltCodes("BIOS"))
         XCTAssertEqual(try element.text, "BIOS")
     }
 }

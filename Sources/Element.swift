@@ -116,15 +116,24 @@ public struct Element {
             session: session.id, element: id, attribute: name)).value
     }
 
-    /// Send keys to this element.
-    public func sendKeys(value: [String]) throws {
+    /// Send keys to an element
+    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
+    public func sendKeys(rawValue: [String]) throws {
         try webDriver.send(Requests.ElementValue(
-            session: session.id, element: id, value: value))
+            session: session.id, element: id, value: rawValue))
     }
 
-    /// Send keys to this element.
-    /// This overload takes a single string for simplicity.
-    public func sendKeys(value: String) throws { try sendKeys(value: [value]) }
+    public func sendKeys(rawValue: String) throws {
+        try sendKeys(rawValue: [rawValue])
+    }
+
+    public func sendKeys(_ keys: [KeyCode]) throws {
+        try sendKeys(rawValue: keys.map { $0.rawValue }.joined())
+    }
+
+    public func sendKeys(_ key: KeyCode) throws {
+        try sendKeys([key])
+    }
 
     /// Clears the text of an editable element.
     public func clear() throws {
