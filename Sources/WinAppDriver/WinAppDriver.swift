@@ -10,68 +10,37 @@ public enum WinAppDriverError: Error {
 public class WinAppDriver: WebDriver {
     public static let defaultIp = "127.0.0.1"
     public static let defaultPort = 4723
+    public static let executableName = "WinAppDriver.exe"
+    public static var defaultExecutablePath: String {
+        let programFilesX86 = ProcessInfo.processInfo.environment["ProgramFiles(x86)"]
+            ?? "\(ProcessInfo.processInfo.environment["SystemDrive"] ?? "C:")\\Program Files (x86)"
+        return "\(programFilesX86)\\Windows Application Driver\\\(executableName)"
+    }
 
-    static let processsName = "WinAppDriver.exe"
-
+    private var process: Process?
     private let httpWebDriver: HTTPWebDriver
 
-    private let port: Int
-    private let ip: String
-
-    private var wadProcessInfo: PROCESS_INFORMATION?
-
     public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) throws {
-        self.ip = ip
-        self.port = port
-
-        httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
     }
 
     public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
-        self.ip = ip
-        self.port = port
+        self.process = try Process(path: Self.defaultExecutablePath, args: [ ip, String(port) ])
 
-        httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        // This gives some time for WinAppDriver to get up and running before
+        // we hammer it with requests, otherwise some requests will timeout.
+        Thread.sleep(forTimeInterval: 1.0)
 
-        let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
-        let commandLine = ["\"\(path)\"", ip, String(port)].joined(separator: " ")
-        try commandLine.withCString(encodedAs: UTF16.self) { commandLine throws in
-            var startupInfo = STARTUPINFOW()
-            startupInfo.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
-
-            var processInfo = PROCESS_INFORMATION()
-            guard CreateProcessW(
-                nil,
-                UnsafeMutablePointer<WCHAR>(mutating: commandLine),
-                nil,
-                nil,
-                false,
-                DWORD(CREATE_NEW_CONSOLE),
-                nil,
-                nil,
-                &startupInfo,
-                &processInfo
-            ) else {
-                throw WinAppDriverError.win32Error(lastError: Int(GetLastError()))
-            }
-
-            wadProcessInfo = processInfo
-
-            // This gives some time for WinAppDriver to get up and running before
-            // we hammer it with requests, otherwise some requests will timeout.
-            Thread.sleep(forTimeInterval: 1.0)
-        }
+        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
     }
 
     deinit {
-        if let wadProcessInfo {
-            CloseHandle(wadProcessInfo.hThread)
-
-            if !TerminateProcess(wadProcessInfo.hProcess, 0) {
-                let error = GetLastError()
+        if let process {
+            do {
+                try process.terminate()
+            } catch {
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
-            CloseHandle(wadProcessInfo.hProcess)
 
             // Add a short delay to let process cleanup happen before we try
             // to launch another instance.
