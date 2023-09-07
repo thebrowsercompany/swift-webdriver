@@ -95,7 +95,9 @@ public enum KeyCode: String {
     case f12 = "\u{E03C}"
     case meta = "\u{E03D}"
 
-    public static var macOSCommand: KeyCode { .meta }
+    public static var windows: KeyCode { .meta }
+    public static var macCommand: KeyCode { .meta }
+    public static var macOption: KeyCode { .alt }
 }
 
 extension KeyCode {
