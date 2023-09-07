@@ -116,15 +116,30 @@ public struct Element {
             session: session.id, element: id, attribute: name)).value
     }
 
-    /// Send keys to this element.
-    public func sendKeys(value: [String]) throws {
+    /// Sends key presses to this element.
+    /// - Parameter rawValue: An array of strings of key codes according to the WebDriver spec.
+    public func sendKeys(rawValue: [String]) throws {
         try webDriver.send(Requests.ElementValue(
-            session: session.id, element: id, value: value))
+            session: session.id, element: id, value: rawValue))
     }
 
-    /// Send keys to this element.
-    /// This overload takes a single string for simplicity.
-    public func sendKeys(value: String) throws { try sendKeys(value: [value]) }
+    /// Sends key presses to this element.
+    /// - Parameter rawValue: A string of key codes according to the WebDriver spec.
+    public func sendKeys(rawValue: String) throws {
+        try sendKeys(rawValue: [rawValue])
+    }
+
+    /// Sends key presses to this element.
+    /// - Parameter keys: The key codes to be sent.
+    public func sendKeys(_ keys: [KeyCode]) throws {
+        try sendKeys(rawValue: keys.map { $0.rawValue }.joined())
+    }
+
+    /// Sends key presses to this element.
+    /// - Parameter key: The key code to be sent.
+    public func sendKeys(_ key: KeyCode) throws {
+        try sendKeys([key])
+    }
 
     /// Clears the text of an editable element.
     public func clear() throws {

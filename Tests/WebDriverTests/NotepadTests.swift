@@ -4,7 +4,7 @@ import XCTest
 
 class Notepad {
     let session: Session
-    var editor: Element?
+    let editor: Element
 
     init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
         let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
@@ -16,7 +16,10 @@ class Notepad {
 
         // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
         // Instead, grab the editor here as the active element
-        editor = try session.activeElement
+        editor = try XCTUnwrap(
+            session.findElement(byName: "Text Editor")
+                ?? session.findElement(byClassName: "Edit")
+                ?? session.activeElement)
     }
 
     func dismissNewFileDialog() throws {
@@ -35,18 +38,6 @@ class Notepad {
 
     func click(button: MouseButton = .left) throws {
         try session.click(button: button)
-    }
-
-    func typeInEditor(keys: [String]) throws {
-        if editor == nil {
-            editor = try session.findElement(byName: "Text Editor")
-            if editor == nil {
-                editor = try session.findElement(byClassName: "Edit")
-            }
-        }
-
-        let editor = try XCTUnwrap(editor, "Failed to find element named 'Text Editor' or of class 'Edit'")
-        try editor.sendKeys(value: keys)
     }
 
     func close() throws {
@@ -110,10 +101,11 @@ class NotepadTests: XCTestCase {
 
     public func testTypingTwoLines() throws {
         let notepad = try Notepad(winAppDriver: Self.winAppDriver)
-        try notepad.typeInEditor(keys: ["T", "y", "p", "ing", "...", KeyCodes.enter, "Another line"])
-        // TODO: the following does not pass in Win10 Notepad - Re-enable when moving to Win11 CI runners
-        // XCTAssertNotNil(notepad.session.findElement(byName: "Typing..."))
-        try notepad.typeInEditor(keys: [KeyCodes.control, "a", KeyCodes.control, KeyCodes.delete])
+        try notepad.editor.sendKeys(
+            KeyCode.typeTextUsingWindowsAltCodes("Hello")
+            + [KeyCode.enter]
+            + KeyCode.typeTextUsingWindowsAltCodes("World"))
+        try notepad.editor.sendKeys(KeyCode.control(KeyCode.a) + [KeyCode.delete])
         try notepad.close()
     }
 }

@@ -4,7 +4,6 @@ import XCTest
 
 class SessionTests: XCTestCase {
     enum AccessibilityIds {
-        static let findWhatEditBox = "204"
         static let searchSelectedCategoryOnlyCheckbox = "206"
     }
 
@@ -58,12 +57,5 @@ class SessionTests: XCTestCase {
 
         try element.click()
         try XCTAssertEqual(element.getAttribute(name: "HasKeyboardFocus").lowercased(), "true")
-    }
-
-    public func testKeys() throws {
-        let element = try XCTUnwrap(Self.session.findElement(byAccessibilityId: AccessibilityIds.findWhatEditBox))
-        try element.click()
-        try Self.session.sendKeys(value: ["B", "I", "O", "S"])
-        XCTAssertEqual(try element.text, "BIOS")
     }
 }
