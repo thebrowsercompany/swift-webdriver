@@ -116,21 +116,27 @@ public struct Element {
             session: session.id, element: id, attribute: name)).value
     }
 
-    /// Send keys to an element
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
+    /// Sends key presses to this element.
+    /// - Parameter rawValue: An array of strings of key codes according to the WebDriver spec.
     public func sendKeys(rawValue: [String]) throws {
         try webDriver.send(Requests.ElementValue(
             session: session.id, element: id, value: rawValue))
     }
 
+    /// Sends key presses to this element.
+    /// - Parameter rawValue: A string of key codes according to the WebDriver spec.
     public func sendKeys(rawValue: String) throws {
         try sendKeys(rawValue: [rawValue])
     }
 
+    /// Sends key presses to this element.
+    /// - Parameter keys: The key codes to be sent.
     public func sendKeys(_ keys: [KeyCode]) throws {
         try sendKeys(rawValue: keys.map { $0.rawValue }.joined())
     }
 
+    /// Sends key presses to this element.
+    /// - Parameter key: The key code to be sent.
     public func sendKeys(_ key: KeyCode) throws {
         try sendKeys([key])
     }
