@@ -2,76 +2,49 @@
 import Foundation
 import WinSDK
 
-public enum WinAppDriverError: Error {
-    // Exposes any underlying win32 errors that may surface as a result of process management.
-    case win32Error(lastError: Int)
-}
-
 public class WinAppDriver: WebDriver {
-    public static let defaultIp = "127.0.0.1"
-    public static let defaultPort = 4723
-
-    static let processsName = "WinAppDriver.exe"
-
-    private let httpWebDriver: HTTPWebDriver
-
-    private let port: Int
-    private let ip: String
-
-    private var wadProcessInfo: PROCESS_INFORMATION?
-
-    public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) throws {
-        self.ip = ip
-        self.port = port
-
-        httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+    /// Raised when the WinAppDriver.exe process fails to start
+    public struct StartError: Error {
+        public var message: String
     }
 
-    public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
-        self.ip = ip
-        self.port = port
+    public static let defaultIp = "127.0.0.1"
+    public static let defaultPort = 4723
+    public static let executableName = "WinAppDriver.exe"
+    public static var defaultExecutablePath: String {
+        let programFilesX86 = ProcessInfo.processInfo.environment["ProgramFiles(x86)"]
+            ?? "\(ProcessInfo.processInfo.environment["SystemDrive"] ?? "C:")\\Program Files (x86)"
+        return "\(programFilesX86)\\Windows Application Driver\\\(executableName)"
+    }
 
-        httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+    private var processTree: Win32ProcessTree?
+    private let httpWebDriver: HTTPWebDriver
 
-        let path = "\(ProcessInfo.processInfo.environment["ProgramFiles(x86)"]!)\\Windows Application Driver\\WinAppDriver.exe"
-        let commandLine = ["\"\(path)\"", ip, String(port)].joined(separator: " ")
-        try commandLine.withCString(encodedAs: UTF16.self) { commandLine throws in
-            var startupInfo = STARTUPINFOW()
-            startupInfo.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
+    public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) {
+        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+    }
 
-            var processInfo = PROCESS_INFORMATION()
-            guard CreateProcessW(
-                nil,
-                UnsafeMutablePointer<WCHAR>(mutating: commandLine),
-                nil,
-                nil,
-                false,
-                DWORD(CREATE_NEW_CONSOLE),
-                nil,
-                nil,
-                &startupInfo,
-                &processInfo
-            ) else {
-                throw WinAppDriverError.win32Error(lastError: Int(GetLastError()))
-            }
-
-            wadProcessInfo = processInfo
-
-            // This gives some time for WinAppDriver to get up and running before
-            // we hammer it with requests, otherwise some requests will timeout.
-            Thread.sleep(forTimeInterval: 1.0)
+    public init(startingProcess executablePath: String = defaultExecutablePath, ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
+        do {
+            self.processTree = try Win32ProcessTree(path: executablePath, args: [ ip, String(port) ])
+        } catch let error as Win32Error {
+            throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
         }
+
+        // This gives some time for WinAppDriver to get up and running before
+        // we hammer it with requests, otherwise some requests will timeout.
+        Thread.sleep(forTimeInterval: 1.0)
+
+        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
     }
 
     deinit {
-        if let wadProcessInfo {
-            CloseHandle(wadProcessInfo.hThread)
-
-            if !TerminateProcess(wadProcessInfo.hProcess, 0) {
-                let error = GetLastError()
+        if let processTree {
+            do {
+                try processTree.terminate()
+            } catch {
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
-            CloseHandle(wadProcessInfo.hProcess)
 
             // Add a short delay to let process cleanup happen before we try
             // to launch another instance.
