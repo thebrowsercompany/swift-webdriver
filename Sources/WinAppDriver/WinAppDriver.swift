@@ -2,12 +2,12 @@
 import Foundation
 import WinSDK
 
-public enum WinAppDriverError: Error {
-    // Exposes any underlying win32 errors that may surface as a result of process management.
-    case win32Error(lastError: Int)
-}
-
 public class WinAppDriver: WebDriver {
+    /// Raised when the WinAppDriver.exe process fails to start
+    public struct StartError: Error {
+        public var message: String
+    }
+
     public static let defaultIp = "127.0.0.1"
     public static let defaultPort = 4723
     public static let executableName = "WinAppDriver.exe"
@@ -17,15 +17,19 @@ public class WinAppDriver: WebDriver {
         return "\(programFilesX86)\\Windows Application Driver\\\(executableName)"
     }
 
-    private var process: Process?
+    private var processTree: Win32ProcessTree?
     private let httpWebDriver: HTTPWebDriver
 
-    public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) throws {
+    public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) {
         self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
     }
 
-    public init(_ ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
-        self.process = try Process(path: Self.defaultExecutablePath, args: [ ip, String(port) ])
+    public init(startingProcess executablePath: String = defaultExecutablePath, ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
+        do {
+            self.processTree = try Win32ProcessTree(path: executablePath, args: [ ip, String(port) ])
+        } catch let error as Win32Error {
+            throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
+        }
 
         // This gives some time for WinAppDriver to get up and running before
         // we hammer it with requests, otherwise some requests will timeout.
@@ -35,9 +39,9 @@ public class WinAppDriver: WebDriver {
     }
 
     deinit {
-        if let process {
+        if let processTree {
             do {
-                try process.terminate()
+                try processTree.terminate()
             } catch {
                 assertionFailure("TerminateProcess failed with error \(error).")
             }
