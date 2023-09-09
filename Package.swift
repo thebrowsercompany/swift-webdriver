@@ -14,7 +14,7 @@ let package = Package(
         .target(name: "WebDriver", path: "Sources"),
         .target(name: "TestsCommon", path: "Tests/Common"),
         .testTarget(
-            name: "WebDriverTests",
+            name: "WinAppDriverTests",
             dependencies: ["WebDriver", "TestsCommon"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
             linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),

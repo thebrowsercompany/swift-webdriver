@@ -3,17 +3,17 @@ import XCTest
 
 class TimeoutTests: XCTestCase {
     private static var _winAppDriver: Result<WinAppDriver, any Error>!
-    public var winAppDriver: WinAppDriver! { try? Self._winAppDriver.get() }
+    var winAppDriver: WinAppDriver! { try? Self._winAppDriver.get() }
 
-    public override class func setUp() {
+    override class func setUp() {
         _winAppDriver = Result { try WinAppDriver.start() }
     }
 
-    public override class func tearDown() {
+    override class func tearDown() {
         _winAppDriver = nil
     }
 
-    public override func setUpWithError() throws {
+    override func setUpWithError() throws {
         try XCTSkipIf(winAppDriver == nil)
     }
 
