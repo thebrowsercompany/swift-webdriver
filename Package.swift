@@ -22,6 +22,6 @@ let package = Package(
             name: "UnitTests",
             dependencies: ["WebDriver", "TestsCommon"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
-            linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ])),
+            linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),
     ]
 )
