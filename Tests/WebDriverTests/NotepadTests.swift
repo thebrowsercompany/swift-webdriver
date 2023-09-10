@@ -6,12 +6,11 @@ class Notepad {
     let session: Session
     let editor: Element
 
-    init(winAppDriver: WinAppDriver, appArguments: [String] = [], appWorkingDir: String? = nil) throws {
-        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        let capabilities = WinAppDriver.Capabilities(
-            app: "\(windowsDir)\\System32\\notepad.exe",
-            appArguments: appArguments,
-            appWorkingDir: appWorkingDir)
+    init(winAppDriver: WinAppDriver, arguments: [String] = [], workingDir: String? = nil) throws {
+        let capabilities = WinAppDriver.Capabilities.startApp(
+            name: "\(WindowsSystemPaths.system32)\\notepad.exe",
+            arguments: arguments,
+            workingDir: workingDir)
         session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
 
         // In Notepad Win11, findElement for name "Text Editor" or class "Edit" does not work
@@ -52,7 +51,7 @@ class NotepadTests: XCTestCase {
 
     override public class func setUp() {
         do {
-            winAppDriver = try WinAppDriver()
+            winAppDriver = try WinAppDriver.start()
         } catch {
             setupError = error
         }
@@ -74,7 +73,7 @@ class NotepadTests: XCTestCase {
     // TODO: implement a way to confirm that the dialog was dismissed and notepad exited,
     // e.g., by attempting to get the window handle from the session
     public func testDismissNewFileDialog() throws {
-        let notepad = try Notepad(winAppDriver: Self.winAppDriver, appArguments: [UUID().uuidString], appWorkingDir: NSTemporaryDirectory())
+        let notepad = try Notepad(winAppDriver: Self.winAppDriver, arguments: [UUID().uuidString], workingDir: NSTemporaryDirectory())
         try notepad.dismissNewFileDialog()
     }
 

@@ -13,10 +13,9 @@ class SessionTests: XCTestCase {
     override public class func setUp() {
         do {
             // We don't store webDriver as session maintains a reference.
-            let winAppDriver = try WinAppDriver()
-            let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-            let capabilities = WinAppDriver.Capabilities(
-                app: "\(windowsDir)\\System32\\msinfo32.exe")
+            let winAppDriver = try WinAppDriver.start()
+            let capabilities = WinAppDriver.Capabilities.startApp(
+                name: "\(WindowsSystemPaths.system32)\\msinfo32.exe")
             session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
         } catch {
             setupError = error
