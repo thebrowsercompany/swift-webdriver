@@ -2,8 +2,8 @@
 import XCTest
 
 class MSInfo32App {
-    static let findWhatEditBoxAccelerator = KeyCode.w
-    static let searchSelectedCategoryOnlyCheckboxAccelerator = KeyCode.s
+    static let findWhatEditBoxAccelerator = Keys.alt(Keys.w)
+    static let searchSelectedCategoryOnlyCheckboxAccelerator = Keys.alt(Keys.s)
 
     let session: Session
 

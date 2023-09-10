@@ -117,28 +117,17 @@ public struct Element {
     }
 
     /// Sends key presses to this element.
-    /// - Parameter rawValue: An array of strings of key codes according to the WebDriver spec.
-    public func sendKeys(rawValue: [String]) throws {
+    /// - Parameter keys: An array of key sequences according to the WebDriver spec.
+    public func sendKeys(_ keys: [Keys]) throws {
         try webDriver.send(Requests.ElementValue(
-            session: session.id, element: id, value: rawValue))
+            session: session.id, element: id, value: keys.map { $0.rawValue }))
     }
 
     /// Sends key presses to this element.
-    /// - Parameter rawValue: A string of key codes according to the WebDriver spec.
-    public func sendKeys(rawValue: String) throws {
-        try sendKeys(rawValue: [rawValue])
-    }
-
-    /// Sends key presses to this element.
-    /// - Parameter keys: The key codes to be sent.
-    public func sendKeys(_ keys: [KeyCode]) throws {
-        try sendKeys(rawValue: keys.map { $0.rawValue }.joined())
-    }
-
-    /// Sends key presses to this element.
-    /// - Parameter key: The key code to be sent.
-    public func sendKeys(_ key: KeyCode) throws {
-        try sendKeys([key])
+    /// - Parameter keys: A key sequence according to the WebDriver spec.
+    public func sendKeys(_ keys: Keys) throws {
+        try webDriver.send(Requests.ElementValue(
+            session: session.id, element: id, value: [keys.rawValue]))
     }
 
     /// Clears the text of an editable element.

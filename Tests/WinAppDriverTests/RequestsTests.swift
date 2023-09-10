@@ -57,19 +57,23 @@ class RequestsTests: XCTestCase {
     }
 
     func testSendKeysWithUnicodeCharacter() throws {
-        let char = "╫"
-        try app.findWhatEditBox.sendKeys(KeyCode.typeTextUsingWindowsAltCodes(char))
+        // k: Requires no modifiers on a US Keyboard
+        // K: Requires modifiers on a US Keyboard
+        // ł: Not typeable on a US Keyboard
+        // ☃: Unicode BMP character
+        let str = "kKł☃"
+        try app.findWhatEditBox.sendKeys(Keys.text(str, typingStrategy: .windowsKeyboardAgnostic))
         // Normally we should be able to read the text back immediately,
         // but the MSInfo32 "Find what" edit box seems to queue events
         // such that WinAppDriver returns before they are fully processed.
-        try retryUntil(0.5) { try app.findWhatEditBox.text == char }
-        XCTAssertEqual(try app.findWhatEditBox.text, char)
+        try retryUntil(0.5) { try app.findWhatEditBox.text == str }
+        XCTAssertEqual(try app.findWhatEditBox.text, str)
     }
 
     func testSendKeysWithAcceleratorsGivesFocus() throws {
-        try app.session.sendKeys(KeyCode.alt(MSInfo32App.findWhatEditBoxAccelerator))
+        try app.session.sendKeys(MSInfo32App.findWhatEditBoxAccelerator)
         try XCTAssert(Self.hasKeyboardFocus(app.findWhatEditBox))
-        try app.session.sendKeys(KeyCode.tab)
+        try app.session.sendKeys(Keys.tab)
         try XCTAssert(!Self.hasKeyboardFocus(app.findWhatEditBox))
     }
 
