@@ -1,3 +1,5 @@
+import struct Foundation.TimeInterval
+
 extension WinAppDriver {
     // See https://github.com/microsoft/WinAppDriver/blob/master/Docs/AuthoringTestScripts.md
     public class Capabilities: BaseCapabilities {
@@ -11,17 +13,25 @@ extension WinAppDriver {
 
         public override init() { super.init() }
 
-        public convenience init(app: String, appArguments: [String] = [], appWorkingDir: String? = nil, waitForAppLaunch: Int? = nil) {
-            self.init()
-            self.app = app
-            self.appArguments = appArguments.isEmpty ? nil : buildCommandLineArgsString(args: appArguments)
-            self.appWorkingDir = appWorkingDir
-            self.waitForAppLaunch = waitForAppLaunch
+        public static func startApp(name: String, arguments: [String] = [], workingDir: String? = nil, waitTime: TimeInterval? = nil) -> Capabilities {
+            let caps = Capabilities()
+            caps.app = name
+            caps.appArguments = arguments.isEmpty ? nil : buildCommandLineArgsString(args: arguments)
+            caps.appWorkingDir = workingDir
+            if let waitTime { caps.waitForAppLaunch = Int(waitTime * 1000) }
+            return caps
         }
 
-        public convenience init(appTopLevelWindowHandle: UInt) {
-            self.init()
-            appTopLevelWindow = String(appTopLevelWindowHandle, radix: 16)
+        public static func attachToApp(topLevelWindowHandle: UInt) -> Capabilities {
+            let caps = Capabilities()
+            caps.appTopLevelWindow = String(topLevelWindowHandle, radix: 16)
+            return caps
+        }
+
+        public static func attachToDesktop() -> Capabilities {
+            let caps = Capabilities()
+            caps.app = "Root"
+            return caps
         }
 
         // Swift can't synthesize init(from:) for subclasses of Codable classes

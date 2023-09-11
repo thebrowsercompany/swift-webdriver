@@ -6,7 +6,7 @@ class TimeoutTests: XCTestCase {
     public var winAppDriver: WinAppDriver! { try? Self._winAppDriver.get() }
 
     public override class func setUp() {
-        _winAppDriver = Result { try WinAppDriver() }
+        _winAppDriver = Result { try WinAppDriver.start() }
     }
 
     public override class func tearDown() {
@@ -19,8 +19,8 @@ class TimeoutTests: XCTestCase {
 
     func startApp() throws -> Session {
         // Use a simple app in which we can expect queries to execute quickly
-        let windowsDir = ProcessInfo.processInfo.environment["SystemRoot"]!
-        let capabilities = WinAppDriver.Capabilities(app: "\(windowsDir)\\System32\\winver.exe")
+        let capabilities = WinAppDriver.Capabilities.startApp(
+            name: "\(WindowsSystemPaths.system32)\\winver.exe")
         return try Session(webDriver: winAppDriver, desiredCapabilities: capabilities)
     }
 

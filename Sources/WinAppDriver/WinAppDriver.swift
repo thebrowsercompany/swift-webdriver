@@ -12,21 +12,30 @@ public class WinAppDriver: WebDriver {
     public static let defaultPort = 4723
     public static let executableName = "WinAppDriver.exe"
     public static var defaultExecutablePath: String {
-        let programFilesX86 = ProcessInfo.processInfo.environment["ProgramFiles(x86)"]
-            ?? "\(ProcessInfo.processInfo.environment["SystemDrive"] ?? "C:")\\Program Files (x86)"
-        return "\(programFilesX86)\\Windows Application Driver\\\(executableName)"
+        "\(WindowsSystemPaths.programFilesX86)\\Windows Application Driver\\\(executableName)"
     }
 
-    private var processTree: Win32ProcessTree?
     private let httpWebDriver: HTTPWebDriver
+    private var processTree: Win32ProcessTree?
 
-    public init(attachingTo ip: String, port: Int = WinAppDriver.defaultPort) {
-        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+    private init(httpWebDriver: HTTPWebDriver, processTree: Win32ProcessTree? = nil) {
+        self.httpWebDriver = httpWebDriver
+        self.processTree = processTree
     }
 
-    public init(startingProcess executablePath: String = defaultExecutablePath, ip: String = WinAppDriver.defaultIp, port: Int = WinAppDriver.defaultPort) throws {
+    public static func attach(ip: String = defaultIp, port: Int = WinAppDriver.defaultPort) -> WinAppDriver {
+        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        return WinAppDriver(httpWebDriver: httpWebDriver)
+    }
+
+    public static func start(
+        executablePath: String = defaultExecutablePath,
+        ip: String = WinAppDriver.defaultIp,
+        port: Int = WinAppDriver.defaultPort) throws -> WinAppDriver {
+
+        let processTree: Win32ProcessTree
         do {
-            self.processTree = try Win32ProcessTree(path: executablePath, args: [ ip, String(port) ])
+            processTree = try Win32ProcessTree(path: executablePath, args: [ ip, String(port) ])
         } catch let error as Win32Error {
             throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
         }
@@ -35,7 +44,8 @@ public class WinAppDriver: WebDriver {
         // we hammer it with requests, otherwise some requests will timeout.
         Thread.sleep(forTimeInterval: 1.0)
 
-        self.httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        return WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
     }
 
     deinit {

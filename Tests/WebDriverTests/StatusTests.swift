@@ -7,7 +7,7 @@ class StatusTest: XCTestCase {
 
     override public class func setUp() {
         do {
-            winAppDriver = try WinAppDriver()
+            winAppDriver = try WinAppDriver.start()
         } catch {
             setupError = error
         }
