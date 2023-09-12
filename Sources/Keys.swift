@@ -161,10 +161,6 @@ extension Keys {
     }
 
     private static func text_windowsKeyboardAgnostic(_ str: String) -> Self {
-        // The webdriver spec is tricky. Any character that corresponds
-        // to a key on a US English keyboard gets sent as a key event,
-        // whereas any other printable character, including upper-case letters,
-        // get sent as character events.
         var result = ""
         for codePoint in str.unicodeScalars {
             if isUSKeyboardKeyCharacter(codePoint) {
@@ -190,7 +186,8 @@ extension Keys {
                 result += Self.alt.rawValue
             }
             else {
-                // Other printable characters will be sent as character events.
+                // Other printable characters will be sent as character events,
+                // independent of keyboard layout.
                 result += String(codePoint)
             }
         }
@@ -198,6 +195,10 @@ extension Keys {
         return Self(rawValue: result)
     }
 
+    /// Tests whether a given character can be typed using a single key on a US English keyboard.
+    /// The WebDriver spec will send these characters as key events, and expect them
+    /// to be translated into the original character, but this depends on the keyboard layout.
+    /// Characters like "A" and "!" are not listed because they require modifiers to type.
     private static func isUSKeyboardKeyCharacter(_ codePoint: UnicodeScalar) -> Bool {
         switch codePoint {
             case "a"..."z": return true
