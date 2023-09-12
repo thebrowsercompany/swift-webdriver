@@ -8,7 +8,7 @@ class MSInfo32App {
     let session: Session
 
     init(winAppDriver: WinAppDriver) throws {
-        let capabilities = WinAppDriver.Capabilities.startApp(name: "\(system32DirectoryPath)\\msinfo32.exe")
+        let capabilities = WinAppDriver.Capabilities.startApp(name: "\(WindowsSystemPaths.system32)\\msinfo32.exe")
         session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
     }
 
