@@ -174,28 +174,17 @@ public class Session {
     }
 
     /// Sends key presses to this session.
-    /// - Parameter rawValue: An array of strings of key codes according to the WebDriver spec.
-    public func sendKeys(rawValue: [String]) throws {
+    /// - Parameter keys: An array of key sequences according to the WebDriver spec.
+    public func sendKeys(_ keys: [Keys]) throws {
         try webDriver.send(Requests.SessionKeys(
-            session: id, value: rawValue))
+            session: id, value: keys.map { $0.rawValue }))
     }
 
     /// Sends key presses to this session.
-    /// - Parameter rawValue: A string of key codes according to the WebDriver spec.
-    public func sendKeys(rawValue: String) throws {
-        try sendKeys(rawValue: [rawValue])
-    }
-
-    /// Sends key presses to this session.
-    /// - Parameter keys: The key codes to be sent.
-    public func sendKeys(_ keys: [KeyCode]) throws {
-        try sendKeys(rawValue: keys.map { $0.rawValue }.joined())
-    }
-
-    /// Sends key presses to this session.
-    /// - Parameter key: The key code to be sent.
-    public func sendKeys(_ key: KeyCode) throws {
-        try sendKeys([key])
+    /// - Parameter keys: A key sequence according to the WebDriver spec.
+    public func sendKeys(_ keys: Keys) throws {
+        try webDriver.send(Requests.SessionKeys(
+            session: id, value: [keys.rawValue]))
     }
 
     /// Deletes the current session.

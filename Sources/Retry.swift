@@ -19,6 +19,7 @@ internal func retryUntil<T>(_ timeout: TimeInterval, work: () throws -> T?) reth
 }
 
 // Retry the given work using exponential backoff until we use allocated time or work returns true.
-internal func retryUntil(_ timeout: TimeInterval, work: () throws -> Bool) rethrows {
-    _ = try retryUntil(timeout) { try work() ? Optional(true) : nil }
+@discardableResult
+internal func retryUntil(_ timeout: TimeInterval, work: () throws -> Bool) rethrows -> Bool {
+    try retryUntil(timeout) { try work() ? Optional(true) : nil } == true
 }
