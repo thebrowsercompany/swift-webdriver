@@ -48,27 +48,33 @@ public struct Element {
     /// Clicks this element.
     public func click(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.ElementClick(session: session.id, element: id)
-        _ = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
+                // Immediately bubble most failures, only retry on element not interactable.
                 try webDriver.send(request)
-                return true
+                return PollResult.success(nil as ErrorResponse?)
             } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return false
+                return PollResult.failure(error)
             }
         }
+
+        if let notInteractableError = result.value { throw notInteractableError }
     }
 
     /// Clicks this element via touch.
     public func touchClick(kind: TouchClickKind = .single, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchClick(session: session.id, kind: kind, element: id)
-        _ = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
+                // Immediately bubble most failures, only retry on element not interactable.
                 try webDriver.send(request)
-                return true
+                return PollResult.success(nil as ErrorResponse?)
             } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return false
+                return PollResult.failure(error)
             }
         }
+
+        if let notInteractableError = result.value { throw notInteractableError }
     }
 
     /// Search for an element by name, starting from this element.
