@@ -10,7 +10,12 @@ class RequestsTests: XCTestCase {
         _app = Result { try MSInfo32App(winAppDriver: WinAppDriver.start()) }
     }
 
-    override func setUpWithError() throws { try XCTSkipIf(app == nil)}
+    override func setUpWithError() throws {
+        if case .failure(let error) = Self._app {
+            throw XCTSkip("Failed to start test app: \(error)")
+        }
+    }
+
     override class func tearDown() { _app = nil }
 
     func testStatusReportsWinAppDriverOnWindows() throws {
