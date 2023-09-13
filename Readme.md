@@ -11,8 +11,9 @@ A Swift library for UI automation of apps and browsers via communication with [W
 A `webdriver-swift` "Hello world" using `WinAppDriver` might look like this:
 
 ```swift
-let winAppDriver = WinAppDriver() // Requires WinAppDriver to be installed on the machine
-let session = Session(webDriver: winAppDriver, desiredCapabilities: WinAppDriver.Capabilities(app: "notepad.exe"))
+let session = Session(
+    webDriver: WinAppDriver.start(), // Requires WinAppDriver to be installed on the machine
+    desiredCapabilities: WinAppDriver.Capabilities.startApp(name: "notepad.exe"))
 session.findElement(byName: "close")?.click()
 ```
 
