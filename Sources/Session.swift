@@ -24,7 +24,9 @@ public class Session {
     }
 
     /// A TimeInterval specifying max time to spend retrying operations.
-    public var defaultRetryTimeout: TimeInterval = 1.0
+    public var defaultRetryTimeout: TimeInterval = 1.0 {
+        willSet { precondition(newValue >= 0) }
+    }
 
     /// The title of this session such as the tab or window text.
     public var title: String {
@@ -100,16 +102,22 @@ public class Session {
     // Helper for findElement functions above.
     internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
         precondition(element == nil || element?.session === self)
+
         let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
-        let element = try retryUntil(retryTimeout ?? defaultRetryTimeout) {
+
+        let elementId = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
+            let elementId: String?
             do {
-                let responseValue = try webDriver.send(request).value
-                return Element(in: self, id: responseValue.element)
+                // Allow errors to bubble up unless they are specifically saying that the element was not found.
+                elementId = try webDriver.send(request).value.element
             } catch let error as ErrorResponse where error.status == .noSuchElement {
-                return nil
+                elementId = nil
             }
-        }
-        return element
+
+            return PollResult(value: elementId, success: elementId != nil)
+        }.value
+
+        return elementId.map { Element(in: self, id: $0) }
     }
 
     /// Moves the pointer to a location relative to the current pointer position or an element.

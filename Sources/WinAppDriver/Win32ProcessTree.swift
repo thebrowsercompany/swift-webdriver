@@ -1,3 +1,4 @@
+import struct Foundation.TimeInterval
 import WinSDK
 
 /// Starts and tracks the lifetime of a process tree using Win32 APIs.
@@ -17,9 +18,24 @@ internal class Win32ProcessTree {
         }
     }
 
-    func terminate() throws {
+    var exitCode: DWORD? {
+        get throws {
+            var result: DWORD = 0
+            guard WinSDK.GetExitCodeProcess(handle, &result) else {
+                throw Win32Error.getLastError(apiName: "GetExitCodeProcess")
+            }
+            return result == WinSDK.STILL_ACTIVE ? nil : result
+        }
+    }
+
+    func terminate(waitTime: TimeInterval? = nil) throws {
         if !TerminateJobObject(jobHandle, UINT.max) {
             throw Win32Error.getLastError(apiName: "TerminateJobObject")
+        }
+
+        if let waitTime {
+            // Should we throw if we don't get an exit code in time?
+            _ = try poll(timeout: waitTime) { try exitCode != nil }
         }
     }
 

@@ -14,24 +14,27 @@ public class WinAppDriver: WebDriver {
     public static var defaultExecutablePath: String {
         "\(WindowsSystemPaths.programFilesX86)\\Windows Application Driver\\\(executableName)"
     }
+    public static let defaultStartWaitTime: TimeInterval = 1.0
 
     private let httpWebDriver: HTTPWebDriver
-    private var processTree: Win32ProcessTree?
+    private let processTree: Win32ProcessTree?
+    private var terminationWaitTime: TimeInterval?
 
     private init(httpWebDriver: HTTPWebDriver, processTree: Win32ProcessTree? = nil) {
         self.httpWebDriver = httpWebDriver
         self.processTree = processTree
     }
 
-    public static func attach(ip: String = defaultIp, port: Int = WinAppDriver.defaultPort) -> WinAppDriver {
+    public static func attach(ip: String = defaultIp, port: Int = defaultPort) -> WinAppDriver {
         let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
         return WinAppDriver(httpWebDriver: httpWebDriver)
     }
 
     public static func start(
         executablePath: String = defaultExecutablePath,
-        ip: String = WinAppDriver.defaultIp,
-        port: Int = WinAppDriver.defaultPort) throws -> WinAppDriver {
+        ip: String = defaultIp,
+        port: Int = defaultPort,
+        waitTime: TimeInterval? = defaultStartWaitTime) throws -> WinAppDriver {
 
         let processTree: Win32ProcessTree
         do {
@@ -40,25 +43,32 @@ public class WinAppDriver: WebDriver {
             throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
         }
 
-        // This gives some time for WinAppDriver to get up and running before
-        // we hammer it with requests, otherwise some requests will timeout.
-        Thread.sleep(forTimeInterval: 1.0)
-
         let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
-        return WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
+
+        // Give WinAppDriver some time to start up
+        if let waitTime {
+            let statusResult = poll(timeout: waitTime) {
+                let result = Result { try httpWebDriver.send(Requests.Status()) }
+                return PollResult(value: result, success: (try? result.get()) != nil)
+            }.value
+
+            if case .failure(let error) = statusResult {
+                throw StartError(message: "WinAppDriver did not respond within the expected time after startup: \(error).")
+            }
+        }
+
+        let result = WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
+        result.terminationWaitTime = waitTime
+        return result
     }
 
     deinit {
         if let processTree {
             do {
-                try processTree.terminate()
+                try processTree.terminate(waitTime: terminationWaitTime)
             } catch {
-                assertionFailure("TerminateProcess failed with error \(error).")
+                assertionFailure("WinAppDriver did not terminate within the expected time: \(error).")
             }
-
-            // Add a short delay to let process cleanup happen before we try
-            // to launch another instance.
-            Thread.sleep(forTimeInterval: 1.0)
         }
     }
 

@@ -66,8 +66,11 @@ class RequestsTests: XCTestCase {
         // Normally we should be able to read the text back immediately,
         // but the MSInfo32 "Find what" edit box seems to queue events
         // such that WinAppDriver returns before they are fully processed.
-        try retryUntil(0.5) { try app.findWhatEditBox.text == str }
-        XCTAssertEqual(try app.findWhatEditBox.text, str)
+        XCTAssertEqual(
+            try poll(timeout: 0.5) {
+                let text = try app.findWhatEditBox.text
+                return PollResult(value: text, success: text == str)
+            }.value, str)
     }
 
     func testSendKeysWithAcceleratorsGivesFocus() throws {
