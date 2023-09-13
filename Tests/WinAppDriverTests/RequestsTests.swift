@@ -37,7 +37,7 @@ class RequestsTests: XCTestCase {
     }
 
     func testAttributes() throws {
-        try XCTAssertEqual(app.findWhatEditBox.getAttribute(name: "ClassName"), "Edit")
+        try XCTAssertEqual(app.findWhatEditBox.getAttribute(name: WinAppDriver.Attributes.className), "Edit")
     }
 
     func testElementClickGivesKeyboardFocus() throws {
@@ -78,6 +78,6 @@ class RequestsTests: XCTestCase {
     }
 
     private static func hasKeyboardFocus(_ element: Element) throws -> Bool {
-        try XCTUnwrap(element.getAttribute(name: "HasKeyboardFocus")).lowercased() == "true"
+        try XCTUnwrap(element.getAttribute(name: WinAppDriver.Attributes.hasKeyboardFocus)).lowercased() == "true"
     }
 }
