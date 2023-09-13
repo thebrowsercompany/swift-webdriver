@@ -47,13 +47,11 @@ public class WinAppDriver: WebDriver {
 
         // Give WinAppDriver some time to start up
         if let waitTime {
-            let statusResult = poll(timeout: waitTime) {
-                let result = Result { try httpWebDriver.send(Requests.Status()) }
-                return PollResult(value: result, success: (try? result.get()) != nil)
-            }.value
+            // TODO(#40): This should be using polling, but an immediate url request would block forever
+            Thread.sleep(forTimeInterval: waitTime)
 
-            if case .failure(let error) = statusResult {
-                throw StartError(message: "WinAppDriver did not respond within the expected time after startup: \(error).")
+            if let earlyExitCode = try? processTree.exitCode {
+                throw StartError(message: "WinAppDriver process exited early with error code \(earlyExitCode).")
             }
         }
 
