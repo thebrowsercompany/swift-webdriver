@@ -15,12 +15,12 @@ enum WindowsSystemPaths {
 
     private static func getKnownFolderPath(_ folderId: KNOWNFOLDERID) throws -> String {
         var mutableId = folderId
-        var pszPath: PWSTR?
-        let result = WinSDK.SHGetKnownFolderPath(&mutableId, 0, nil, &pszPath)
+        var path: PWSTR?
+        let result = WinSDK.SHGetKnownFolderPath(&mutableId, 0, nil, &path)
         defer { WinSDK.CoTaskMemFree(pszPath) } // no-op on null
-        guard let pszPath, result == S_OK else {
+        guard let path, result == S_OK else {
            throw Win32Error.getLastError(apiName: "SHGetKnownFolderPath") 
         }
-        return String(decodingCString: pszPath, as: UTF16.self)
+        return String(decodingCString: path, as: UTF16.self)
     }
 }
