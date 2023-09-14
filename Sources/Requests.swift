@@ -155,6 +155,14 @@ public enum Requests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidback
+    public struct SessionBack: Request {
+        public var session: String
+
+        public var pathComponents: [String] { ["session", session, "back"] }
+        public var method: HTTPMethod { .post }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttondown
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidbuttonup
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidclick
@@ -221,6 +229,14 @@ public enum Requests {
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidforward
+    public struct SessionForward: Request {
+        public var session: String
+
+        public var pathComponents: [String] { ["session", session, "forward"] }
+        public var method: HTTPMethod { .post }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidkeys
     public struct SessionKeys: Request {
         public var session: String
@@ -257,6 +273,14 @@ public enum Requests {
                 case yOffset = "yoffset"
             }
         }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidrefresh
+    public struct SessionRefresh: Request {
+        public var session: String
+
+        public var pathComponents: [String] { ["session", session, "refresh"] }
+        public var method: HTTPMethod { .post }
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidscreenshot
@@ -355,6 +379,31 @@ public enum Requests {
                 case element = "element"
                 case xOffset = "xoffset"
                 case yOffset = "yoffset"
+            }
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidurl
+    public enum SessionUrl {
+        public struct Get: Request {
+            public var session: String
+
+            public var pathComponents: [String] { ["session", session, "url"] }
+            public var method: HTTPMethod { .get }
+
+            public typealias Response = ResponseWithValue<String>
+        }
+
+        public struct Post: Request {
+            public var session: String
+            public var url: String
+
+            public var pathComponents: [String] { ["session", session, "url"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(url: url) }
+
+            public struct Body: Codable {
+                public var url: String
             }
         }
     }

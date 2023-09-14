@@ -1,5 +1,4 @@
-import struct Foundation.TimeInterval
-import struct Foundation.Data
+import Foundation
 
 /// Represents a session in the WebDriver protocol,
 /// which manages the lifetime of a page or app under UI automation.
@@ -35,6 +34,26 @@ public class Session {
         }
     }
 
+    /// The current URL of this session.
+    public var url: URL {
+        get throws {
+            guard let result = URL(string: try webDriver.send(Requests.SessionUrl.Get(session: id)).value) else {
+                throw DecodingError.dataCorrupted(
+                    DecodingError.Context(
+                        codingPath: [Requests.SessionUrl.Get.Response.CodingKeys.value],
+                        debugDescription: "Invalid url format."))
+            }
+            return result
+        }
+    }
+
+    /// Navigates to a given URL.
+    /// This is logically a setter for the 'url' property,
+    /// but Swift doesn't support throwing setters.
+    public func url(_ url: URL) throws {
+        try webDriver.send(Requests.SessionUrl.Post(session: id, url: url.absoluteString))
+    }
+
     /// The active (focused) element.
     public var activeElement: Element? {
         get throws {
@@ -48,10 +67,21 @@ public class Session {
     }
 
     /// Sets a a timeout value on this session.
-    /// https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtimeouts
     public func setTimeout(type: String, duration: TimeInterval) throws {
         try webDriver.send(
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
+    }
+
+    public func back() throws {
+        try webDriver.send(Requests.SessionBack(session: id))
+    }
+
+    public func forward() throws {
+        try webDriver.send(Requests.SessionForward(session: id))
+    }
+    
+    public func refresh() throws {
+        try webDriver.send(Requests.SessionRefresh(session: id))
     }
 
     /// Takes a screenshot of the current page.
@@ -65,6 +95,14 @@ public class Session {
             throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: codingPath, debugDescription: description))
         }
         return data
+    }
+
+    /// Finds an element by id, starting from the root.
+    /// - Parameter byId: id of the element to search for.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Returns: The element that was found, if any.
+    public func findElement(byId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "id", value: id, retryTimeout: retryTimeout)
     }
 
     /// Finds an element by name, starting from the root.
