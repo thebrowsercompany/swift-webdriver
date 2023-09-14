@@ -17,7 +17,7 @@ enum WindowsSystemPaths {
         var mutableId = folderId
         var path: PWSTR?
         let result = WinSDK.SHGetKnownFolderPath(&mutableId, 0, nil, &path)
-        defer { WinSDK.CoTaskMemFree(pszPath) } // no-op on null
+        defer { WinSDK.CoTaskMemFree(path) } // no-op on null
         guard let path, result == S_OK else {
            throw Win32Error.getLastError(apiName: "SHGetKnownFolderPath") 
         }
