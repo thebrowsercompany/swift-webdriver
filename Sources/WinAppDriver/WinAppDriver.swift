@@ -18,7 +18,6 @@ public class WinAppDriver: WebDriver {
 
     private let httpWebDriver: HTTPWebDriver
     private let processTree: Win32ProcessTree?
-    private var terminationWaitTime: TimeInterval?
 
     private init(httpWebDriver: HTTPWebDriver, processTree: Win32ProcessTree? = nil) {
         self.httpWebDriver = httpWebDriver
@@ -55,15 +54,13 @@ public class WinAppDriver: WebDriver {
             }
         }
 
-        let result = WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
-        result.terminationWaitTime = waitTime
-        return result
+        return WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
     }
 
     deinit {
         if let processTree {
             do {
-                try processTree.terminate(waitTime: terminationWaitTime)
+                try processTree.terminate(waitTime: TimeInterval.infinity)
             } catch {
                 assertionFailure("WinAppDriver did not terminate within the expected time: \(error).")
             }

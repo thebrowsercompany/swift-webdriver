@@ -28,14 +28,18 @@ internal class Win32ProcessTree {
         }
     }
 
-    func terminate(waitTime: TimeInterval? = nil) throws {
+    func terminate(waitTime: TimeInterval?) throws {
+        precondition((waitTime ?? 0) >= 0)
+
         if !TerminateJobObject(jobHandle, UINT.max) {
             throw Win32Error.getLastError(apiName: "TerminateJobObject")
         }
 
         if let waitTime {
-            // Should we throw if we don't get an exit code in time?
-            _ = try poll(timeout: waitTime) { try exitCode != nil }
+            let milliseconds = waitTime * 1000
+            let millisecondsDword = milliseconds > Double(DWORD.max) ? INFINITE : DWORD(milliseconds)
+            let waitResult = WaitForSingleObject(handle, millisecondsDword)
+            assert(waitResult == WAIT_OBJECT_0, "The process did not terminate within the expected time interval.")
         }
     }
 
