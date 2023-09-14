@@ -97,6 +97,14 @@ public class Session {
         return data
     }
 
+    /// Finds an element by id, starting from the root.
+    /// - Parameter byId: id of the element to search for.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Returns: The element that was found, if any.
+    public func findElement(byId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "id", value: id, retryTimeout: retryTimeout)
+    }
+
     /// Finds an element by name, starting from the root.
     /// - Parameter byName: name of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.

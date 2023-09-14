@@ -77,6 +77,14 @@ public struct Element {
         if let notInteractableError = result.value { throw notInteractableError }
     }
 
+    /// Finds an element by id, starting from this element.
+    /// - Parameter byId: id of the element to search for.
+    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Returns: The element that was found, if any.
+    public func findElement(byId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "id", value: id, retryTimeout: retryTimeout)
+    }
+
     /// Search for an element by name, starting from this element.
     /// - Parameter byName: name of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
