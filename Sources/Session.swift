@@ -23,8 +23,8 @@ public class Session {
     }
 
     /// A TimeInterval specifying max time to spend retrying operations.
-    public var defaultRetryTimeout: TimeInterval = 1.0 {
-        willSet { precondition(newValue >= 0) }
+    public var defaultRetryTimeout: TimeInterval? = 0 {
+        willSet { precondition((newValue ?? 0) >= 0) }
     }
 
     /// The title of this session such as the tab or window text.
@@ -143,7 +143,7 @@ public class Session {
 
         let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
 
-        let elementId = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
+        let elementId = try poll(timeout: retryTimeout ?? defaultRetryTimeout ?? 0) {
             let elementId: String?
             do {
                 // Allow errors to bubble up unless they are specifically saying that the element was not found.

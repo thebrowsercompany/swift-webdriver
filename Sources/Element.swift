@@ -48,7 +48,7 @@ public struct Element {
     /// Clicks this element.
     public func click(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.ElementClick(session: session.id, element: id)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout ?? 0) {
             do {
                 // Immediately bubble most failures, only retry on element not interactable.
                 try webDriver.send(request)
@@ -64,7 +64,7 @@ public struct Element {
     /// Clicks this element via touch.
     public func touchClick(kind: TouchClickKind = .single, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchClick(session: session.id, kind: kind, element: id)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout ?? 0) {
             do {
                 // Immediately bubble most failures, only retry on element not interactable.
                 try webDriver.send(request)
