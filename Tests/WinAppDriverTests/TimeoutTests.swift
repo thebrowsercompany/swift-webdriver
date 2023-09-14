@@ -14,7 +14,9 @@ class TimeoutTests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        try XCTSkipIf(winAppDriver == nil)
+        if case .failure(let error) = Self._winAppDriver {
+            throw XCTSkip("Failed to start WinAppDriver: \(error)")
+        }
     }
 
     func startApp() throws -> Session {
