@@ -8,8 +8,10 @@ class MSInfo32App {
     let session: Session
 
     init(winAppDriver: WinAppDriver) throws {
+        print("\(Date()) MSInfo32App.init enter")
         let capabilities = WinAppDriver.Capabilities.startApp(name: "\(WindowsSystemPaths.system32)\\msinfo32.exe")
         session = try Session(webDriver: winAppDriver, desiredCapabilities: capabilities, requiredCapabilities: capabilities)
+        print("\(Date()) MSInfo32App.init exit")
     }
 
     private lazy var _maximizeButton = Result {

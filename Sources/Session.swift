@@ -9,11 +9,13 @@ public class Session {
     private var deleted: Bool = false
 
     public init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
+        print("\(Date()) Session.init enter")
         self.webDriver = webDriver
         let response = try webDriver.send(Requests.Session(
             desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
         self.id = response.sessionId
         self.capabilities = response.value
+        print("\(Date()) Session.init exit")
     }
 
     public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities) {

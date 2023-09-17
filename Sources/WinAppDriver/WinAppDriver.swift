@@ -35,6 +35,8 @@ public class WinAppDriver: WebDriver {
         port: Int = defaultPort,
         waitTime: TimeInterval? = defaultStartWaitTime) throws -> WinAppDriver {
 
+        print("\(Date()) WinAppDriver.start enter")
+
         let processTree: Win32ProcessTree
         do {
             processTree = try Win32ProcessTree(path: executablePath, args: [ ip, String(port) ])
@@ -53,6 +55,8 @@ public class WinAppDriver: WebDriver {
                 throw StartError(message: "WinAppDriver process exited early with error code \(earlyExitCode).")
             }
         }
+
+        print("\(Date()) WinAppDriver.start exit")
 
         return WinAppDriver(httpWebDriver: httpWebDriver, processTree: processTree)
     }
