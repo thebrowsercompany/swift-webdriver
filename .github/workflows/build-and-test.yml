@@ -8,15 +8,16 @@ jobs:
     timeout-minutes: 20
 
     steps:
-    - run: |
-        Write-Output "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
-        Write-Output "GITHUB_PATH: $env:GITHUB_PATH"
-        Write-Output (Get-Content $env:GITHUB_PATH)
-        Write-Output "Path: $env:Path"
-        Add-Content $env:GITHUB_PATH "a;b"
+      - run: |
+          $SDKRoot = "$env:GITHUB_WORKSPACE\BuildRoot\Library\Developer\SDKs\Windows.sdk"
+          Add-Content $env:GITHUB_ENV "SDKROOT=$SDKRoot"
+          
+          $PathEntries = @(
+            "$SDKRoot\usr\bin",
+            "$env:GITHUB_WORKSPACE\BuildRoot\Library\Developer\Toolchains\unknown-Asserts-development.xctoolchain\usr\bin"
+          )
+          Add-Content $env:GITHUB_PATH ($PathEntries -join ";")
 
-    - run: |
-        Write-Output "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
-        Write-Output "GITHUB_PATH: $env:GITHUB_PATH"
-        Write-Output (Get-Content $env:GITHUB_PATH)
-        Write-Output "Path: $env:Path"
+      - run: |
+          Write-Output "SDKROOT=$env:SDKROOT"
+          Write-Output "Path=$env:Path"
