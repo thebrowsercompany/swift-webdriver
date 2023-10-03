@@ -8,19 +8,7 @@ jobs:
     timeout-minutes: 20
 
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Setup Visual Studio Development Environment
-      uses: compnerd/gha-setup-vsdevenv@main
-
-    - name: Install Swift
-      uses: compnerd/gha-setup-swift@main
-      with:
-        branch: swift-5.8-release
-        tag: 5.8-RELEASE
-
-    - name: Build
-      run: swift build --verbose --build-tests
-
-    - name: Test
-      run: swift test --verbose --skip-build
+    - run: |
+        Write-Output $env:GITHUB_WORKSPACE
+        Write-Output $env:GITHUB_PATH
+        Write-Output (Get-Content $env:GITHUB_PATH)
