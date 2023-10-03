@@ -9,6 +9,14 @@ jobs:
 
     steps:
     - run: |
-        Write-Output $env:GITHUB_WORKSPACE
-        Write-Output $env:GITHUB_PATH
+        Write-Output "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
+        Write-Output "GITHUB_PATH: $env:GITHUB_PATH"
         Write-Output (Get-Content $env:GITHUB_PATH)
+        Write-Output "Path: $env:Path"
+        Append-Content $env:GITHUB_PATH "a;b"
+
+    - run: |
+        Write-Output "GITHUB_WORKSPACE: $env:GITHUB_WORKSPACE"
+        Write-Output "GITHUB_PATH: $env:GITHUB_PATH"
+        Write-Output (Get-Content $env:GITHUB_PATH)
+        Write-Output "Path: $env:Path"
