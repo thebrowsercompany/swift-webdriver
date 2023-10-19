@@ -1,14 +1,14 @@
-# webdriver-swift
+# swift-webdriver
 
-[![Build & Test](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/thebrowsercompany/webdriver-swift/actions/workflows/build-and-test.yml)
+[![Build & Test](https://github.com/thebrowsercompany/swift-webdriver/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/thebrowsercompany/swift-webdriver/actions/workflows/build-and-test.yml)
 
 A Swift library for UI automation of apps and browsers via communication with [WebDriver](https://w3c.github.io/webdriver/) endpoints, such as [Selenium](https://www.selenium.dev/), [Appium](http://appium.io/) or the [Windows Application Driver](https://github.com/microsoft/WinAppDriver).
 
-`webdriver-swift` is meant to support both the [Selenium legacy JSON wire protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) and its successor, the W3C-standard [WebDriver protocol](https://w3c.github.io/webdriver/), against any WebDriver endpoint. In practice, it has been developed and tested for WinAppDriver-based scenarios on Windows, and may have gaps in other environments.
+`swift-webdriver` is meant to support both the [Selenium legacy JSON wire protocol](https://www.selenium.dev/documentation/legacy/json_wire_protocol/) and its successor, the W3C-standard [WebDriver protocol](https://w3c.github.io/webdriver/), against any WebDriver endpoint. In practice, it has been developed and tested for WinAppDriver-based scenarios on Windows, and may have gaps in other environments.
 
 ## Usage
 
-A `webdriver-swift` "Hello world" using `WinAppDriver` might look like this:
+A `swift-webdriver` "Hello world" using `WinAppDriver` might look like this:
 
 ```swift
 let session = Session(
@@ -17,19 +17,19 @@ let session = Session(
 session.findElement(byName: "close")?.click()
 ```
 
-To use `webdriver-swift` in your project, add a reference to it in your `Package.swift` file as follows:
+To use `swift-webdriver` in your project, add a reference to it in your `Package.swift` file as follows:
 
 ```swift
 let package = Package(
     name: "MyPackage",
     dependencies: [
-        .package(url: "https://github.com/thebrowsercompany/webdriver-swift", branch: "main")
+        .package(url: "https://github.com/thebrowsercompany/swift-webdriver", branch: "main")
     ],
     targets: [
         .testTarget(
             name: "UITests",
             dependencies: [
-                .product(name: "WebDriver", package: "webdriver-swift"),
+                .product(name: "WebDriver", package: "swift-webdriver"),
             ]
         )
     ]

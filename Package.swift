@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "webdriver-swift",
+    name: "swift-webdriver",
     products: [
         .library(name: "WebDriver", targets: ["WebDriver"]),
     ],
