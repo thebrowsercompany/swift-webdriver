@@ -39,4 +39,13 @@ class MSInfo32App {
     var searchSelectedCategoryOnlyCheckbox: Element {
         get throws { try _searchSelectedCategoryOnlyCheckbox.get() }
     }
+
+    private lazy var _listView = Result {
+        let elements = try XCTUnwrap(session.findElements(byAccessibilityId: "202"), "List view not found")
+        try XCTSkipIf(elements.count != 1, "Expected exactly one list view; request timeout?")
+        return elements[0]
+    }
+    var listView: Element {
+        get throws { try _listView.get() }
+    }
 }
