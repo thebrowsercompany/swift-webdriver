@@ -126,7 +126,6 @@ public struct Element {
     /// - Parameter byId: id of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-
     public func findElements(byId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
         try findElements(using: "id", value: id, retryTimeout: retryTimeout)
     }
@@ -135,7 +134,6 @@ public struct Element {
     /// - Parameter byName: name of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-
     public func findElements(byName name: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
         try findElements(using: "name", value: name, retryTimeout: retryTimeout)
     }
