@@ -6,7 +6,7 @@ public class Session {
     public let webDriver: any WebDriver
     public let id: String
     public let capabilities: Capabilities
-    private var deleted: Bool = false
+    private var shouldDelete: Bool = true
 
     public init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
         self.webDriver = webDriver
@@ -16,10 +16,11 @@ public class Session {
         self.capabilities = response.value
     }
 
-    public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities) {
+    public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
         self.webDriver = webDriver
         self.id = existingId
         self.capabilities = capabilities
+        self.shouldDelete = owned
     }
 
     /// A TimeInterval specifying max time to spend retrying operations.
@@ -59,7 +60,7 @@ public class Session {
         get throws {
             do {
                 let response = try webDriver.send(Requests.SessionActiveElement(session: id))
-                return Element(in: self, id: response.value.element)
+                return Element(session: self, id: response.value.element)
             } catch let error as ErrorResponse where error.status == .noSuchElement {
                 return nil
             }
@@ -155,7 +156,7 @@ public class Session {
             return PollResult(value: elementId, success: elementId != nil)
         }.value
 
-        return elementId.map { Element(in: self, id: $0) }
+        return elementId.map { Element(session: self, id: $0) }
     }
 
     /// Moves the pointer to a location relative to the current pointer position or an element.
@@ -238,9 +239,9 @@ public class Session {
 
     /// Deletes the current session.
     public func delete() throws {
-        guard !deleted else { return }
+        guard shouldDelete else { return }
         try webDriver.send(Requests.SessionDelete(session: id))
-        deleted = true
+        shouldDelete = false
     }
 
     deinit {

@@ -8,6 +8,8 @@ public class Capabilities: Codable {
     public var takesScreenshot: Bool?
     public var nativeEvents: Bool?
 
+    public init() {}
+
     // See https://www.w3.org/TR/webdriver1/#dfn-table-of-session-timeouts
     public struct Timeouts: Codable {
         public var script: Int?
