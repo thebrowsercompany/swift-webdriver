@@ -44,7 +44,6 @@ public struct Keys: RawRepresentable {
     public static let digit9 = Self(rawValue: "9")
     public static let digit0 = Self(rawValue: "0")
 
-    /// Resets the state of modifier keys
     public static let cancel = Self(rawValue: "\u{E001}")
     public static let help = Self(rawValue: "\u{E002}")
     public static let backspace = Self(rawValue: "\u{E003}")
