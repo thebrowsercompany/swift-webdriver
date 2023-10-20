@@ -44,8 +44,6 @@ public struct Keys: RawRepresentable {
     public static let digit9 = Self(rawValue: "9")
     public static let digit0 = Self(rawValue: "0")
 
-    /// Resets the state of modifier keys
-    public static let null = Self(rawValue: "\u{E000}")
     public static let cancel = Self(rawValue: "\u{E001}")
     public static let help = Self(rawValue: "\u{E002}")
     public static let backspace = Self(rawValue: "\u{E003}")
@@ -99,6 +97,9 @@ public struct Keys: RawRepresentable {
 
     /// Modifier keys are interpreted as toggles instead of key presses.
     public enum Modifiers {
+        /// A special Keys value that causes all modifiers to be released.
+        public static let releaseAll = Keys(rawValue: "\u{E000}")
+
         public static let shift = Keys(rawValue: "\u{E008}")
         public static let control = Keys(rawValue: "\u{E009}")
         public static let alt = Keys(rawValue: "\u{E00A}")
