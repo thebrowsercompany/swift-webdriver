@@ -221,16 +221,19 @@ public class Session {
 
     /// Sends key presses to this session.
     /// - Parameter keys: An array of key sequences according to the WebDriver spec.
-    public func sendKeys(_ keys: [Keys]) throws {
-        try webDriver.send(Requests.SessionKeys(
-            session: id, value: keys.map { $0.rawValue }))
+    /// - Parameter releaseModifiers: A boolean indicating whether to release modifier keys at the end of the sequence.
+    public func sendKeys(_ keys: [Keys], releaseModifiers: Bool = true) throws {
+        var value = keys.map { $0.rawValue }
+        if releaseModifiers { value.append(Keys.Modifiers.releaseAll.rawValue) }
+        try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
     /// Sends key presses to this session.
     /// - Parameter keys: A key sequence according to the WebDriver spec.
-    public func sendKeys(_ keys: Keys) throws {
-        try webDriver.send(Requests.SessionKeys(
-            session: id, value: [keys.rawValue]))
+    /// - Parameter releaseModifiers: A boolean indicating whether to release modifier keys at the end of the sequence.
+    public func sendKeys(_ keys: Keys, releaseModifiers: Bool = true) throws {
+        let value = releaseModifiers ? [keys.rawValue, Keys.Modifiers.releaseAll.rawValue] : [keys.rawValue]
+        try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
     /// Deletes the current session.

@@ -107,7 +107,7 @@ class APIToRequestMappingTests: XCTestCase {
             XCTAssertEqual($0.value, keys.map { $0.rawValue })
             return CodableNone()
         }
-        try session.sendKeys(keys)
+        try session.sendKeys(keys, releaseModifiers: false)
 
         // Account for session deinitializer
         mockWebDriver.expect(path: "session/mySession", method: .delete)
