@@ -53,9 +53,6 @@ public struct Keys: RawRepresentable {
     public static let clear = Self(rawValue: "\u{E005}")
     public static let returnKey = Self(rawValue: "\u{E006}")
     public static let enter = Self(rawValue: "\u{E007}")
-    public static let shift = Self(rawValue: "\u{E008}")
-    public static let control = Self(rawValue: "\u{E009}")
-    public static let alt = Self(rawValue: "\u{E00A}")
     public static let pause = Self(rawValue: "\u{E00B}")
     public static let escape = Self(rawValue: "\u{E00C}")
     public static let space = Self(rawValue: "\u{E00D}")
@@ -99,49 +96,56 @@ public struct Keys: RawRepresentable {
     public static let f10 = Self(rawValue: "\u{E03A}")
     public static let f11 = Self(rawValue: "\u{E03B}")
     public static let f12 = Self(rawValue: "\u{E03C}")
-    public static let meta = Self(rawValue: "\u{E03D}")
 
-    public static var windows: Self { .meta }
-    public static var macCommand: Self { .meta }
-    public static var macOption: Self { .alt }
+    /// Modifier keys are interpreted as toggles instead of key presses.
+    public enum Modifiers {
+        public static let shift = Keys(rawValue: "\u{E008}")
+        public static let control = Keys(rawValue: "\u{E009}")
+        public static let alt = Keys(rawValue: "\u{E00A}")
+        public static let meta = Keys(rawValue: "\u{E03D}")
+
+        public static var windows: Keys { meta }
+        public static var macCommand: Keys { meta }
+        public static var macOption: Keys { alt }
+    }
 }
 
 extension Keys {
     /// Wraps a keys sequence with holding and releasing the shift key.
     public static func shift(_ keys: Self) -> Self {
-        Self(rawValue: "\(Self.shift.rawValue)\(keys.rawValue)\(Self.shift.rawValue)")
+        Self(rawValue: "\(Modifiers.shift.rawValue)\(keys.rawValue)\(Modifiers.shift.rawValue)")
     }
 
     /// Wraps a keys sequence with holding and releasing the control key.
     public static func control(_ keys: Self) -> Self {
-        Self(rawValue: "\(Self.control.rawValue)\(keys.rawValue)\(Self.control.rawValue)")
+        Self(rawValue: "\(Modifiers.control.rawValue)\(keys.rawValue)\(Modifiers.control.rawValue)")
     }
 
     /// Wraps a keys sequence with holding and releasing the alt key.
     public static func alt(_ keys: Self) -> Self {
-        Self(rawValue: "\(Self.alt.rawValue)\(keys.rawValue)\(Self.alt.rawValue)")
+        Self(rawValue: "\(Modifiers.alt.rawValue)\(keys.rawValue)\(Modifiers.alt.rawValue)")
     }
 
     /// Wraps a keys sequence with holding and releasing the meta key.
     public static func meta(_ keys: Self) -> Self {
-        Self(rawValue: "\(Self.meta.rawValue)\(keys.rawValue)\(Self.meta.rawValue)")
+        Self(rawValue: "\(Modifiers.meta.rawValue)\(keys.rawValue)\(Modifiers.meta.rawValue)")
     }
 
     /// Wraps a keys sequence with holding and releasing modifier keys.
     public func combo(_ keys: Self, shift: Bool = false, control: Bool = false, alt: Bool = false, meta: Bool = false) -> Self {
         var rawValue = ""
 
-        if shift { rawValue += Self.shift.rawValue }
-        if control { rawValue += Self.control.rawValue }
-        if alt { rawValue += Self.alt.rawValue }
-        if meta { rawValue += Self.meta.rawValue }
+        if shift { rawValue += Modifiers.shift.rawValue }
+        if control { rawValue += Modifiers.control.rawValue }
+        if alt { rawValue += Modifiers.alt.rawValue }
+        if meta { rawValue += Modifiers.meta.rawValue }
 
         rawValue += keys.rawValue
 
-        if meta { rawValue += Self.meta.rawValue }
-        if alt { rawValue += Self.alt.rawValue }
-        if control { rawValue += Self.control.rawValue }
-        if shift { rawValue += Self.shift.rawValue }
+        if meta { rawValue += Modifiers.meta.rawValue }
+        if alt { rawValue += Modifiers.alt.rawValue }
+        if control { rawValue += Modifiers.control.rawValue }
+        if shift { rawValue += Modifiers.shift.rawValue }
 
         return Self(rawValue: rawValue)
     }
@@ -167,7 +171,7 @@ extension Keys {
                 // Avoid sending it as a key event, which is dependent on keyboard layout.
                 // For example, the "q" key would type "a" on an AZERTY keyboard layout.
                 // Instead, use the alt+numpad code to type the character.
-                result += Self.alt.rawValue
+                result += Modifiers.alt.rawValue
                 for digit in String(codePoint.value) {
                     switch digit {
                         case "0": result += Self.numpad0.rawValue
@@ -183,7 +187,7 @@ extension Keys {
                         default: fatalError()
                     }
                 }
-                result += Self.alt.rawValue
+                result += Modifiers.alt.rawValue
             }
             else {
                 // Other printable characters will be sent as character events,
