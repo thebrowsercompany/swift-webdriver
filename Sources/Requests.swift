@@ -11,6 +11,18 @@ public enum Requests {
         }
     }
 
+    public struct ResponseWithValueArray<Value>: Codable where Value: Codable {
+        public var value: [Value]
+
+        public init(_ value: [Value]) {
+            self.value = value
+        }
+
+        internal enum CodingKeys: String, CodingKey {
+            case value
+        }
+    }
+
     public struct ElementResponseValue: Codable {
         public var element: String
 
@@ -227,6 +239,33 @@ public enum Requests {
         }
 
         public typealias Response = ResponseWithValue<ElementResponseValue>
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelements
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidelements
+    public struct SessionElements: Request {
+        public var session: String
+        public var element: String? = nil
+        public var using: String
+        public var value: String
+
+        public var pathComponents: [String] {
+            if let element {
+                return ["session", session, "element", element, "elements"]
+            } else {
+                return ["session", session, "elements"]
+            }
+        }
+
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(using: using, value: value) }
+
+        public struct Body: Codable {
+            var using: String
+            var value: String
+        }
+
+        public typealias Response = ResponseWithValueArray<ElementResponseValue>
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidforward
