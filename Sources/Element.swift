@@ -6,7 +6,7 @@ public struct Element {
     public let session: Session
     public let id: String
 
-    public init(in session: Session, id: String) {
+    public init(session: Session, id: String) {
         self.session = session
         self.id = id
     }

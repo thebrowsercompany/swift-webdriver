@@ -2,16 +2,12 @@ import TestsCommon
 @testable import WebDriver
 import XCTest
 
-let base64TestImage: String =
-    "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
-
 /// Tests how usage of high-level Session/Element APIs map to lower-level requests
 class APIToRequestMappingTests: XCTestCase {
     private typealias ResponseWithValue = Requests.ResponseWithValue
 
-    func testSessionAndElement() throws {
+    func testCreateSession() throws {
         let mockWebDriver = MockWebDriver()
-
         mockWebDriver.expect(path: "session", method: .post, type: Requests.Session.self) {
             let capabilities = Capabilities()
             capabilities.platformName = "myPlatform"
@@ -21,30 +17,52 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssertEqual(session.id, "mySession")
         XCTAssertEqual(session.capabilities.platformName, "myPlatform")
 
-        // Session requests unit-tests
+        // Account for session deinitializer
+        mockWebDriver.expect(path: "session/mySession", method: .delete)
+    }
+
+    func testSessionTitle() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/title", method: .get) {
             ResponseWithValue("mySession.title")
         }
         XCTAssertEqual(try session.title, "mySession.title")
+    }
 
+    func testSessionScreenshot() throws {
+        let base64TestImage: String =
+            "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
+
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/screenshot", method: .get) {
             ResponseWithValue(base64TestImage)
         }
         let data: Data = try session.screenshot()
         XCTAssert(isPNG(data: data))
+    }
 
+    func testSessionFindElement() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Requests.SessionElement.self) {
             XCTAssertEqual($0.using, "name")
             XCTAssertEqual($0.value, "myElement.name")
             return ResponseWithValue(.init(element: "myElement"))
         }
-        let element = try session.findElement(byName: "myElement.name")!
+        XCTAssertNotNil(try session.findElement(byName: "myElement.name"))
 
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Requests.SessionActiveElement.self) {
             ResponseWithValue(.init(element: "myElement"))
         }
         _ = try session.activeElement!
+    }
 
+    func testSessionMoveTo() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/moveto", method: .post, type: Requests.SessionMoveTo.self) {
             XCTAssertEqual($0.element, "myElement")
             XCTAssertEqual($0.xOffset, 30)
@@ -52,13 +70,21 @@ class APIToRequestMappingTests: XCTestCase {
             return CodableNone()
         }
         try session.moveTo(element: element, xOffset: 30, yOffset: 0)
+    }
 
+    func testSessionClick() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/click", method: .post, type: Requests.SessionButton.self) {
             XCTAssertEqual($0.button, .left)
             return CodableNone()
         }
         try session.click(button: .left)
+    }
 
+    func testSessionButton() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/buttondown", method: .post, type: Requests.SessionButton.self) {
             XCTAssertEqual($0.button, .right)
             return CodableNone()
@@ -70,22 +96,59 @@ class APIToRequestMappingTests: XCTestCase {
             return CodableNone()
         }
         try session.buttonUp(button: .right)
+    }
 
-        // Element requests unit-tests
+    func testSendKeys() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
 
+        let keys = [ Keys.a, Keys.b, Keys.c ]
+        mockWebDriver.expect(path: "session/mySession/keys", method: .post, type: Requests.SessionKeys.self) {
+            XCTAssertEqual($0.value, keys.map { $0.rawValue })
+            return CodableNone()
+        }
+        try session.sendKeys(keys, releaseModifiers: false)
+
+        mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Requests.ElementValue.self) {
+            XCTAssertEqual($0.value, keys.map { $0.rawValue })
+            return CodableNone()
+        }
+        try element.sendKeys(keys)
+    }
+
+    func testElementText() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/text", method: .get) {
             ResponseWithValue("myElement.text")
         }
         XCTAssertEqual(try element.text, "myElement.text")
+    }
 
+    func testElementAttribute() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/attribute/myAttribute.name", method: .get) {
             ResponseWithValue("myAttribute.value")
         }
         XCTAssertEqual(try element.getAttribute(name: "myAttribute.name"), "myAttribute.value")
+    }
 
+    func testElementClick() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/click", method: .post)
         try element.click()
+    }
 
+    func testElementLocationAndSize() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/location", method: .get, type: Requests.ElementLocation.self) {
             ResponseWithValue(.init(x: 10, y: -20))
         }
@@ -95,21 +158,5 @@ class APIToRequestMappingTests: XCTestCase {
             ResponseWithValue(.init(width: 100, height: 200))
         }
         XCTAssert(try element.size == (width: 100, height: 200))
-
-        let keys = [ Keys.a, Keys.b, Keys.c ]
-        mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Requests.ElementValue.self) {
-            XCTAssertEqual($0.value, keys.map { $0.rawValue })
-            return CodableNone()
-        }
-        try element.sendKeys(keys)
-
-        mockWebDriver.expect(path: "session/mySession/keys", method: .post, type: Requests.SessionKeys.self) {
-            XCTAssertEqual($0.value, keys.map { $0.rawValue })
-            return CodableNone()
-        }
-        try session.sendKeys(keys, releaseModifiers: false)
-
-        // Account for session deinitializer
-        mockWebDriver.expect(path: "session/mySession", method: .delete)
     }
 }
