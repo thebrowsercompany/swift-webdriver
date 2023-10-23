@@ -220,7 +220,7 @@ public class Session {
             return PollResult.success(elementIds)
         }.value
 
-        return elementIds.map { $0.map { Element(in: self, id: $0) } }
+        return elementIds.map { $0.map { Element(session: self, id: $0) } }
     }
 
     /// Moves the pointer to a location relative to the current pointer position or an element.
@@ -289,7 +289,7 @@ public class Session {
     /// - Parameter releaseModifiers: A boolean indicating whether to release modifier keys at the end of the sequence.
     public func sendKeys(_ keys: [Keys], releaseModifiers: Bool = true) throws {
         var value = keys.map { $0.rawValue }
-        if releaseModifiers { value.append(Keys.Modifiers.releaseAll.rawValue) }
+        if releaseModifiers { value.append(Keys.releaseModifiers.rawValue) }
         try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
@@ -297,7 +297,7 @@ public class Session {
     /// - Parameter keys: A key sequence according to the WebDriver spec.
     /// - Parameter releaseModifiers: A boolean indicating whether to release modifier keys at the end of the sequence.
     public func sendKeys(_ keys: Keys, releaseModifiers: Bool = true) throws {
-        let value = releaseModifiers ? [keys.rawValue, Keys.Modifiers.releaseAll.rawValue] : [keys.rawValue]
+        let value = releaseModifiers ? [keys.rawValue, Keys.releaseModifiers.rawValue] : [keys.rawValue]
         try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
