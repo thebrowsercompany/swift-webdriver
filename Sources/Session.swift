@@ -164,7 +164,7 @@ public class Session {
     /// - Parameter byId: id of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
+    public func findElements(byId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, using: "id", value: id, retryTimeout: retryTimeout)
     }
 
@@ -172,7 +172,7 @@ public class Session {
     /// - Parameter byName: name of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byName name: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
+    public func findElements(byName name: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
     }
 
@@ -180,7 +180,7 @@ public class Session {
     /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
+    public func findElements(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
     }
 
@@ -188,7 +188,7 @@ public class Session {
     /// - Parameter byXPath: xpath of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
+    public func findElements(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
     }
 
@@ -196,31 +196,23 @@ public class Session {
     /// - Parameter byClassName: class name of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> [Element]? {
+    public func findElements(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
     }
 
     // Helper for findElements functions above.
-    internal func findElements(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> [Element]? {
+    internal func findElements(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> [Element] {
         let request = Requests.SessionElements(session: id, element: element?.id, using: using, value: value)
 
-        let elementIds = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
-            let elementIds: [String]?
+        return try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
             do {
                 // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                elementIds = try webDriver.send(request).value.map { $0.element }
+                return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
             } catch let error as ErrorResponse where error.status == .noSuchElement {
-                elementIds = nil
+                // Follow the WebDriver spec and keep polling if no elements are found
+                return PollResult.failure([])
             }
-
-            guard let elementIds, elementIds.count > 0 else {
-                return PollResult.failure(elementIds)
-            }
-
-            return PollResult.success(elementIds)
         }.value
-
-        return elementIds.map { $0.map { Element(session: self, id: $0) } }
     }
 
     /// Moves the pointer to a location relative to the current pointer position or an element.
