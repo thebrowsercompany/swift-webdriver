@@ -159,7 +159,6 @@ public class Session {
         return elementId.map { Element(session: self, id: $0) }
     }
 
-
     /// Finds elements by id, starting from the root.
     /// - Parameter byId: id of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
