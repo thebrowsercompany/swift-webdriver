@@ -3,7 +3,7 @@
 This table shows a mapping between WebDriver commands, backend support (currently just WinAppDriver), and the
 swift-webdriver API that implements the given command.
 
-Contributions to expland support to unimplemented functionality are always welcome.
+Contributions to expand support to unimplemented functionality are always welcome.
 
 | Method | Command Path                                        | WinAppDriver | swift-webdriver API |
 |--------|-----------------------------------------------------|--------------|---------------------|
