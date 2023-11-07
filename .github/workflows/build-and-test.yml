@@ -11,7 +11,17 @@ jobs:
     - name: Append to path
       run: |
         $RTLPath = cygpath -w ${{ github.workspace }}/BinaryCache/Developer/Library/Developer/Platforms/Windows.platform/Developer/SDKs/Windows.sdk/usr/bin
-        for ($i = 0; $i -le 50; $i += 1) {
+        for ($i = 0; $i -le 10; $i += 1) {
+          Add-Content ${env:GITHUB_PATH} "${RTLPath}$i"
+        }
+
+    - name: Print path
+      run: Write-Output ${env:Path}
+
+    - name: Append to path
+      run: |
+        $RTLPath = cygpath -w ${{ github.workspace }}/BinaryCache/Developer/Library/Developer/Platforms/Windows.platform/Developer/SDKs/Windows.sdk/usr/bin
+        for ($i = 10; $i -le 20; $i += 1) {
           Add-Content ${env:GITHUB_PATH} "${RTLPath}$i"
         }
 
