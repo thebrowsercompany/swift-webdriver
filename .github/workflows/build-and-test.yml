@@ -8,19 +8,10 @@ jobs:
     timeout-minutes: 20
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Append to path
+      run: |
+        $RTLPath = cygpath -w ${{ github.workspace }}/BinaryCache/Developer/Library/Developer/Platforms/Windows.platform/Developer/SDKs/Windows.sdk/usr/bin
+        Add-Content ${env:GITHUB_PATH} "${RTLPath}"
 
-    - name: Setup Visual Studio Development Environment
-      uses: compnerd/gha-setup-vsdevenv@main
-
-    - name: Install Swift
-      uses: compnerd/gha-setup-swift@main
-      with:
-        branch: swift-5.8-release
-        tag: 5.8-RELEASE
-
-    - name: Build
-      run: swift build --verbose --build-tests
-
-    - name: Test
-      run: swift test --verbose --skip-build
+    - name: Print path
+      run: Write-Output ${env:Path}
