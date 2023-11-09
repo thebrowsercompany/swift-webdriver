@@ -76,6 +76,21 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidenabled
+    public struct ElementEnabled: Request {
+        public var session: String
+        public var element: String
+
+        public var pathComponents: [String] { ["session", session, "element", element, "enabled"] }
+        public var method: HTTPMethod { .get }
+
+        // Override the whole Response struct instead of just ResponseValue
+        // because the value is a Bool, which does not conform to Codable.
+        public struct Response: Codable {
+            public var value: Bool
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public struct ElementValue: Request {
         public var session: String

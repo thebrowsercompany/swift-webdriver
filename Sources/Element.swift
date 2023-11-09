@@ -45,6 +45,14 @@ public struct Element {
         }
     }
 
+    /// Gets a value indicating whether this element is currently enabled.
+    public var enabled: Bool {
+        get throws {
+            try webDriver.send(Requests.ElementEnabled(
+                session: session.id, element: id)).value
+        }
+    }
+
     /// Clicks this element.
     public func click(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.ElementClick(session: session.id, element: id)

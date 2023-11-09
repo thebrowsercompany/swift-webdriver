@@ -50,6 +50,10 @@ class RequestsTests: XCTestCase {
         try XCTAssertEqual(app.findWhatEditBox.getAttribute(name: WinAppDriver.Attributes.className), "Edit")
     }
 
+    func testEnabled() throws {
+        try XCTAssert(app.findWhatEditBox.enabled)
+    }
+
     func testElementClickGivesKeyboardFocus() throws {
         try app.systemSummaryTree.click()
         try XCTAssert(!Self.hasKeyboardFocus(app.findWhatEditBox))

@@ -159,4 +159,14 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try element.size == (width: 100, height: 200))
     }
+
+    func testElementEnabled() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
+        mockWebDriver.expect(path: "session/mySession/element/myElement/enabled", method: .get) {
+            ResponseWithValue(true)
+        }
+        XCTAssert(try element.enabled == true)
+    }
 }
