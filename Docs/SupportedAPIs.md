@@ -27,7 +27,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/element/:id/displayed`         | Supported    | `Element.displayed` |
 | GET    | `/session/:sessionId/element/:id/element`           | Supported    | `Element.findElement()`|
 | GET    | `/session/:sessionId/element/:id/elements`          | Supported    | `Element.findElements()`|
-| GET    | `/session/:sessionId/element/:id/enabled`           | Supported    | Not implemented     |
+| GET    | `/session/:sessionId/element/:id/enabled`           | Supported    | `Element.enabled`   |
 | GET    | `/session/:sessionId/element/:id/equals`            | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/element/:id/location`          | Supported    | `Element.location`  |
 | GET    | `/session/:sessionId/element/:id/location_in_view`  | Supported    | Not implemented     |
