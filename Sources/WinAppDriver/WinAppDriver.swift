@@ -1,5 +1,6 @@
 
 import Foundation
+import WebDriver
 import WinSDK
 
 public class WinAppDriver: WebDriver {

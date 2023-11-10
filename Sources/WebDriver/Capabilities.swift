@@ -1,4 +1,4 @@
-public class Capabilities: Codable {
+open class Capabilities: Codable {
     // From https://www.w3.org/TR/webdriver1/#dfn-capability
     public var platformName: String?
     public var setWindowRect: Bool?

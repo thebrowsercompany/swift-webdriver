@@ -32,6 +32,11 @@ public struct ErrorResponse: Codable, Error {
         public static let sessionNotCreatedException = Self(rawValue: 33)
         public static let moveTargetOutOfBounds = Self(rawValue: 34)
 
+        // WinAppDriver-specific, but we need it in this module,
+        // as we use it when polling for element clickability.
+        /// Indicates that an request could not be completed because the element is not pointer- or keyboard interactable.
+        static let winAppDriver_elementNotInteractable = Self(rawValue: 105)
+
         public init(rawValue: Int) {
             self.rawValue = rawValue
         }
