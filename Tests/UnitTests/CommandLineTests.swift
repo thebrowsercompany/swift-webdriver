@@ -1,4 +1,4 @@
-@testable import WebDriver
+@testable import WinAppDriver
 import XCTest
 
 class CommandLineTests: XCTestCase {

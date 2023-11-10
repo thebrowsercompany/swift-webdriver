@@ -1,26 +1,31 @@
 // swift-tools-version: 5.8
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "swift-webdriver",
     products: [
-        .library(name: "WebDriver", targets: ["WebDriver"]),
+        .library(name: "WebDriver", targets: ["WebDriver", "WinAppDriver"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(name: "WebDriver", path: "Sources"),
-        .target(name: "TestsCommon", path: "Tests/Common"),
+        .target(
+            name: "WebDriver",
+            path: "Sources/WebDriver"),
+        .target(
+            name: "WinAppDriver",
+            dependencies: ["WebDriver"],
+            path: "Sources/WinAppDriver"),
+        .target(
+            name: "TestsCommon",
+            path: "Tests/Common"),
         .testTarget(
             name: "WinAppDriverTests",
-            dependencies: ["WebDriver", "TestsCommon"],
+            dependencies: ["TestsCommon", "WebDriver", "WinAppDriver"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
             linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),
         .testTarget(
             name: "UnitTests",
-            dependencies: ["WebDriver", "TestsCommon"],
+            dependencies: ["TestsCommon", "WebDriver", "WinAppDriver"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
             linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),
     ]

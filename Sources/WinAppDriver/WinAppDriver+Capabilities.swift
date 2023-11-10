@@ -1,4 +1,5 @@
 import struct Foundation.TimeInterval
+import WebDriver
 
 extension WinAppDriver {
     // See https://github.com/microsoft/WinAppDriver/blob/master/Docs/AuthoringTestScripts.md
