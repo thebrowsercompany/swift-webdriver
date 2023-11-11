@@ -57,8 +57,8 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/touch/up`                      | Supported    | `Session.touchUp()` |
 | GET    | `/session/:sessionId/url`                           | Not supported| `Session.url`       |
 | POST   | `/session/:sessionId/url`                           | Not supported| `Session.url()`     |
-| DELETE | `/session/:sessionId/window`                        | Supported    | Not implemented     |
-| POST   | `/session/:sessionId/window`                        | Supported    | Not implemented     |
+| DELETE | `/session/:sessionId/window`                        | Supported    | `Session.window()`  |
+| POST   | `/session/:sessionId/window`                        | Supported    | `Session.window()`  |
 | POST   | `/session/:sessionId/window/maximize`               | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/window/size`                   | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window/size`                   | Supported    | Not implemented     |

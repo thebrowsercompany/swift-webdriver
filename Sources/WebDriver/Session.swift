@@ -5,6 +5,7 @@ import Foundation
 public class Session {
     public let webDriver: any WebDriver
     public let id: String
+    public let windowHandle: String
     public let capabilities: Capabilities
     private var shouldDelete: Bool = true
 
@@ -19,6 +20,14 @@ public class Session {
     public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
         self.webDriver = webDriver
         self.id = existingId
+        self.capabilities = capabilities
+        self.shouldDelete = owned
+    }
+
+    public init(webDriver: any WebDriver, existingId: String, windowHandle: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
+        self.webDriver = webDriver
+        self.id = existingId
+        self.windowHandle = windowHandle
         self.capabilities = capabilities
         self.shouldDelete = owned
     }
@@ -290,6 +299,20 @@ public class Session {
     public func sendKeys(_ keys: Keys, releaseModifiers: Bool = true) throws {
         let value = releaseModifiers ? [keys.rawValue, Keys.releaseModifiers.rawValue] : [keys.rawValue]
         try webDriver.send(Requests.SessionKeys(session: id, value: value))
+    }
+
+    /// Change focus to another window
+    /// - Parameter name: The window to change focus to
+    public func window(name: String) throws {
+        try webDriver.send(Requests.SessionWindow(session: id, name: name))
+    }
+
+    /// Change the size of the specified window
+    /// - Parameter windowHandle: URL parameter is "current", the currently active window will be resized.
+    /// - Parameter width: The new window width.
+    /// - Parameter height: The new window height
+    public func windowHandleSize(windowHandle: String, width: Int, height: Int) throws {
+        try webDriver.send(Requests.SessionWindowHandleSize(session: id, windowHandle: windowHandle, width: width, height: height))
     }
 
     /// Deletes the current session.
