@@ -476,7 +476,9 @@ public enum Requests {
                 public var name: String
             }
         }
+    }
 
+    public enum SessionClose {
         public struct Delete: Request {
             public var session: String
             public var name: String
@@ -492,7 +494,7 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandlesize
-    public enum SessionWindowHandleSize {
+    public enum SessionWindowSize {
         public struct Post: Request {
             public var session: String
             public var windowHandle: String
@@ -512,17 +514,11 @@ public enum Requests {
         public struct Get: Request {
             public var session: String
             public var windowHandle: String
-            public var width: Int
-            public var height: Int
-
+            
             public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
             public var method: HTTPMethod { .get }
-            public var body: Body { .init(width: Int, height: Int) }
 
-            public struct Body: Codable {
-                public var width: Int
-                public var height: Int
-            }
+            public typealias Response = ResponseWithValue<String>
         }
     }
 

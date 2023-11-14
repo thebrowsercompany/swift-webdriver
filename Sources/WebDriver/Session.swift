@@ -302,17 +302,23 @@ public class Session {
     }
 
     /// Change focus to another window
-    /// - Parameter window: The window to change focus to
-    public func focus(window: String) throws {
+    /// - Parameter name: The window to change focus to
+    public func focus(window name: String) throws {
         try webDriver.send(Requests.SessionWindow(session: id, name: name))
     }
 
+    /// Close selected window
+    /// - Parameter name: The selected window to close
+    public func close(window name: String) throws {
+        try webDriver.send(Requests.SessionClose(session: id, name: name))
+    }
+
     /// Change the size of the specified window
-    /// - Parameter windowHandle: URL parameter is "current", the currently active window will be resized.
+    /// - Parameter name: URL parameter is "current", the currently active window will be resized.
     /// - Parameter width: The new window width.
     /// - Parameter height: The new window height
-    public func resize(window: String, width: Int, height: Int) throws {
-        try webDriver.send(Requests.SessionWindowHandleSize(session: id, windowHandle: windowHandle, width: width, height: height))
+    public func resize(window name: String, width: Int, height: Int) throws {
+        try webDriver.send(Requests.SessionWindowSize(session: id, windowHandle: name, width: width, height: height))
     }
 
     /// Deletes the current session.
