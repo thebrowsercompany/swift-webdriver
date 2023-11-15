@@ -169,24 +169,4 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try element.enabled == true)
     }
-
-    func testSessionScript() throws {
-        let mockWebDriver = MockWebDriver()
-        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self) {
-            XCTAssertEqual($0.script, "return document.body")
-            XCTAssertEqual($0.args, [])
-            return CodableNone()
-        }
-    }
-
-    func testSessionAsync() throws {
-        let mockWebDriver = MockWebDriver()
-        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionAsync.self) {
-            XCTAssertEqual($0.script, "return document.body")
-            XCTAssertEqual($0.args, [])
-            return CodableNone()
-        }
-    }
 }

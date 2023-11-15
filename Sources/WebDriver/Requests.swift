@@ -462,42 +462,6 @@ public enum Requests {
         }
     }
 
-    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute
-    public enum SessionScript {
-        public struct Post: Request {
-            public var session: String
-            public var script: String
-            public var args: [String]
-
-            public var pathComponents: [String] { ["session", session, "execute"] }
-            public var method: HTTPMethod { .post }
-            public var body: Body { .init(script: String, args: [String]) }
-
-            public struct Body: Codable {
-                public var script: String
-                public var args: [String]
-            }
-        }
-    }
-
-    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-    public enum SessionAsync {
-        public struct Post: Request {
-            public var session: String
-            public var script: String
-            public var args: [String]
-
-            public var pathComponents: [String] { ["session", session, "execute_async"] }
-            public var method: HTTPMethod { .post }
-            public var body: Body { .init(script: String, args: [String]) }
-
-            public struct Body: Codable {
-                public var script: String
-                public var args: [String]
-            }
-        }
-    }
-
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
     public struct Status: Request {
         public var pathComponents: [String] { ["status"] }
