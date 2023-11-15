@@ -5,7 +5,6 @@ import Foundation
 public class Session {
     public let webDriver: any WebDriver
     public let id: String
-    public let windowHandle: String
     public let capabilities: Capabilities
     private var shouldDelete: Bool = true
 
@@ -20,14 +19,6 @@ public class Session {
     public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
         self.webDriver = webDriver
         self.id = existingId
-        self.capabilities = capabilities
-        self.shouldDelete = owned
-    }
-
-    public init(webDriver: any WebDriver, existingId: String, windowHandle: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
-        self.webDriver = webDriver
-        self.id = existingId
-        self.windowHandle = windowHandle
         self.capabilities = capabilities
         self.shouldDelete = owned
     }
@@ -304,21 +295,26 @@ public class Session {
     /// Change focus to another window
     /// - Parameter name: The window to change focus to
     public func focus(window name: String) throws {
-        try webDriver.send(Requests.SessionWindow(session: id, name: name))
+        try webDriver.send(Requests.SessionWindow.Post(session: id, name: name))
     }
 
     /// Close selected window
     /// - Parameter name: The selected window to close
     public func close(window name: String) throws {
-        try webDriver.send(Requests.SessionClose(session: id, name: name))
+        try webDriver.send(Requests.SessionWindow.Delete(session: id, name: name))
+    }
+
+    public func size(window handle: String) throws -> (width: Int, height: Int) {
+        let response = try webDriver.send(Requests.SessionWindowSize.Get(session: id, windowHandle: handle))
+        return (width: response.value.width, height: response.value.height)
     }
 
     /// Change the size of the specified window
     /// - Parameter name: URL parameter is "current", the currently active window will be resized.
     /// - Parameter width: The new window width.
     /// - Parameter height: The new window height
-    public func resize(window name: String, width: Int, height: Int) throws {
-        try webDriver.send(Requests.SessionWindowSize(session: id, windowHandle: name, width: width, height: height))
+    public func resize(window handle: String, width: Int, height: Int) throws {
+        try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
     /// Deletes the current session.

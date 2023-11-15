@@ -173,22 +173,22 @@ class APIToRequestMappingTests: XCTestCase {
     func testWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/window", method: .post, type: Requests.SessionWindow.self)
-        XCTAssertNotNil(try session.window())
+        mockWebDriver.expect(path: "session/mySession/window", method: .post)
+        try session.focus(window: "myWindow")
 
-        mockWebDriver.expect(path: "session/mySession/window", method: .delete, type: Requests.SessionClose.self)
-        XCTAssertNil(try session.window())
+        mockWebDriver.expect(path: "session/mySession/window", method: .delete)
+        try session.close(window: "myWindow")
     }
 
     func testWindowHandleSize() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
-        let session = Session(webDriver: mockWebDriver, existingId: "mySession", windowHandle: "current")
-        mockWebDriver.expect(path: "session/mySession/window/current/size", method: .post, type: Requests.SessionWindowSize.self)
-        XCTAssertNotNil(try session.windowHandle(width: 500, height: 500))
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .post)
+        try session.resize(window: "myWindow", width: 500, height: 500)
 
-        mockWebDriver.expect(path: "session/mySession/window/current/size", method: .get, type: Requests.SessionWindowSize.self) {
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.SessionWindowSize.Get.self) {
             ResponseWithValue(.init(width: 500, height: 500))
         }
-        XCTAssert(try session.windowHandle == (width: 500, height: 500))
+        XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
     }
 }

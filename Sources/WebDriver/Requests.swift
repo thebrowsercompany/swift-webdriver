@@ -476,9 +476,7 @@ public enum Requests {
                 public var name: String
             }
         }
-    }
 
-    public enum SessionClose {
         public struct Delete: Request {
             public var session: String
             public var name: String
@@ -503,7 +501,7 @@ public enum Requests {
 
             public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
             public var method: HTTPMethod { .post }
-            public var body: Body { .init(width: Int, height: Int) }
+            public var body: Body { .init(width: width, height: height) }
 
             public struct Body: Codable {
                 public var width: Int
@@ -514,11 +512,15 @@ public enum Requests {
         public struct Get: Request {
             public var session: String
             public var windowHandle: String
-            
+
             public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
             public var method: HTTPMethod { .get }
 
-            public typealias Response = ResponseWithValue<String>
+            public typealias Response = ResponseWithValue<ResponseValue>
+            public struct ResponseValue: Codable {
+                public var width: Int
+                public var height: Int
+            }
         }
     }
 
