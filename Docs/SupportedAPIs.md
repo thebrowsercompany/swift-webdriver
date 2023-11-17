@@ -69,3 +69,6 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window_handle`                 | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window_handles`                | Supported    | Not implemented     |
+
+
+## Usage
