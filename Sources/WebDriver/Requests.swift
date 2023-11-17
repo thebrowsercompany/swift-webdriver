@@ -462,6 +462,101 @@ public enum Requests {
         }
     }
 
+  // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute
+    public enum SessionScript {
+        public struct Post: Request {
+            public var session: String
+            public var script: String
+            public var args: [String]
+
+            public var pathComponents: [String] { ["session", session, "execute"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(script: String, args: [String]) }
+
+            public struct Body: Codable {
+                public var script: String
+                public var args: [String]
+            }
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
+    public enum SessionAsync {
+        public struct Post: Request {
+            public var session: String
+            public var script: String
+            public var args: [String]
+
+            public var pathComponents: [String] { ["session", session, "execute_async"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(script: String, args: [String]) }
+
+            public struct Body: Codable {
+                public var script: String
+                public var args: [String]
+              
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow
+    public enum SessionWindow {
+        public struct Post: Request {
+            public var session: String
+            public var name: String
+
+            public var pathComponents: [String] { ["session", session, "window"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(name: name) }
+
+            public struct Body: Codable {
+                public var name: String
+            }
+        }
+
+        public struct Delete: Request {
+            public var session: String
+            public var name: String
+
+            public var pathComponents: [String] { ["session", session, "window"] }
+            public var method: HTTPMethod { .delete }
+            public var body: Body { .init(name: name) }
+
+            public struct Body: Codable {
+                public var name: String
+            }
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandlesize
+    public enum SessionWindowSize {
+        public struct Post: Request {
+            public var session: String
+            public var windowHandle: String
+            public var width: Int
+            public var height: Int
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(width: width, height: height) }
+
+            public struct Body: Codable {
+                public var width: Int
+                public var height: Int
+            }
+        }
+
+        public struct Get: Request {
+            public var session: String
+            public var windowHandle: String
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
+            public var method: HTTPMethod { .get }
+
+            public typealias Response = ResponseWithValue<ResponseValue>
+            public struct ResponseValue: Codable {
+                public var width: Int
+                public var height: Int
+            }
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
     public struct Status: Request {
         public var pathComponents: [String] { ["status"] }
