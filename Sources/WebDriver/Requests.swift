@@ -494,7 +494,9 @@ public enum Requests {
             public struct Body: Codable {
                 public var script: String
                 public var args: [String]
-              
+        }
+    }
+}
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow
     public enum SessionWindow {
         public struct Post: Request {
