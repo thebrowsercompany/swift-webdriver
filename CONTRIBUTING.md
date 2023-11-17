@@ -7,7 +7,7 @@ All UI tests are located in the `Tests` directory. Build and run tests using `sw
 For additional examples, refer to the `Tests\WebDriverTests` directory.
 
 ##Bug Submissions
-If you've found a bug in the project feel free to open an issue [here](https://github.com/thebrowsercompany/swift-webdriver/issues/new). Please follow the [issues template](swift-webdriver/Docs/IssueTemplate.md).
+If you've found a bug in the project feel free to open an issue [here](https://github.com/thebrowsercompany/swift-webdriver/issues/new). Please follow the issues template provided.
 
 ##Enhancement Requests
 To submit an enhancement open a new issue with the `enhancements` tag with details for what you think would be good to add.
