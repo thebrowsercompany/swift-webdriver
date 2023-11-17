@@ -1,0 +1,2 @@
+## Contribution Guidelines
+Welcome to swift-webdriver a Swift library for UI automation of apps and browsers via communication with [WebDriver](https://w3c.github.io/webdriver/) endpoints, such as [Selenium](https://www.selenium.dev/), [Appium](http://appium.io/) or the [Windows Application Driver](https://github.com/microsoft/WinAppDriver). We welcome contributions of all kinds however before contributing please read this entire document to ensure quality pull requests
