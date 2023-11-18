@@ -72,3 +72,16 @@ Contributions to expand support to unimplemented functionality are always welcom
 
 
 ## Usage
+All usage examples are based on the session being initialized with the variable name `session` as shown here 
+```
+let session = Session(
+    webDriver: WinAppDriver.start(), // Requires WinAppDriver to be installed on the machine
+    desiredCapabilities: WinAppDriver.Capabilities.startApp(name: "notepad.exe"))
+session.findElement(byName: "close")?.click()
+```
+
+### Session.delete()
+```
+// Delete the session.
+session.delete(name: "MySession")
+```
