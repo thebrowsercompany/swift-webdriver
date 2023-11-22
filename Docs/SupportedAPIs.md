@@ -74,14 +74,14 @@ Contributions to expand support to unimplemented functionality are always welcom
 ## Example Usage
 
 ### 1. Installing Swift
-Swift-WebDriver works with Swift 3 and onwards. If you haven't already, install the [most recent release of swift here](https://www.swift.org/install/windows/#installation-via-windows-package-manager). Verify installation with `swift -v` in the terminal
+Swift-WebDriver works with Swift 5.9 and onwards. If you haven't already, install the [most recent release of swift here](https://www.swift.org/install/windows/#installation-via-windows-package-manager). Verify installation with `swift -v` in the terminal
 
 ### 2. Initialize Directory
-Once you have verified the installation run the command:
-```bash
-mkdir swift-webdriver \
-cd swift-webdriver \
-swift package init --name swift-webdriver --type executable \
+Once you have verified the installation run the command in Windows Command Prompt:
+```cmd
+mkdir swift-webdriver ^
+cd swift-webdriver ^
+swift package init --name swift-webdriver --type executable ^
 ``` 
 
 ### 3. Add Swift-WebDriver
@@ -120,4 +120,4 @@ session.screenshot()
 // Close the selected window
 session.close("<Current-Window>")
 ```
-Save the file and execute the command `swift --run`.
+Save the file and execute the command `swift run`.
