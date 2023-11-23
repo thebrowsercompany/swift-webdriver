@@ -463,7 +463,7 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute
-    public struct SessionScript {
+    public struct SessionScript: Request {
         public var session: String
         public var script: String
         public var args: [String]
@@ -479,7 +479,7 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-    public struct SessionAsync {
+    public struct SessionAsync: Request {
         public var session: String
         public var script: String
         public var args: [String]
