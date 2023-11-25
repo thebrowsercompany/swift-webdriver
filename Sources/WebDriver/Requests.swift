@@ -429,7 +429,7 @@ public enum Requests {
             public var xOffset: Int
             public var yOffset: Int
 
-            private enum CodableKeys: String, CodingKey {
+            private enum CodingKeys: String, CodingKey {
                 case element = "element"
                 case xOffset = "xoffset"
                 case yOffset = "yoffset"
