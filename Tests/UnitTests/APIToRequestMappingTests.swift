@@ -177,7 +177,6 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/touch/scroll", method: .post)
         try session.touchScroll(element: element, xOffset: 9, yOffset: 16)
     }
-}
 
     func testWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
