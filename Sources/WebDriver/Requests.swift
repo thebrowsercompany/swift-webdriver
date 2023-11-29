@@ -463,36 +463,23 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
     public struct SessionScript: Request {
         public var session: String
-        public var script: String
+        public var script: Any
         public var args: [String]
+        public var async: Bool
 
-            public var pathComponents: [String] { ["session", session, "execute"] }
-            public var method: HTTPMethod { .post }
-            public var body: Body { .init(script: script, args: args) }
+        public var pathComponents: [String] { ["session", session, async ? "execute_async" : "execute"] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(script: script, args: args) }
 
         public struct Body: Codable {
             public var script: String
             public var args: [String]
         }
     }
-
-    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
-    public struct SessionAsync: Request {
-        public var session: String
-        public var script: String
-        public var args: [String]
-
-        public var pathComponents: [String] { ["session", session, "execute_async"] }
-        public var method: HTTPMethod { .post }
-        public var body: Body { .init(script: script, args: args)}
-
-        public struct Body: Codable {
-            public var script: String
-            public var args: [String]
-    }
-}
+    
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow
     public enum SessionWindow {
         public struct Post: Request {
