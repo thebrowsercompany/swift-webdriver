@@ -173,17 +173,26 @@ class APIToRequestMappingTests: XCTestCase {
     func testSessionScript() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/execute", method: .post)
         try session.execute(javascript: "return document.body", args: [], async: false)
-        XCTAssertNotEqual(session.execute, nil)
+        mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self) {
+            XCTAssertEqual($0.javascript, "return document.body")
+            XCTAssertEqual($0.args, [])
+            XCTAssertEqual($0.async, true)
+            return CodableNone()
+        }
+        try session.execute(javascript: "return document.body", args: [], async: false)
     }
 
     func testSessionScriptAsync() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post)
+        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self) {
+            XCTAssertEqual($0.javascript, "return document.body")
+            XCTAssertEqual($0.args, [])
+            XCTAssertEqual($0.async, true)
+            return CodableNone()
+        }
         try session.execute(javascript: "return document.body", args: [], async: true)
-        XCTAssertNotEqual(session.execute, nil)
     }
 
     func testWindow() throws {

@@ -466,7 +466,7 @@ public enum Requests {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidexecute_async
     public struct SessionScript: Request {
         public var session: String
-        public var script: Any
+        public var script: String
         public var args: [String]
         public var async: Bool
 
