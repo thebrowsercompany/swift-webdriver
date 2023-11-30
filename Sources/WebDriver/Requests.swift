@@ -477,13 +477,6 @@ public enum Requests {
             public var script: String
             public var args: [String]
         }
-
-        public typealias Response = ResponseWithValue<ResponseValue>
-        public struct ResponseValue: Codable {
-            public var script: Any
-            public var args: Any
-            public var async: Bool
-        }
     }
     
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow
