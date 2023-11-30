@@ -473,7 +473,7 @@ public enum Requests {
         public var pathComponents: [String] { ["session", session, async ? "execute_async" : "execute"] }
         public var method: HTTPMethod { .post }
         public var body: Body { .init(script: script, args: args) }
-
+        public typealias Response = ResponseWithValue<ResponseValue>
         public struct Body: Codable {
             public var script: String
             public var args: [String]

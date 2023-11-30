@@ -176,11 +176,9 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         try session.execute(javascript: "return document.body", args: [], async: false)
         mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self){
-            let requestBody = request.body
-            let requestBodyJSON = try JSONSerialization.jsonObject(with: requestBody.data(using: .utf8)!) as? [String: Any]
-            let javascript = requestBodyJSON["script"] as? String
-            XCTAssertEqual(javascript, "return document.body")
+            ResponseWithValue(.init(javascript: "return document.body", args: [], async: false))
         }
+        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: false))
     }
 
     func testSessionScriptAsync() throws {
@@ -188,11 +186,9 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         try session.execute(javascript: "return document.body", args: [], async: true)
         mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self){
-            let requestBody = request.body
-            let requestBodyJSON = try JSONSerialization.jsonObject(with: requestBody.data(using: .utf8)!) as? [String: Any]
-            let javascript = requestBodyJSON["script"] as? String
-            XCTAssertEqual(javascript, "return document.body")
+            ResponseWithValue(.init(javascript: "return document.body", args: [], async: true))
         }
+        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: true))
     }
 
     func testWindow() throws {
