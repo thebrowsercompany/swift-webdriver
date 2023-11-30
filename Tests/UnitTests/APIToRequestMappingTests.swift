@@ -2,7 +2,6 @@ import TestsCommon
 @testable import WebDriver
 import XCTest
 
-
 /// Tests how usage of high-level Session/Element APIs map to lower-level requests
 class APIToRequestMappingTests: XCTestCase {
     private typealias ResponseWithValue = Requests.ResponseWithValue
