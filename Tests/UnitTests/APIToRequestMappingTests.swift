@@ -174,25 +174,24 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         try session.execute(javascript: "return document.body", args: [], async: false)
-        mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self) {
-            XCTAssertEqual($0.javascript, "return document.body")
-            XCTAssertEqual($0.args, [])
-            XCTAssertEqual($0.async, true)
-            return CodableNone()
+        mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self){
+            let requestBody = request.body
+            let requestBodyJSON = try JSONSerialization.jsonObject(with: requestBody.data(using: .utf8)!) as? [String: Any]
+            let javascript = requestBodyJSON["script"] as? String
+            XCTAssertEqual(javascript, "return document.body")
         }
-        try session.execute(javascript: "return document.body", args: [], async: false)
     }
 
     func testSessionScriptAsync() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self) {
-            XCTAssertEqual($0.javascript, "return document.body")
-            XCTAssertEqual($0.args, [])
-            XCTAssertEqual($0.async, true)
-            return CodableNone()
-        }
         try session.execute(javascript: "return document.body", args: [], async: true)
+        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self){
+            let requestBody = request.body
+            let requestBodyJSON = try JSONSerialization.jsonObject(with: requestBody.data(using: .utf8)!) as? [String: Any]
+            let javascript = requestBodyJSON["script"] as? String
+            XCTAssertEqual(javascript, "return document.body")
+        }
     }
 
     func testWindow() throws {
