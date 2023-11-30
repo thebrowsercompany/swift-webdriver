@@ -178,7 +178,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self){
             ResponseWithValue(.init(javascript: "return document.body", args: [], async: false))
         }
-        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: false))
+        XCTAssert(try session.execute(javascript: "return document.body", args: [], async: false) == (javascript: "return document.body", args: [], async: false))
     }
 
     func testSessionScriptAsync() throws {
@@ -188,7 +188,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self){
             ResponseWithValue(.init(javascript: "return document.body", args: [], async: true))
         }
-        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: true))
+        XCTAssert(try session.execute(javascript: "return document.body", args: [], async: true) == (javascript: "return document.body", args: [], async: true))
     }
 
     func testWindow() throws {
