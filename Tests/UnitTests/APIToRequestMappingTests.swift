@@ -170,6 +170,14 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try element.enabled == true)
     }
 
+    func testSessionTouchScroll() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
+        mockWebDriver.expect(path: "session/mySession/touch/scroll", method: .post)
+        try session.touchScroll(element: element, xOffset: 9, yOffset: 16)
+    }
+
     func testWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
