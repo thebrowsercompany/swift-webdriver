@@ -188,6 +188,7 @@ class APIToRequestMappingTests: XCTestCase {
             XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: true))
             return CodableNone()
         }
+    }
 
     func testSessionTouchScroll() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
