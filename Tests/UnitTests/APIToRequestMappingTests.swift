@@ -169,4 +169,16 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try element.enabled == true)
     }
+
+    func testWindowHandleSize() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
+        try session.reposition(window: "myWindow", x: 9, y: 16)
+
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.SessionPosition.Get.self) {
+            ResponseWithValue(.init(x: 9, y: 16))
+        }
+        XCTAssert(try session.position(window: "myWindow") == (x: 9, y: 16))
+    }
 }

@@ -298,6 +298,21 @@ public class Session {
         try webDriver.send(Requests.SessionDelete(session: id))
         shouldDelete = false
     }
+ 
+    /// - Parameter windowHandle: Name of current window
+    /// - Returns: Current window position in form of {x,y} where x and y are the upper left corner of the screen
+    public func position(windowHandle: String) throws -> (x: Int, y: Int) {
+        let response = try webDriver.send(Requests.SessionPosition.Get(session: id, windowHandle: windowHandle))
+        return (x: response.value.x, y: response.value.y)
+    }
+
+    /// - Parameters:
+    ///   - windowHandle: Name of current window
+    ///   - x: Position in the top left corner of the x coordinate
+    ///   - y: Position in the top left corner of the y coordinate
+    public func reposition(windowHandle: String, x: Int, y: Int) {
+        try webDriver.send(Requests.SessionPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
+    }
 
     deinit {
         do { try delete() }
