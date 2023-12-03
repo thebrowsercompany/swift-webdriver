@@ -317,6 +317,14 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
+    /// 
+    /// - Parameter many: Bool value that will return multiple window handles 
+    /// - Returns: either current window handle or many based on bool flag
+    public func windowHandle(many: Bool) throws -> (windowHandle: String, windowHandles: [String]) {
+        let response = try webDriver.send(Requests.SessionWindowHandle(session: id, many: many))
+        return (windowHandle: response.value.windowHandle, windowHandles: response.value.windowHandles)
+    }
+
     /// Deletes the current session.
     public func delete() throws {
         guard shouldDelete else { return }

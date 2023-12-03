@@ -199,4 +199,24 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
     }
+
+    func testWindowHandle() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+
+        mockWebDriver.expect(path: "session/mySession/window_handle", method: .get, type: Requests.SessionWindowHandle.self) {
+            ResponseWithValue(.init(windowHandle: "myWindow", windowHandles: []))
+        }
+        XCTAssert(try session.windowHandle(many: false) == (windowHandle: "myWindow", windowHandles: []))
+    }
+
+        func testWindowHandles() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+
+        mockWebDriver.expect(path: "session/mySession/window_handles", method: .get, type: Requests.SessionWindowHandle.self) {
+            ResponseWithValue(.init(windowHandle: nil, windowHandles: ["myWindow", "myWindow"]))
+        }
+        XCTAssert(try session.windowHandle(many: true) == (windowHandle: "myWindow", windowHandles: []))
+    }
 }
