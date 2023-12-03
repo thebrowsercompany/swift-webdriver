@@ -429,7 +429,7 @@ public enum Requests {
             public var xOffset: Int
             public var yOffset: Int
 
-            private enum CodableKeys: String, CodingKey {
+            private enum CodingKeys: String, CodingKey {
                 case element = "element"
                 case xOffset = "xoffset"
                 case yOffset = "yoffset"
@@ -458,6 +458,68 @@ public enum Requests {
 
             public struct Body: Codable {
                 public var url: String
+            }
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow
+    public enum SessionWindow {
+        public struct Post: Request {
+            public var session: String
+            public var name: String
+
+            public var pathComponents: [String] { ["session", session, "window"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(name: name) }
+
+            public struct Body: Codable {
+                public var name: String
+            }
+        }
+
+        public struct Delete: Request {
+            public var session: String
+            public var name: String
+
+            public var pathComponents: [String] { ["session", session, "window"] }
+            public var method: HTTPMethod { .delete }
+            public var body: Body { .init(name: name) }
+
+            public struct Body: Codable {
+                public var name: String
+            }
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandlesize
+    public enum SessionWindowSize {
+        public struct Post: Request {
+            public var session: String
+            public var windowHandle: String
+            public var width: Int
+            public var height: Int
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(width: width, height: height) }
+
+            public struct Body: Codable {
+                public var width: Int
+                public var height: Int
+            }
+        }
+
+        public struct Get: Request {
+            public var session: String
+            public var windowHandle: String
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
+            public var method: HTTPMethod { .get }
+
+            public typealias Response = ResponseWithValue<ResponseValue>
+            public struct ResponseValue: Codable {
+                public var width: Int
+                public var height: Int
             }
         }
     }
