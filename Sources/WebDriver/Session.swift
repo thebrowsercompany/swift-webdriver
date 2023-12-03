@@ -335,7 +335,7 @@ public class Session {
     ///   - windowHandle: Name of current window
     ///   - x: Position in the top left corner of the x coordinate
     ///   - y: Position in the top left corner of the y coordinate
-    public func reposition(windowHandle: String, x: Int, y: Int) {
+    public func reposition(windowHandle: String, x: Int, y: Int) throws {
         try webDriver.send(Requests.SessionPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
     }
 
