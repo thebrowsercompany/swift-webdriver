@@ -215,8 +215,8 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
 
         mockWebDriver.expect(path: "session/mySession/window_handles", method: .get, type: Requests.SessionWindowHandle.self) {
-            ResponseWithValue(.init(windowHandle: nil, windowHandles: ["myWindow", "myWindow"]))
+            ResponseWithValue(.init(windowHandle: "", windowHandles: ["myWindow", "myWindow"]))
         }
-        XCTAssert(try session.windowHandle(many: true) == (windowHandle: "myWindow", windowHandles: []))
+        XCTAssert(try session.windowHandle(many: true) == (windowHandle: "", windowHandles: ["myWindow", "myWindow"]))
     }
 }
