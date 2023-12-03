@@ -564,4 +564,13 @@ public enum Requests {
             }
         }
     }
+
+    public struct SessionMaximize: Request {
+        public var session: String
+        public var windowHandle: String 
+
+        public var pathComponents: [String] = { ["session", session, "window", windowHandle, "maximize"] }
+        public var method: HTTPMethod = { .post }
+
+    }
 }

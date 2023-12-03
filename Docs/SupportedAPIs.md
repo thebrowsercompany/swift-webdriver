@@ -66,6 +66,6 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/window/:windowHandle/size`     | Supported    | `Session.size()`    |
 | POST   | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Session.reposition()`|
 | GET    | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Session.position()`|
-| POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | Not implemented     |
+| POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | `Session.maximize()`|
 | GET    | `/session/:sessionId/window_handle`                 | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window_handles`                | Supported    | Not implemented     |

@@ -339,6 +339,11 @@ public class Session {
         try webDriver.send(Requests.SessionPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
     }
 
+    /// Maximize specific window if :windowHandle is "current" the current window will be maximized
+    public func maximize(windowHandle: String) throws {
+        try webDriver.send(Requests.SessionMaximize(session: id, windowHandle: windowHandle))
+    }
+
     deinit {
         do { try delete() }
         catch let error as ErrorResponse {
