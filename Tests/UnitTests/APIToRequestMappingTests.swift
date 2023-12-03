@@ -173,21 +173,15 @@ class APIToRequestMappingTests: XCTestCase {
     func testSessionScript() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        try session.execute(javascript: "return document.body", args: [], async: false)
-        mockWebDriver.expect(path: "session/mySession/execute", method: .post, type: Requests.SessionScript.self){
-            XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: false))
-            return CodableNone()
-        }
+        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post)
+        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: ["script"], async: false))
     }
 
     func testSessionScriptAsync() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        try session.execute(javascript: "return document.body", args: [], async: true)
-        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post, type: Requests.SessionScript.self){
-            XCTAssertNotNil(try session.execute(javascript: "return document.body", args: [], async: true))
-            return CodableNone()
-        }
+        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post)
+        XCTAssertNotNil(try session.execute(javascript: "return document.body", args: ["script"], async: true))
     }
 
     func testSessionTouchScroll() throws {
