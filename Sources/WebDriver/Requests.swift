@@ -540,8 +540,8 @@ public enum Requests {
             public var x: Int
             public var y: Int 
 
-            public var pathComponents: [String] = { ["session" + session, "window", windowHandle, "position"] }
-            public var method: HTTPMethod = { .post }
+            public var pathComponents: [String] { ["session" + session, "window", windowHandle, "position"] }
+            public var method: HTTPMethod { .post }
             public var body: Body { .init(x: x, y: y) }
 
             public struct Body: Codable {
@@ -554,8 +554,8 @@ public enum Requests {
             public var session: String
             public var windowHandle: String
 
-            public var pathComponents: [String] = { ["session" + session, "window", windowHandle, "position"] }
-            public var method: HTTPMethod = { .get }
+            public var pathComponents: [String] { ["session" + session, "window", windowHandle, "position"] }
+            public var method: HTTPMethod { .get }
 
             public typealias Response = ResponseWithValue<ResponseValue>
             public struct ResponseValue: Codable {
@@ -569,8 +569,8 @@ public enum Requests {
         public var session: String
         public var windowHandle: String 
 
-        public var pathComponents: [String] = { ["session", session, "window", windowHandle, "maximize"] }
-        public var method: HTTPMethod = { .post }
+        public var pathComponents: [String] { ["session", session, "window", windowHandle, "maximize"] }
+        public var method: HTTPMethod { .post }
 
     }
 }
