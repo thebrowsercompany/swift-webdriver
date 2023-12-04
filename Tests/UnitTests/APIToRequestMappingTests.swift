@@ -204,7 +204,7 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
-        mockWebDriver.expect(path: "session/mySession/touch/scroll", method: .post)
+        mockWebDriver.expect(path: "session/mySession/touch/doubleclick", method: .post)
         XCTAssertNotNil(try element.doubleClick(element: "myElement"))
     }
 
