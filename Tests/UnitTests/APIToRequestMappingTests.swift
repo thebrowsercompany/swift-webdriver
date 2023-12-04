@@ -170,16 +170,16 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try element.enabled == true)
     }
 
-    func testWindowHandleSize() throws {
+    func testWindowHandlePosition() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
-        try session.reposition(window: "myWindow", x: 9, y: 16)
+        try session.reposition(windowHandle: "myWindow", x: 9, y: 16)
 
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.SessionPosition.Get.self) {
             ResponseWithValue(.init(x: 9, y: 16))
         }
-        XCTAssert(try session.position(window: "myWindow") == (x: 9, y: 16))
+        XCTAssert(try session.position(windowHandle: "myWindow") == (x: 9, y: 16))
     }
 
     func testSessionTouchScroll() throws {
@@ -214,8 +214,8 @@ class APIToRequestMappingTests: XCTestCase {
 
     func testMaximizeSelectedWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
-        let session: Session = Session(webDriver: WebDriver, existingId: "mySession")
+        let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
-        try session.maximize(window: "myWindow")
+        try session.maximize(windowHandle: "myWindow")
     }
 }
