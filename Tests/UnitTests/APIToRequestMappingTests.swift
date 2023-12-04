@@ -207,7 +207,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/location", method: .post)
         try session.setLocation(latitude: 5, longitude: 20, altitude: 2003)
 
-        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.SessionGeoLocation.Get.self) {
+        mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionGeoLocation.Get.self) {
             ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
         }
         XCTAssert(try session.getLocation() == (latitude: 5, longitude: 20, altitude: 2003))
