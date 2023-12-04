@@ -319,7 +319,7 @@ public class Session {
 
     /// - Returns: The current page source.
     public func source() throws -> String {
-        let response = try webDriver.send(Request.SessionSource(session: id))
+        let response = try webDriver.send(Requests.SessionSource(session: id))
         return response.value.source
     }
 
