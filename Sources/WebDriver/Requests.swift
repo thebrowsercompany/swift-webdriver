@@ -533,7 +533,7 @@ public enum Requests {
 
         public typealias Response = ResponseWithValue<ResponseValue>
 
-        public struct ResponseWithValue: Codable {
+        public struct ResponseValue: Codable {
             public var source: String
         }
 
