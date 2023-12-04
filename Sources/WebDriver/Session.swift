@@ -333,6 +333,12 @@ public class Session {
         return response.value.screenOrientation
     }
 
+    public func delete() throws {
+        guard shouldDelete else { return }
+        try webDriver.send(Requests.SessionDelete(session: id))
+        shouldDelete = false
+    }
+
     deinit {
         do { try delete() }
         catch let error as ErrorResponse {
