@@ -205,7 +205,7 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/scroll", method: .post)
-        try element.doubleClick(element: element)
+        XCTAssertNotNil(try element.doubleClick(element: "myElement"))
     }
 
     func testElementFlick() throws {
@@ -213,14 +213,13 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
-        try element.precisionFlick(element: element, xOffset: 5, yOffset: 20, speed: 2003)
+        XCTAssertNotNil(try element.precisionFlick(element: "myElement", xOffset: 5, yOffset: 20, speed: 2003))
     }
 
     func testSessionFlick() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
-        try session.flick(xSpeed: 5, ySpeed: 20)
+        XCTAssertNotNil(try session.flick(xSpeed: 5, ySpeed: 20))
     }
 }
