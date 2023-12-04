@@ -317,6 +317,12 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
+    /// - Returns: The current page source.
+    public func source() throws -> String {
+        let response = try webDriver.send(Request.SessionSource(session: id))
+        return response.value.source
+    }
+
     /// Deletes the current session.
     public func delete() throws {
         guard shouldDelete else { return }
