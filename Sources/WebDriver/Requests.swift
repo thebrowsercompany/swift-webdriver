@@ -524,6 +524,55 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchdoubleclick
+    public struct SessionTouchDoubleClick: Request {
+        public var session: String
+        public var element: String 
+
+        public var pathComponents: [String] { ["session", session, "touch", "doubleclick"] }
+        public var method: HTTPMethod {.post}
+        public var body: Body {.init(element: element)}
+
+        public struct Body: Codable {
+            public var element: String
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchflick
+    public struct SessionTouchFlickExact: Request {
+        public var session: String 
+        public var element: String
+        public var xOffset: Int
+        public var yOffset: Int
+        public var speed: Int
+
+        public var pathComponents: [String] { ["session", session, "touch", "flick"] }
+        public var method: HTTPMethod {.post}
+        public var body: Body {.init(xOffset: xOffset, yOffset: yOffset, speed: speed)}
+
+        public struct Body: Codable {
+            public var xOffset: Int
+            public var yOffset: Int
+            public var speed: Int
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchflick-1
+    public struct SessionTouchFlick: Request {
+        public var session: String 
+        public var xSpeed: Int
+        public var ySpeed: Int
+
+        public var pathComponents: [String] { ["session", session, "touch", "flick"] }
+        public var method: HTTPMethod {.post}
+        public var body: Body {.init(xSpeed: xSpeed, ySpeed: ySpeed)}
+
+        public struct Body: Codable {
+            public var xSpeed: Int
+            public var ySpeed: Int
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
     public struct Status: Request {
         public var pathComponents: [String] { ["status"] }

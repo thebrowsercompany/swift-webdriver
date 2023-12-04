@@ -85,6 +85,43 @@ public struct Element {
         if let notInteractableError = result.value { throw notInteractableError }
     }
 
+    /// Double clicks an element by id.
+    public func doubleClick(retryTimeout: TimeInterval? = nil, element: String) throws {
+        let request = Requests.SessionTouchDoubleClick(session: session.id, element: id)
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+            do {
+                // Immediately bubble most failures, only retry on element not interactable.
+                try webDriver.send(request)
+                return PollResult.success(nil as ErrorResponse?)
+            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
+                return PollResult.failure(error)
+            }
+        }
+
+        if let notInteractableError = result.value { throw notInteractableError }
+    }
+
+    /// - Parameters:
+    ///   - retryTimeout: Optional value to override defaultRetryTimeout.
+    ///   - element: Element id to click
+    ///   - xOffset: The x offset in pixels to flick by.
+    ///   - yOffset: The y offset in pixels to flick by.
+    ///   - speed: The speed in pixels per seconds.
+    public func precisionFlick(retryTimeout: TimeInterval? = nil, element: String, xOffset: Int, yOffset: Int, speed: Int) throws {
+        let request = Requests.SessionTouchFlickExact(session: session.id, element: id, xOffset: xOffset, yOffset: yOffset, speed: speed)
+        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
+            do {
+                // Immediately bubble most failures, only retry on element not interactable.
+                try webDriver.send(request)
+                return PollResult.success(nil as ErrorResponse?)
+            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
+                return PollResult.failure(error)
+            }
+        }
+
+        if let notInteractableError = result.value { throw notInteractableError }
+    }
+
     /// Finds an element by id, starting from this element.
     /// - Parameter byId: id of the element to search for.
     /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.

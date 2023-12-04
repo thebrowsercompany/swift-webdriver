@@ -214,6 +214,14 @@ public class Session {
         }.value
     }
 
+    /// - Parameters:
+    ///   - retryTimeout: Optional value to override defaultRetryTimeout.
+    ///   - xSpeed: The x speed in pixels per second.
+    ///   - ySpeed: The y speed in pixels per second.
+    public func flick( xSpeed: Int, ySpeed: Int) throws {
+        try webDriver.send(Requests.SessionTouchFlick(session: id, xSpeed: xSpeed, ySpeed: ySpeed))
+    }
+
     /// Moves the pointer to a location relative to the current pointer position or an element.
     /// - Parameter element: if not nil the top left of the element provides the origin.
     /// - Parameter xOffset: x offset from the left of the element.
