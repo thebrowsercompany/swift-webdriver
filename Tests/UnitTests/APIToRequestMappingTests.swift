@@ -205,7 +205,7 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
 
         mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionWindowSize.Get.self) {
-            ResponseWithValue(.init(source: "currentSource"))
+            ResponseWithValue(.init("currentSource"))
         }
         XCTAssert(try session.source() == "currentSource")
     }
