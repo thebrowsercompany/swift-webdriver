@@ -317,6 +317,19 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
+    /// - Parameters:
+    ///   - latitude: Number coordinate of current geo location
+    ///   - longitude: Number coordinate of current geo location
+    ///   - altitude: Number coordinate of current geo location
+    public func setLocation(latitude: Int, longitude: Int, altitude: Int) throws {
+        try webDriver.send(Requests.SessionGeoLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude))
+    }
+
+    public func getLocation() throws -> (latitude: Int, longitude: Int, altitude: Int) {
+        let response = try webDriver.send(Requests.SessionGeoLocation.Get(session: id))
+        return (latitude: response.value.latitude, longitude: response.value.longitude, altitude: response.value.altitude)
+    }
+
     /// Deletes the current session.
     public func delete() throws {
         guard shouldDelete else { return }

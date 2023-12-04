@@ -39,7 +39,8 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/element/:id/value`             | Supported    | `Element.sendKeys()`|
 | POST   | `/session/:sessionId/forward`                       | Supported    | `Session.forward()` |
 | POST   | `/session/:sessionId/keys`                          | Supported    | `Session.sendKeys()`|
-| GET    | `/session/:sessionId/location`                      | Supported    | Not implemented     |
+| POST   | `/session/:sessionId/location`                      | Supported    | `Session.setLocation`|
+| GET    | `/session/:sessionId/location`                      | Supported    | `Session.getLocation`|
 | POST   | `/session/:sessionId/moveto`                        | Supported    | `Session.moveTo()`  |
 | GET    | `/session/:sessionId/orientation`                   | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/refresh`                       | Not supported| `Session.refresh()` |

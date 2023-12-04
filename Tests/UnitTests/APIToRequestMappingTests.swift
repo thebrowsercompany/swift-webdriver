@@ -199,4 +199,17 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
     }
+
+    func testGeoLocation() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        
+        mockWebDriver.expect(path: "session/mySession/location", method: .post)
+        try session.setLocation(latitude: 5, longitude: 20, altitude: 2003)
+
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.SessionGeoLocation.Get.self) {
+            ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
+        }
+        XCTAssert(try session.getLocation() == (latitude: 5, longitude: 20, altitude: 2003))
+    }
 }
