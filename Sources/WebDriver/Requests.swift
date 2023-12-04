@@ -531,4 +531,32 @@ public enum Requests {
 
         public typealias Response = WebDriverStatus
     }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidorientation
+    public enum SessionOrientation {
+        public struct Post: Request {
+            public var session: String
+            public var orientation: ScreenOrientation
+
+            public var pathComponents: [String] { ["session", session, "orientation"] }
+            public var method: HTTPMethod {.post}
+            public var body: Body {.init(orientation: orientation)}
+
+            public struct Body: Codable {
+                public var orientation: ScreenOrientation
+            }
+        }
+
+        public struct Get: Request {
+            public var session: String
+
+            public var pathComponents: [String] { ["session", session, "orientation"] }
+            public var method: HTTPMethod {.get}
+
+            public typealias Response = ResponseWithValue<ResponseValue>
+            public struct ResponseValue: Codable {
+                public var screenOrientation: String
+            }
+        }
+    }
 }

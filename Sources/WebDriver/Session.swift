@@ -317,11 +317,20 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
-    /// Deletes the current session.
-    public func delete() throws {
-        guard shouldDelete else { return }
-        try webDriver.send(Requests.SessionDelete(session: id))
-        shouldDelete = false
+    /// - Parameter orientation: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    public func portraitOrientation(orientation: ScreenOrientation = .portrait) throws {
+        try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: orientation))
+    }
+
+    /// - Parameter orientation: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    public func landscapeOrientation(orientation: ScreenOrientation = .landscape) throws {
+        try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: orientation))
+    }
+
+    /// - Parameter orientation: Orientation the window is oriented to {LANDSCAPE|PORTRAIT}
+    public func orientation() throws -> String {
+        let response = try webDriver.send(Requests.SessionOrientation.Get(session: id))
+        return response.value.screenOrientation
     }
 
     deinit {

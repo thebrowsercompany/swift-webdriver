@@ -41,7 +41,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/keys`                          | Supported    | `Session.sendKeys()`|
 | GET    | `/session/:sessionId/location`                      | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/moveto`                        | Supported    | `Session.moveTo()`  |
-| GET    | `/session/:sessionId/orientation`                   | Supported    | Not implemented     |
+| GET    | `/session/:sessionId/orientation`                   | Supported    | `Session.orientation`|
 | POST   | `/session/:sessionId/refresh`                       | Not supported| `Session.refresh()` |
 | GET    | `/session/:sessionId/screenshot`                    | Supported    | `Session.screenshot()`|
 | GET    | `/session/:sessionId/source`                        | Supported    | Not implemented     |
