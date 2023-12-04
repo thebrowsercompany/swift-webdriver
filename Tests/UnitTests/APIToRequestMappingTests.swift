@@ -215,7 +215,7 @@ class APIToRequestMappingTests: XCTestCase {
     func testMaximizeSelectedWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
         try session.maximize(windowHandle: "myWindow")
     }
 }
