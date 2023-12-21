@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "swift-webdriver",
     products: [
-        .library(name: "WebDriver", targets: ["WebDriver", "WinAppDriver"]),
+        .library(name: "WebDriver", type: .dynamic, targets: ["WebDriver", "WinAppDriver"]),
     ],
     targets: [
         .target(
