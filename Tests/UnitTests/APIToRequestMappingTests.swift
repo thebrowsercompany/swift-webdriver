@@ -213,4 +213,5 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
     }
+    
 }
