@@ -182,6 +182,20 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try session.position(windowHandle: "myWindow") == (x: 9, y: 16))
     }
 
+    func testSessionScript() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/execute", method: .post)
+        XCTAssertNotNil(try session.execute(script: "return document.body", args: ["script"], async: false))
+    }
+
+    func testSessionScriptAsync() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/execute_async", method: .post)
+        XCTAssertNotNil(try session.execute(script: "return document.body", args: ["script"], async: true))
+    }
+
     func testSessionTouchScroll() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")

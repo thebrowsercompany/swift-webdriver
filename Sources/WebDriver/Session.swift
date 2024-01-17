@@ -73,6 +73,10 @@ public class Session {
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
     }
 
+    public func execute(script: String, args: [String] = [], async: Bool = false) throws {
+        try webDriver.send(Requests.SessionScript(session: id, script: script, args: args, async: async))
+    }
+
     public func back() throws {
         try webDriver.send(Requests.SessionBack(session: id))
     }

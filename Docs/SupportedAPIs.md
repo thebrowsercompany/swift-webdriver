@@ -37,6 +37,8 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/element/:id/size`              | Supported    | `Element.size`      |
 | GET    | `/session/:sessionId/element/:id/text`              | Supported    | `Element.text`      |
 | POST   | `/session/:sessionId/element/:id/value`             | Supported    | `Element.sendKeys()`|
+| POST   | `/session/:sessionId/execute`                       | Not Supported| `Session.execute()` |
+| POST   | `/session/:sessionId/execute_async`                 | Not Supported| `Session.execute()` |
 | POST   | `/session/:sessionId/forward`                       | Supported    | `Session.forward()` |
 | POST   | `/session/:sessionId/keys`                          | Supported    | `Session.sendKeys()`|
 | GET    | `/session/:sessionId/location`                      | Supported    | Not implemented     |
