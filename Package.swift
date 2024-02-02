@@ -2,6 +2,10 @@
 
 import PackageDescription
 
+#if !os(Windows)
+fatalError("swift-webdriver does not support this OS")
+#endif
+
 let package = Package(
     name: "swift-webdriver",
     products: [
