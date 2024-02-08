@@ -550,20 +550,20 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandleposition
-    public enum SessionPosition {
+    public enum WindowPosition {
         public struct Post: Request {
             public var session: String
             public var windowHandle: String
-            public var x: Int
-            public var y: Int 
+            public var x: Double
+            public var y: Double 
 
             public var pathComponents: [String] { ["session", session, "window", windowHandle, "position"] }
             public var method: HTTPMethod { .post }
             public var body: Body { .init(x: x, y: y) }
 
             public struct Body: Codable {
-                public var x: Int
-                public var y: Int
+                public var x: Double
+                public var y: Double
             }
         }
 
@@ -576,8 +576,8 @@ public enum Requests {
 
             public typealias Response = ResponseWithValue<ResponseValue>
             public struct ResponseValue: Codable {
-                public var x: Int
-                public var y: Int
+                public var x: Double
+                public var y: Double
             }
         }
     }

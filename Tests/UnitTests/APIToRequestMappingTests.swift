@@ -170,7 +170,7 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try element.enabled == true)
     }
 
-    func testWindowHandlePosition() throws {
+    func testWindowPosition() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
@@ -226,7 +226,7 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
     }
 
-    func testMaximizeSelectedWindow() throws {
+    func testMaximizeWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
