@@ -46,7 +46,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/orientation`                   | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/refresh`                       | Not supported| `Session.refresh()` |
 | GET    | `/session/:sessionId/screenshot`                    | Supported    | `Session.screenshot()`|
-| GET    | `/session/:sessionId/source`                        | Supported    | Not implemented     |
+| GET    | `/session/:sessionId/source`                        | Supported    | `Session.source`    |
 | POST   | `/session/:sessionId/timeouts`                      | Supported    | `Session.setTimeout()`|
 | GET    | `/session/:sessionId/title`                         | Supported    | `Session.title`     |
 | POST   | `/session/:sessionId/touch/click`                   | Supported    | `Element.touchClick()`|

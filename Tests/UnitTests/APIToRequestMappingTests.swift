@@ -232,4 +232,14 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
         try session.maximize(windowHandle: "myWindow")
     }
+
+    func testSessionSource() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+
+        mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionSource.self) {
+            ResponseWithValue(.init(source: "currentSource"))
+        }
+        XCTAssert(try session.source() == "currentSource")
+    }
 }
