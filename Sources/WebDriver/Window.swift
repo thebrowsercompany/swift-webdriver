@@ -19,7 +19,7 @@ public struct Window {
 
     public var size: (width: Double, height: Double) {
         get throws {
-            let responseValue = try webDriver.send(Requests.SessionWindowSize.Get(
+            let responseValue = try webDriver.send(Requests.WindowSize.Get(
                 session: session.id, windowHandle: handle)).value
             return (responseValue.width, responseValue.height)
         }
@@ -28,8 +28,16 @@ public struct Window {
     /// - Parameter windowHandle: Name of current window
     /// - Returns: Current window position in form of {x,y} where x and y are the upper left corner of the screen
     public func position(windowHandle: String) throws -> (x: Int, y: Int) {
-        let response = try webDriver.send(Requests.SessionPosition.Get(session: id, windowHandle: windowHandle))
+        let response = try webDriver.send(Requests.WindowPosition.Get(session: id, windowHandle: windowHandle))
         return (x: response.value.x, y: response.value.y)
+    }
+
+    /// - Parameters:
+    ///   - windowHandle: Name of te current window
+    ///   - width: The new window width
+    ///   - height: The new window height
+    public func setSize(windowHandle: String, width: Double, height: Double) throws {
+        try webDriver.send(Requests.WindowSize.Post(session: id, windowHandle: windowHandle, width: width, height: height))
     }
 
     /// - Parameters:
@@ -37,7 +45,7 @@ public struct Window {
     ///   - x: Position in the top left corner of the x coordinate
     ///   - y: Position in the top left corner of the y coordinate
     public func setPosition(windowHandle: String, x: Double, y: Double) throws {
-        try webDriver.send(Requests.SessionPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
+        try webDriver.send(Requests.WindowPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
     }
 
     /// Maximize specific window if :windowHandle is "current" the current window will be maximized
