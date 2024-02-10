@@ -3,10 +3,12 @@ public struct Window {
     var webDriver: WebDriver { session.webDriver }
     public let session: Session
     public let handle: String
+    public let id: String
 
-    public init(session: Session, handle: String) {
+    public init(session: Session, handle: String, id: String) {
         self.session = session
         self.handle = handle
+        self.id = id
     }
 
     public var position: (x: Double, y: Double) {
@@ -23,13 +25,6 @@ public struct Window {
                 session: session.id, windowHandle: handle)).value
             return (responseValue.width, responseValue.height)
         }
-    }
-
-    /// - Parameter windowHandle: Name of current window
-    /// - Returns: Current window position in form of {x,y} where x and y are the upper left corner of the screen
-    public func position(windowHandle: String) throws -> (x: Int, y: Int) {
-        let response = try webDriver.send(Requests.WindowPosition.Get(session: id, windowHandle: windowHandle))
-        return (x: response.value.x, y: response.value.y)
     }
 
     /// - Parameters:

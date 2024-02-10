@@ -308,8 +308,8 @@ public class Session {
         try webDriver.send(Requests.SessionWindow.Delete(session: id, name: name))
     }
 
-    public func size(window handle: String) throws -> (width: Int, height: Int) {
-        let response = try webDriver.send(Requests.SessionWindowSize.Get(session: id, windowHandle: handle))
+    public func size(window handle: String) throws -> (width: Double, height: Double) {
+        let response = try webDriver.send(Requests.WindowSize.Get(session: id, windowHandle: handle))
         return (width: response.value.width, height: response.value.height)
     }
 
@@ -317,14 +317,8 @@ public class Session {
     /// - Parameter name: URL parameter is "current", the currently active window will be resized.
     /// - Parameter width: The new window width.
     /// - Parameter height: The new window height
-    public func resize(window handle: String, width: Int, height: Int) throws {
-        try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
-    }
-
-    /// - Returns: The current page source.
-    public func source() throws -> String {
-        let response = try webDriver.send(Requests.SessionSource(session: id))
-        return response.value.source
+    public func resize(window handle: String, width: Double, height: Double) throws {
+        try webDriver.send(Requests.WindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
     /// Deletes the current session.
@@ -336,8 +330,8 @@ public class Session {
  
     /// - Parameter windowHandle: Name of current window
     /// - Returns: Current window position in form of {x,y} where x and y are the upper left corner of the screen
-    public func position(windowHandle: String) throws -> (x: Int, y: Int) {
-        let response = try webDriver.send(Requests.SessionPosition.Get(session: id, windowHandle: windowHandle))
+    public func position(windowHandle: String) throws -> (x: Double, y: Double) {
+        let response = try webDriver.send(Requests.WindowPosition.Get(session: id, windowHandle: windowHandle))
         return (x: response.value.x, y: response.value.y)
     }
 
@@ -345,8 +339,8 @@ public class Session {
     ///   - windowHandle: Name of current window
     ///   - x: Position in the top left corner of the x coordinate
     ///   - y: Position in the top left corner of the y coordinate
-    public func reposition(windowHandle: String, x: Int, y: Int) throws {
-        try webDriver.send(Requests.SessionPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
+    public func reposition(windowHandle: String, x: Double, y: Double) throws {
+        try webDriver.send(Requests.WindowPosition.Post(session: id, windowHandle: windowHandle, x: x, y: y))
     }
 
     /// Maximize specific window if :windowHandle is "current" the current window will be maximized
