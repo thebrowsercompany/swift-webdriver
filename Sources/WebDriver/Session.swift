@@ -313,6 +313,12 @@ public class Session {
         return (width: response.value.width, height: response.value.height)
     }
 
+    /// - Returns: The current page source.
+    public func source() throws -> String {
+        let response = try webDriver.send(Requests.SessionSource(session: id))
+        return response.value.source
+    }
+    
     /// Change the size of the specified window
     /// - Parameter name: URL parameter is "current", the currently active window will be resized.
     /// - Parameter width: The new window width.
