@@ -176,7 +176,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
         try session.reposition(windowHandle: "myWindow", x: 9, y: 16)
 
-        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.SessionPosition.Get.self) {
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.WindowPosition.Get.self) {
             ResponseWithValue(.init(x: 9, y: 16))
         }
         XCTAssert(try session.position(windowHandle: "myWindow") == (x: 9, y: 16))
@@ -220,7 +220,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .post)
         try session.resize(window: "myWindow", width: 500, height: 500)
 
-        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.SessionWindowSize.Get.self) {
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.WindowSize.Get.self) {
             ResponseWithValue(.init(width: 500, height: 500))
         }
         XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
