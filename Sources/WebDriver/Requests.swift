@@ -597,7 +597,7 @@ public enum Requests {
         }
     }
 
-    public struct SessionMaximize: Request {
+    public struct WindowMaximize: Request {
         public var session: String
         public var windowHandle: String 
 

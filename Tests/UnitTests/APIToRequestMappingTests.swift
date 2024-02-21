@@ -174,12 +174,12 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
-        try session.reposition(windowHandle: "myWindow", x: 9, y: 16)
+        try session.window(handle: "myWindow").setPosition(x: 9, y: 16)
 
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.WindowPosition.Get.self) {
             ResponseWithValue(.init(x: 9, y: 16))
         }
-        XCTAssert(try session.position(windowHandle: "myWindow") == (x: 9, y: 16))
+        XCTAssert(try session.window(handle: "myWindow").position == (x: 9, y: 16))
     }
 
     func testSessionScript() throws {
@@ -218,25 +218,24 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .post)
-        try session.resize(window: "myWindow", width: 500, height: 500)
+        try session.window(handle: "myWindow").setSize(width: 500, height: 500)
 
         mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.WindowSize.Get.self) {
             ResponseWithValue(.init(width: 500, height: 500))
         }
-        XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
+        XCTAssert(try session.window(handle: "myWindow").size == (width: 500, height: 500))
     }
 
     func testMaximizeWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
-        try session.maximize(windowHandle: "myWindow")
+        try session.window(handle: "myWindow").maximize()
     }
 
     func testSessionSource() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-
         mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionSource.self) {
             ResponseWithValue(.init(source: "currentSource"))
         }
