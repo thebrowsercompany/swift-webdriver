@@ -41,6 +41,6 @@ public struct Window {
 
     /// Maximize specific window if :windowHandle is "current" the current window will be maximized
     public func maximize() throws {
-        try webDriver.send(Requests.SessionMaximize(session: session.id, windowHandle: handle))
+        try webDriver.send(Requests.WindowMaximize(session: session.id, windowHandle: handle))
     }
 }
