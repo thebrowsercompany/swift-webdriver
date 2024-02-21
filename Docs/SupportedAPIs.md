@@ -62,12 +62,10 @@ Contributions to expand support to unimplemented functionality are always welcom
 | DELETE | `/session/:sessionId/window`                        | Supported    | `Session.close()`   |
 | POST   | `/session/:sessionId/window`                        | Supported    | `Session.focus()`   |
 | POST   | `/session/:sessionId/window/maximize`               | Supported    | Not implemented     |
-| POST   | `/session/:sessionId/window/size`                   | Supported    | Not implemented     |
-| GET    | `/session/:sessionId/window/size`                   | Supported    | Not implemented     |
-| POST   | `/session/:sessionId/window/:windowHandle/size`     | Supported    | `Session.resize()`  |
-| GET    | `/session/:sessionId/window/:windowHandle/size`     | Supported    | `Session.size()`    |
-| POST   | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Session.reposition()`|
-| GET    | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Session.position()`|
-| POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | `Session.maximize()`|
+| POST   | `/session/:sessionId/window/:windowHandle/size`     | Supported    | `Window.setSize()`  |
+| GET    | `/session/:sessionId/window/:windowHandle/size`     | Supported    | `Window.size`    |
+| POST   | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Window.setPosition()`|
+| GET    | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Window.position`|
+| POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | `Window.maximize()`|
 | GET    | `/session/:sessionId/window_handle`                 | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window_handles`                | Supported    | Not implemented     |
