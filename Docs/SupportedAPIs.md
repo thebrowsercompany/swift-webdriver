@@ -70,4 +70,4 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/window/:windowHandle/position` | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/window_handle`                 | Supported    | `Session.windowHandle()`|
-| GET    | `/session/:sessionId/window_handles`                | Supported    | `Session.windowHandle()`|
+| GET    | `/session/:sessionId/window_handles`                | Supported    | `Session.windowHandles()`|

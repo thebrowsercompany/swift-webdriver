@@ -564,17 +564,22 @@ public enum Requests {
         public typealias Response = WebDriverStatus
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow_handle
     public struct SessionWindowHandle: Request {
         public var session: String 
-        public var many: Bool
 
-        public var pathComponents: [String] { ["session", session, many ? "window_handles" : "window_handle"] }
+        public var pathComponents: [String] { ["session", session, "window_handle"] }
         public var method: HTTPMethod { .get }
 
-        public typealias Response = ResponseWithValue<ResponseValue>
-        public struct ResponseValue: Codable {
-            public var windowHandle: String
-            public var windowHandles: [String]
-        }
+        public typealias Response = ResponseWithValue<String>
+    }
+
+    public struct SessionWindowHandles: Request {
+        public var session: String 
+
+        public var pathComponents: [String] { ["session", session, "window_handles"] }
+        public var method: HTTPMethod { .get }
+
+        public typealias Response = ResponseWithValue<Array<String>>
     }
 }
