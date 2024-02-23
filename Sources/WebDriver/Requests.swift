@@ -542,38 +542,27 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidlocation
-    public enum SessionGeoLocation {
+    public enum SessionLocation {
         public struct Post: Request {
             public var session: String
-            public var latitude: Int
-            public var longitude: Int
-            public var altitude: Int
+            public var latitude: Double
+            public var longitude: Double
+            public var altitude: Float
 
-            public var pathComponents: [String] {["session", session, "location"]}
+            public var pathComponents: [String] { ["session", session, "location"] }
             public var method: HTTPMethod { .post }
-            public var body: Body {.init(latitude: latitude, longitude: longitude, altitude: altitude)}
-
-            public struct Body: Codable {
-                public var latitude: Int 
-                public var longitude: Int
-                public var altitude: Int
-            }
+            public var body: Location { .init(latitude: latitude, longitude: longitude, altitude: altitude) }
         }
 
         public struct Get: Request {
             public var session: String
             
-            public var pathComponents: [String] {["session", session, "location"]}
+            public var pathComponents: [String] { ["session", session, "location"] }
             public var method: HTTPMethod {.get}
 
-            public typealias Response = ResponseWithValue<ResponseValue>
-
-            public struct ResponseValue: Codable {
-                public var latitude: Int
-                public var longitude: Int
-                public var altitude: Int 
-            }
+            public typealias Response = ResponseWithValue<Location>
         }
+    }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidsource
     public struct SessionSource: Request {

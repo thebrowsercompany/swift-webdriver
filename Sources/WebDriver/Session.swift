@@ -66,6 +66,13 @@ public class Session {
             }
         }
     }
+    
+    public var location: Location {
+        get throws {
+            let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
+            return Location(latitude: response.value.latitude, longitude: response.value.longitude, altitude: response.value.altitude)
+        }
+    }
 
     /// Sets a a timeout value on this session.
     public func setTimeout(type: String, duration: TimeInterval) throws {
@@ -325,13 +332,9 @@ public class Session {
     ///   - latitude: Number coordinate of current geo location
     ///   - longitude: Number coordinate of current geo location
     ///   - altitude: Number coordinate of current geo location
-    public func setLocation(latitude: Int, longitude: Int, altitude: Int) throws {
-        try webDriver.send(Requests.SessionGeoLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude))
+    public func setLocation(latitude: Double, longitude: Double, altitude: Float) throws {
+        try webDriver.send(Requests.SessionLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude))
     }
-
-    public func getLocation() throws -> (latitude: Int, longitude: Int, altitude: Int) {
-        let response = try webDriver.send(Requests.SessionGeoLocation.Get(session: id))
-        return (latitude: response.value.latitude, longitude: response.value.longitude, altitude: response.value.altitude)
 
     /// - Returns: The current page source.
     public func source() throws -> String {
