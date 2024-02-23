@@ -73,6 +73,10 @@ public class Session {
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
     }
 
+    public func execute(script: String, args: [String] = [], async: Bool = false) throws {
+        try webDriver.send(Requests.SessionScript(session: id, script: script, args: args, async: async))
+    }
+
     public func back() throws {
         try webDriver.send(Requests.SessionBack(session: id))
     }
@@ -317,12 +321,10 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
-    /// 
-    /// - Parameter many: Bool value that will return multiple window handles 
-    /// - Returns: either current window handle or many based on bool flag
-    public func windowHandle(many: Bool) throws -> (windowHandle: String, windowHandles: [String]) {
-        let response = try webDriver.send(Requests.SessionWindowHandle(session: id, many: many))
-        return (windowHandle: response.value.windowHandle, windowHandles: response.value.windowHandles)
+    /// - Returns: The current page source.
+    public func source() throws -> String {
+        let response = try webDriver.send(Requests.SessionSource(session: id))
+        return response.value.source
     }
 
     /// Deletes the current session.
