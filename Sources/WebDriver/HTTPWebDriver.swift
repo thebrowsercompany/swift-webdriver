@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
 import FoundationNetworking
+#endif
 
 public struct HTTPWebDriver: WebDriver {
     let rootURL: URL
