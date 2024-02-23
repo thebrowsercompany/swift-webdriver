@@ -73,6 +73,10 @@ public class Session {
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
     }
 
+    public func execute(script: String, args: [String] = [], async: Bool = false) throws {
+        try webDriver.send(Requests.SessionScript(session: id, script: script, args: args, async: async))
+    }
+
     public func back() throws {
         try webDriver.send(Requests.SessionBack(session: id))
     }
@@ -328,6 +332,11 @@ public class Session {
     public func getLocation() throws -> (latitude: Int, longitude: Int, altitude: Int) {
         let response = try webDriver.send(Requests.SessionGeoLocation.Get(session: id))
         return (latitude: response.value.latitude, longitude: response.value.longitude, altitude: response.value.altitude)
+
+    /// - Returns: The current page source.
+    public func source() throws -> String {
+        let response = try webDriver.send(Requests.SessionSource(session: id))
+        return response.value.source
     }
 
     /// Deletes the current session.
