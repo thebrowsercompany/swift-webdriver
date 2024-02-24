@@ -547,8 +547,8 @@ public enum Requests {
         public var element: String 
 
         public var pathComponents: [String] { ["session", session, "touch", "doubleclick"] }
-        public var method: HTTPMethod {.post}
-        public var body: Body {.init(element: element)}
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(element: element) }
 
         public struct Body: Codable {
             public var element: String
@@ -556,45 +556,46 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchflick
-    public struct SessionTouchFlickExact: Request {
+    public struct SessionTouchFlickElement: Request {
         public var session: String 
         public var element: String
-        public var xOffset: Int
-        public var yOffset: Int
-        public var speed: Int
+        public var xOffset: Double
+        public var yOffset: Double
+        public var speed: Double
 
         public var pathComponents: [String] { ["session", session, "touch", "flick"] }
-        public var method: HTTPMethod {.post}
-        public var body: Body {.init(xOffset: xOffset, yOffset: yOffset, speed: speed)}
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(xOffset: xOffset, yOffset: yOffset, speed: speed) }
 
         public struct Body: Codable {
-            public var xOffset: Int
-            public var yOffset: Int
-            public var speed: Int
+            public var xOffset: Double
+            public var yOffset: Double
+            public var speed: Double
         }
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtouchflick-1
     public struct SessionTouchFlick: Request {
         public var session: String 
-        public var xSpeed: Int
-        public var ySpeed: Int
-
+        public var xSpeed: Double
+        public var ySpeed: Double
+        
         public var pathComponents: [String] { ["session", session, "touch", "flick"] }
-        public var method: HTTPMethod {.post}
-        public var body: Body {.init(xSpeed: xSpeed, ySpeed: ySpeed)}
-
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(xSpeed: xSpeed, ySpeed: ySpeed) }
+        
         public struct Body: Codable {
-            public var xSpeed: Int
-            public var ySpeed: Int
+            public var xSpeed: Double
+            public var ySpeed: Double
         }
+    }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidsource
     public struct SessionSource: Request {
         public var session: String 
 
         public var pathComponents: [String] { ["session", session, "source"] }
-        public var method: HTTPMethod {.get}
+        public var method: HTTPMethod { .get }
 
         public typealias Response = ResponseWithValue<ResponseValue>
 

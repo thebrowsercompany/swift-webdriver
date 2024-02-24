@@ -222,7 +222,7 @@ public class Session {
     ///   - retryTimeout: Optional value to override defaultRetryTimeout.
     ///   - xSpeed: The x speed in pixels per second.
     ///   - ySpeed: The y speed in pixels per second.
-    public func flick( xSpeed: Int, ySpeed: Int) throws {
+    public func flick(xSpeed: Double, ySpeed: Double) throws {
         try webDriver.send(Requests.SessionTouchFlick(session: id, xSpeed: xSpeed, ySpeed: ySpeed))
     }
 

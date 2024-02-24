@@ -86,7 +86,7 @@ public struct Element {
     }
 
     /// Double clicks an element by id.
-    public func doubleClick(retryTimeout: TimeInterval? = nil, element: String) throws {
+    public func doubleClick(element: String, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchDoubleClick(session: session.id, element: id)
         let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
@@ -107,8 +107,8 @@ public struct Element {
     ///   - xOffset: The x offset in pixels to flick by.
     ///   - yOffset: The y offset in pixels to flick by.
     ///   - speed: The speed in pixels per seconds.
-    public func precisionFlick(retryTimeout: TimeInterval? = nil, element: String, xOffset: Int, yOffset: Int, speed: Int) throws {
-        let request = Requests.SessionTouchFlickExact(session: session.id, element: id, xOffset: xOffset, yOffset: yOffset, speed: speed)
+    public func flick(element: String, xOffset: Double, yOffset: Double, speed: Double, retryTimeout: TimeInterval? = nil) throws {
+        let request = Requests.SessionTouchFlickElement(session: session.id, element: id, xOffset: xOffset, yOffset: yOffset, speed: speed)
         let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
                 // Immediately bubble most failures, only retry on element not interactable.
