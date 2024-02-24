@@ -219,20 +219,20 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/orientation", method: .post)
-        try session.portraitOrientation()
+        try session.setOrientation(.portrait)
 
         mockWebDriver.expect(path: "session/mySession/orientation", method: .get, type: Requests.SessionOrientation.Get.self) {
-            ResponseWithValue(.init(screenOrientation: "PORTRAIT"))
+            ResponseWithValue(.portrait)
         }
-        XCTAssert(try session.orientation() == "PORTRAIT")
+        XCTAssert(try session.orientation == .portrait)
 
         mockWebDriver.expect(path: "session/mySession/orientation", method: .post)
-        try session.landscapeOrientation()
+        try session.setOrientation(.landscape)
 
         mockWebDriver.expect(path: "session/mySession/orientation", method: .get, type: Requests.SessionOrientation.Get.self) {
-            ResponseWithValue(.init(screenOrientation: "LANDSCAPE"))
+            ResponseWithValue(.landscape)
         }
-        XCTAssert(try session.orientation() == "LANDSCAPE")
+        XCTAssert(try session.orientation == .landscape)
     }
 
 

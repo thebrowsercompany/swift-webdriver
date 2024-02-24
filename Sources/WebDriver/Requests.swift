@@ -571,8 +571,8 @@ public enum Requests {
             public var orientation: ScreenOrientation
 
             public var pathComponents: [String] { ["session", session, "orientation"] }
-            public var method: HTTPMethod {.post}
-            public var body: Body {.init(orientation: orientation)}
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(orientation: orientation) }
 
             public struct Body: Codable {
                 public var orientation: ScreenOrientation
@@ -583,12 +583,9 @@ public enum Requests {
             public var session: String
 
             public var pathComponents: [String] { ["session", session, "orientation"] }
-            public var method: HTTPMethod {.get}
+            public var method: HTTPMethod { .get }
 
-            public typealias Response = ResponseWithValue<ResponseValue>
-            public struct ResponseValue: Codable {
-                public var screenOrientation: String
-            }
+            public typealias Response = ResponseWithValue<ScreenOrientation>
         }
     }
 }
