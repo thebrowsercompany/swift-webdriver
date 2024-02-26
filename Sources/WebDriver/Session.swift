@@ -328,15 +328,19 @@ public class Session {
     }
  
     /// - Returns: Current window handle
-    public func windowHandle() throws -> String {
-        let response = try webDriver.send(Requests.SessionWindowHandle(session: id))
-        return response.value
+    public var windowHandle: String {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandle(session: id))
+            return response.value
+        }
     }
 
     /// - Returns: Array of window handles
-    public func windowHandles() throws ->  [String] {
-        let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
-        return response.value
+    public func windowHandles: [String] {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
+            return response.value
+        }
     }
 
     /// Deletes the current session.
