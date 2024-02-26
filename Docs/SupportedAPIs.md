@@ -42,7 +42,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/forward`                       | Supported    | `Session.forward()` |
 | POST   | `/session/:sessionId/keys`                          | Supported    | `Session.sendKeys()`|
 | POST   | `/session/:sessionId/location`                      | Supported    | `Session.setLocation`|
-| GET    | `/session/:sessionId/location`                      | Supported    | `Session.getLocation`|
+| GET    | `/session/:sessionId/location`                      | Supported    | `Session.location`|
 | POST   | `/session/:sessionId/moveto`                        | Supported    | `Session.moveTo()`  |
 | GET    | `/session/:sessionId/orientation`                   | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/refresh`                       | Not supported| `Session.refresh()` |

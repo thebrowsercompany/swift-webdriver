@@ -220,7 +220,7 @@ class APIToRequestMappingTests: XCTestCase {
         let location = Location(latitude: 5, longitude: 20, altitude: 2003)
         
         mockWebDriver.expect(path: "session/mySession/location", method: .post)
-        try session.setLocation(latitude: 5, longitude: 20, altitude: 2003)
+        try session.setLocation(latitude: 5, longitude: 20, altitude: 2003, location: location)
         
         mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionLocation.Get.self) {
             ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))

@@ -1,16 +1,12 @@
-public struct Location: Codable {
+public struct Location: Codable, Equatable {
     public var latitude: Double
     public var longitude: Double
-    public var altitude: Float
+    public var altitude: Double
 
-    init(latitude: Double, longitude: Double, altitude: Float) {
+    public init(latitude: Double, longitude: Double, altitude: Double) {
         self.latitude = latitude
         self.longitude = longitude
         self.altitude = altitude
     }
-    
-}
-
-extension Location: Equatable {
     
 }

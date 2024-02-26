@@ -547,7 +547,8 @@ public enum Requests {
             public var session: String
             public var latitude: Double
             public var longitude: Double
-            public var altitude: Float
+            public var altitude: Double
+            public var location: Location
 
             public var pathComponents: [String] { ["session", session, "location"] }
             public var method: HTTPMethod { .post }

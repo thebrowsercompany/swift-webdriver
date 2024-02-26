@@ -70,7 +70,7 @@ public class Session {
     public var location: Location {
         get throws {
             let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
-            return Location(latitude: response.value.latitude, longitude: response.value.longitude, altitude: response.value.altitude)
+            return response.value
         }
     }
 
@@ -328,12 +328,9 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
-    /// - Parameters:
-    ///   - latitude: Number coordinate of current geo location
-    ///   - longitude: Number coordinate of current geo location
-    ///   - altitude: Number coordinate of current geo location
-    public func setLocation(latitude: Double, longitude: Double, altitude: Float) throws {
-        try webDriver.send(Requests.SessionLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude))
+    /// Set the current geolocation 
+    public func setLocation(latitude: Double, longitude: Double, altitude: Double, location: Location) throws {
+        try webDriver.send(Requests.SessionLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude, location: location))
     }
 
     /// - Returns: The current page source.
