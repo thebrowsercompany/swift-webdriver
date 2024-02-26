@@ -548,12 +548,7 @@ public enum Requests {
         public var pathComponents: [String] { ["session", session, "source"] }
         public var method: HTTPMethod {.get}
 
-        public typealias Response = ResponseWithValue<ResponseValue>
-
-        public struct ResponseValue: Codable {
-            public var source: String
-        }
-
+        public typealias Response = ResponseWithValue<String>
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status

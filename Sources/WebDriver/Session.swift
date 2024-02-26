@@ -321,10 +321,11 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
-    /// - Returns: The current page source.
-    public func source() throws -> String {
-        let response = try webDriver.send(Requests.SessionSource(session: id))
-        return response.value.source
+    /// Get the current page source
+    public var source: String {
+        get throws {
+            try webDriver.send(Requests.SessionSource(session: id)).value
+        }
     }
  
     /// - Returns: Current window handle
