@@ -336,7 +336,7 @@ public class Session {
     }
 
     /// - Returns: Array of window handles
-    public func windowHandles: [String] {
+    public var windowHandles: [String] {
         get throws {
             let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
             return response.value
