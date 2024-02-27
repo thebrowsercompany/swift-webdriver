@@ -66,6 +66,13 @@ public class Session {
             }
         }
     }
+    
+    public var orientation: ScreenOrientation {
+        get throws {
+            let response = try webDriver.send(Requests.SessionOrientation.Get(session: id))
+            return response.value
+        }
+    }
 
     /// Sets a a timeout value on this session.
     public func setTimeout(type: String, duration: TimeInterval) throws {
@@ -321,6 +328,11 @@ public class Session {
         try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
     }
 
+    /// - Prarmeter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    public func setOrientation(_ value: ScreenOrientation) throws {
+        try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: value))
+    }
+
     /// Get the current page source
     public var source: String {
         get throws {
@@ -345,6 +357,7 @@ public class Session {
     }
 
     /// Deletes the current session.
+
     public func delete() throws {
         guard shouldDelete else { return }
         try webDriver.send(Requests.SessionDelete(session: id))
