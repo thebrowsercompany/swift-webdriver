@@ -333,10 +333,27 @@ public class Session {
         try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: value))
     }
 
-    /// - Returns: The current page source.
-    public func source() throws -> String {
-        let response = try webDriver.send(Requests.SessionSource(session: id))
-        return response.value.source
+    /// Get the current page source
+    public var source: String {
+        get throws {
+            try webDriver.send(Requests.SessionSource(session: id)).value
+        }
+    }
+ 
+    /// - Returns: Current window handle
+    public var windowHandle: String {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandle(session: id))
+            return response.value
+        }
+    }
+
+    /// - Returns: Array of window handles
+    public var windowHandles: [String] {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
+            return response.value
+        }
     }
 
     /// Deletes the current session.
