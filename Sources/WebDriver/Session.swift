@@ -315,18 +315,7 @@ public class Session {
         try webDriver.send(Requests.SessionWindow.Delete(session: id, name: name))
     }
 
-    public func size(window handle: String) throws -> (width: Int, height: Int) {
-        let response = try webDriver.send(Requests.SessionWindowSize.Get(session: id, windowHandle: handle))
-        return (width: response.value.width, height: response.value.height)
-    }
-
-    /// Change the size of the specified window
-    /// - Parameter name: URL parameter is "current", the currently active window will be resized.
-    /// - Parameter width: The new window width.
-    /// - Parameter height: The new window height
-    public func resize(window handle: String, width: Int, height: Int) throws {
-        try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
-    }
+    public func window(handle: String) throws -> Window { .init(session: self, handle: handle) }
 
     /// - Prarmeter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
     public func setOrientation(_ value: ScreenOrientation) throws {
