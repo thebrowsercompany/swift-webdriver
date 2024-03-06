@@ -545,14 +545,11 @@ public enum Requests {
     public enum SessionLocation {
         public struct Post: Request {
             public var session: String
-            public var latitude: Double
-            public var longitude: Double
-            public var altitude: Double
             public var location: Location
 
             public var pathComponents: [String] { ["session", session, "location"] }
             public var method: HTTPMethod { .post }
-            public var body: Location { .init(latitude: latitude, longitude: longitude, altitude: altitude) }
+            public var body: Location { location }
         }
 
         public struct Get: Request {

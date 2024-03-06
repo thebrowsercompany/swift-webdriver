@@ -70,7 +70,9 @@ public class Session {
     public var location: Location {
         get throws {
             let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
+            return response.value
         }
+    }
 
     public var orientation: ScreenOrientation {
         get throws {
@@ -344,14 +346,12 @@ public class Session {
     }
 
     /// Set the current geolocation 
-    public func setLocation(latitude: Double, longitude: Double, altitude: Double, location: Location) throws {
-        try webDriver.send(Requests.SessionLocation.Post(session: id, latitude: latitude, longitude: longitude, altitude: altitude, location: location))
+    public func setLocation(_ location: Location) throws {
+        try webDriver.send(Requests.SessionLocation.Post(session: id, location: location))
     }
 
-    /// - Returns: The current page source.
-    public func source() throws -> String {
-        let response = try webDriver.send(Requests.SessionSource(session: id))
-        return response.value.source
+    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws { 
+        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude)) 
     }
 
     /// - Returns: Array of window handles

@@ -252,16 +252,12 @@ class APIToRequestMappingTests: XCTestCase {
         let location = Location(latitude: 5, longitude: 20, altitude: 2003)
         
         mockWebDriver.expect(path: "session/mySession/location", method: .post)
-        try session.setLocation(latitude: 5, longitude: 20, altitude: 2003, location: location)
+        try session.setLocation(location)
         
         mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionLocation.Get.self) {
             ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
         }
         XCTAssert(try session.location == location)
-    }
-
-    func testSessionSource() throws {
-              XCTAssert(try session.source == "currentSource")
     }
 
     func testMaximizeWindow() throws {
@@ -298,5 +294,6 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionSource.self) {
             ResponseWithValue("currentSource")
         }
+        XCTAssert(try session.source == "currentSource")
     }
 }
