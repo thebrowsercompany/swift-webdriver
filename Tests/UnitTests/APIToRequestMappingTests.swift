@@ -246,6 +246,20 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try session.window(handle: "myWindow").size == (width: 500, height: 500))
     }
 
+    func testLocation() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let location = Location(latitude: 5, longitude: 20, altitude: 2003)
+        
+        mockWebDriver.expect(path: "session/mySession/location", method: .post)
+        try session.setLocation(location)
+        
+        mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionLocation.Get.self) {
+            ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
+        }
+        XCTAssert(try session.location == location)
+    }
+
     func testMaximizeWindow() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
@@ -264,6 +278,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testWindowHandles() throws {
+
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         

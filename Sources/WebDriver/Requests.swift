@@ -541,12 +541,34 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidlocation
+    public enum SessionLocation {
+        public struct Post: Request {
+            public var session: String
+            public var location: Location
+
+            public var pathComponents: [String] { ["session", session, "location"] }
+            public var method: HTTPMethod { .post }
+            public var body: Location { location }
+        }
+
+        public struct Get: Request {
+            public var session: String
+            
+            public var pathComponents: [String] { ["session", session, "location"] }
+            public var method: HTTPMethod {.get}
+
+            public typealias Response = ResponseWithValue<Location>
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidsource
     public struct SessionSource: Request {
         public var session: String 
 
         public var pathComponents: [String] { ["session", session, "source"] }
         public var method: HTTPMethod {.get}
+
 
         public typealias Response = ResponseWithValue<String>
     }
