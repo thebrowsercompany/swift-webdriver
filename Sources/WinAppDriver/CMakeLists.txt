@@ -8,5 +8,5 @@ add_library(WinAppDriver
   WinAppDriver+Capabilities.swift
   WinAppDriver.swift
   WindowsSystemPaths.swift)
-  target_link_libraries(WinAppDriver PRIVATE
-    WebDriver)
+target_link_libraries(WinAppDriver PRIVATE
+  WebDriver)
