@@ -51,7 +51,9 @@ jobs:
           tag: 5.8-RELEASE
 
       - name: CMake Configure
+        shell: pwsh
         run: cmake -S . -B build -G Ninja
 
       - name: CMake Build
+        shell: pwsh
         run: cmake --build .\build
