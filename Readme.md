@@ -44,7 +44,7 @@ For additional examples, refer to the `Tests\WebDriverTests` directory.
 
 To build with CMake, use the Ninja generator:
 ```powershell
-cmake --build -S . -B build -G Ninja
+cmake -S . -B build -G Ninja
 cmake --build .\build\
 ```
 
