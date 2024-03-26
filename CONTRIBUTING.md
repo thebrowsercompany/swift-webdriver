@@ -6,6 +6,13 @@ All UI tests are located in the `Tests` directory. Build and run tests using `sw
 
 For additional examples, refer to the `Tests\WebDriverTests` directory.
 
+## Code Submissions
+Fork the repository and create a feature branch for your work. When
+ready, send a pull request. Make sure that the CI workflows that
+build and test the code pass. If you add files or dependencies, make
+sure you update both `Package.swift` and the appropriate `CMakeLists.txt`
+files. If you forget about CMake, your CI jobs will fail. `:-)`
+
 ## Bug Submissions
 If you've found a bug in the project feel free to open an issue [here](https://github.com/thebrowsercompany/swift-webdriver/issues/new). Please follow the issues template provided.
 
@@ -13,7 +20,7 @@ If you've found a bug in the project feel free to open an issue [here](https://g
 To submit an enhancement open a new issue with the `enhancements` tag with details for what you think would be good to add.
 
 ## Style Guide
-For branch names please follow the naming convention of `<name>/<desciption-of-change>` e.g. squid/docs-update. When opening a pr use the most relevant tag to your request. 
+For branch names please follow the naming convention of `<name>/<desciption-of-change>` e.g. squid/docs-update. When opening a pr use the most relevant tag to your request.
 
-
+##
 Thank you for helping expand the swift environment and we look forward to working with you!

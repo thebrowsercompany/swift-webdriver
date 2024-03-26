@@ -66,6 +66,21 @@ public class Session {
             }
         }
     }
+    
+    public var location: Location {
+        get throws {
+            let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
+            return response.value
+        }
+    }
+
+    public var orientation: ScreenOrientation {
+        get throws {
+            let response = try webDriver.send(Requests.SessionOrientation.Get(session: id))
+
+          return response.value
+        }
+    }
 
     /// Sets a a timeout value on this session.
     public func setTimeout(type: String, duration: TimeInterval) throws {
@@ -316,26 +331,47 @@ public class Session {
         try webDriver.send(Requests.SessionWindow.Delete(session: id, name: name))
     }
 
-    public func size(window handle: String) throws -> (width: Int, height: Int) {
-        let response = try webDriver.send(Requests.SessionWindowSize.Get(session: id, windowHandle: handle))
-        return (width: response.value.width, height: response.value.height)
+    public func window(handle: String) throws -> Window { .init(session: self, handle: handle) }
+
+    /// - Prarmeter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    public func setOrientation(_ value: ScreenOrientation) throws {
+        try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: value))
     }
 
-    /// Change the size of the specified window
-    /// - Parameter name: URL parameter is "current", the currently active window will be resized.
-    /// - Parameter width: The new window width.
-    /// - Parameter height: The new window height
-    public func resize(window handle: String, width: Int, height: Int) throws {
-        try webDriver.send(Requests.SessionWindowSize.Post(session: id, windowHandle: handle, width: width, height: height))
+    /// Get the current page source
+    public var source: String {
+        get throws {
+            try webDriver.send(Requests.SessionSource(session: id)).value
+        }
+    }
+ 
+    /// - Returns: Current window handle
+    public var windowHandle: String {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandle(session: id))
+            return response.value
+        }
     }
 
-    /// - Returns: The current page source.
-    public func source() throws -> String {
-        let response = try webDriver.send(Requests.SessionSource(session: id))
-        return response.value.source
+    /// Set the current geolocation 
+    public func setLocation(_ location: Location) throws {
+        try webDriver.send(Requests.SessionLocation.Post(session: id, location: location))
+    }
+
+    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws { 
+        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude)) 
+    }
+
+    /// - Returns: Array of window handles
+    public var windowHandles: [String] {
+        get throws {
+            let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
+            return response.value
+        }
     }
 
     /// Deletes the current session.
+
     public func delete() throws {
         guard shouldDelete else { return }
         try webDriver.send(Requests.SessionDelete(session: id))

@@ -97,6 +97,26 @@ class APIToRequestMappingTests: XCTestCase {
         }
         try session.buttonUp(button: .right)
     }
+ 
+    func testSessionOrientation() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/orientation", method: .post)
+        try session.setOrientation(.portrait)
+
+        mockWebDriver.expect(path: "session/mySession/orientation", method: .get, type: Requests.SessionOrientation.Get.self) {
+            ResponseWithValue(.portrait)
+        }
+        XCTAssert(try session.orientation == .portrait)
+
+        mockWebDriver.expect(path: "session/mySession/orientation", method: .post)
+        try session.setOrientation(.landscape)
+
+        mockWebDriver.expect(path: "session/mySession/orientation", method: .get, type: Requests.SessionOrientation.Get.self) {
+            ResponseWithValue(.landscape)
+        }
+        XCTAssert(try session.orientation == .landscape)
+    }
 
     func testSendKeys() throws {
         let mockWebDriver = MockWebDriver()
@@ -170,6 +190,18 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try element.enabled == true)
     }
 
+    func testWindowPosition() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
+        try session.window(handle: "myWindow").setPosition(x: 9, y: 16)
+
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .get, type: Requests.WindowPosition.Get.self) {
+            ResponseWithValue(.init(x: 9, y: 16))
+        }
+        XCTAssert(try session.window(handle: "myWindow").position == (x: 9, y: 16))
+    }
+
     func testSessionScript() throws {
         let mockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
@@ -206,12 +238,54 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .post)
-        try session.resize(window: "myWindow", width: 500, height: 500)
+        try session.window(handle: "myWindow").setSize(width: 500, height: 500)
 
-        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.SessionWindowSize.Get.self) {
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .get, type: Requests.WindowSize.Get.self) {
             ResponseWithValue(.init(width: 500, height: 500))
         }
-        XCTAssert(try session.size(window: "myWindow") == (width: 500, height: 500))
+        XCTAssert(try session.window(handle: "myWindow").size == (width: 500, height: 500))
+    }
+
+    func testLocation() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let location = Location(latitude: 5, longitude: 20, altitude: 2003)
+        
+        mockWebDriver.expect(path: "session/mySession/location", method: .post)
+        try session.setLocation(location)
+        
+        mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionLocation.Get.self) {
+            ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
+        }
+        XCTAssert(try session.location == location)
+    }
+
+    func testMaximizeWindow() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
+        try session.window(handle: "myWindow").maximize()
+    }
+
+    func testWindowHandle() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+
+        mockWebDriver.expect(path: "session/mySession/window_handle", method: .get, type: Requests.SessionWindowHandle.self) {
+            ResponseWithValue(.init("myWindow"))
+        }
+        XCTAssert(try session.windowHandle == "myWindow")
+    }
+
+    func testWindowHandles() throws {
+
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        
+        mockWebDriver.expect(path: "session/mySession/window_handles", method: .get, type: Requests.SessionWindowHandles.self) {
+            ResponseWithValue(.init(["myWindow", "myWindow"]))
+        }
+        XCTAssert(try session.windowHandles == ["myWindow", "myWindow"])
     }
 
 
@@ -241,10 +315,9 @@ class APIToRequestMappingTests: XCTestCase {
     func testSessionSource() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-
         mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionSource.self) {
-            ResponseWithValue(.init(source: "currentSource"))
+            ResponseWithValue("currentSource")
         }
-        XCTAssert(try session.source() == "currentSource")
+        XCTAssert(try session.source == "currentSource")
     }
 }

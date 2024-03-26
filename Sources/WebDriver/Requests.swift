@@ -509,20 +509,20 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandlesize
-    public enum SessionWindowSize {
+    public enum WindowSize {
         public struct Post: Request {
             public var session: String
             public var windowHandle: String
-            public var width: Int
-            public var height: Int
+            public var width: Double
+            public var height: Double
 
             public var pathComponents: [String] { ["session", session, "window", windowHandle, "size"] }
             public var method: HTTPMethod { .post }
             public var body: Body { .init(width: width, height: height) }
 
             public struct Body: Codable {
-                public var width: Int
-                public var height: Int
+                public var width: Double
+                public var height: Double
             }
         }
 
@@ -535,8 +535,8 @@ public enum Requests {
 
             public typealias Response = ResponseWithValue<ResponseValue>
             public struct ResponseValue: Codable {
-                public var width: Int
-                public var height: Int
+                public var width: Double
+                public var height: Double
             }
         }
     }
@@ -590,6 +590,27 @@ public enum Requests {
         }
     }
 
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidlocation
+    public enum SessionLocation {
+        public struct Post: Request {
+            public var session: String
+            public var location: Location
+
+            public var pathComponents: [String] { ["session", session, "location"] }
+            public var method: HTTPMethod { .post }
+            public var body: Location { location }
+        }
+
+        public struct Get: Request {
+            public var session: String
+            
+            public var pathComponents: [String] { ["session", session, "location"] }
+            public var method: HTTPMethod {.get}
+
+            public typealias Response = ResponseWithValue<Location>
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidsource
     public struct SessionSource: Request {
         public var session: String 
@@ -597,11 +618,7 @@ public enum Requests {
         public var pathComponents: [String] { ["session", session, "source"] }
         public var method: HTTPMethod { .get }
 
-        public typealias Response = ResponseWithValue<ResponseValue>
-
-        public struct ResponseValue: Codable {
-            public var source: String
-        }
+        public typealias Response = ResponseWithValue<String>
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
@@ -610,5 +627,90 @@ public enum Requests {
         public var method: HTTPMethod { .get }
 
         public typealias Response = WebDriverStatus
+    }
+  
+     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidorientation
+    public enum SessionOrientation {
+        public struct Post: Request {
+            public var session: String
+            public var orientation: ScreenOrientation
+
+            public var pathComponents: [String] { ["session", session, "orientation"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(orientation: orientation) }
+
+            public struct Body: Codable {
+                public var orientation: ScreenOrientation
+            }
+        }
+
+        public struct Get: Request {
+            public var session: String
+
+            public var pathComponents: [String] { ["session", session, "orientation"] }
+            public var method: HTTPMethod { .get }
+
+            public typealias Response = ResponseWithValue<ScreenOrientation>
+        }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindowwindowhandleposition
+    public enum WindowPosition {
+        public struct Post: Request {
+            public var session: String
+            public var windowHandle: String
+            public var x: Double
+            public var y: Double 
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "position"] }
+            public var method: HTTPMethod { .post }
+            public var body: Body { .init(x: x, y: y) }
+
+            public struct Body: Codable {
+                public var x: Double
+                public var y: Double
+            }
+        }
+
+        public struct Get: Request {
+            public var session: String
+            public var windowHandle: String
+
+            public var pathComponents: [String] { ["session", session, "window", windowHandle, "position"] }
+            public var method: HTTPMethod { .get }
+
+            public typealias Response = ResponseWithValue<ResponseValue>
+            public struct ResponseValue: Codable {
+                public var x: Double
+                public var y: Double
+            }
+        }
+    }
+
+    public struct WindowMaximize: Request {
+        public var session: String
+        public var windowHandle: String 
+
+        public var pathComponents: [String] { ["session", session, "window", windowHandle, "maximize"] }
+        public var method: HTTPMethod { .post }
+    }
+
+    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidwindow_handle
+    public struct SessionWindowHandle: Request {
+        public var session: String 
+
+        public var pathComponents: [String] { ["session", session, "window_handle"] }
+        public var method: HTTPMethod { .get }
+
+        public typealias Response = ResponseWithValue<String>
+    }
+
+    public struct SessionWindowHandles: Request {
+        public var session: String 
+
+        public var pathComponents: [String] { ["session", session, "window_handles"] }
+        public var method: HTTPMethod { .get }
+
+        public typealias Response = ResponseWithValue<Array<String>>
     }
 }

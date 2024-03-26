@@ -40,6 +40,14 @@ Build and run tests using `swift build` and `swift test`, or use the [Swift exte
 
 For additional examples, refer to the `Tests\WebDriverTests` directory.
 
+### CMake
+
+To build with CMake, use the Ninja generator:
+```powershell
+cmake -S . -B build -G Ninja
+cmake --build .\build\
+```
+
 ## Architecture
 
 The library has two logical layers:
