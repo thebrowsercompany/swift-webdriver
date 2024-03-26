@@ -8,12 +8,14 @@ on:
       - main
 
 jobs:
-  build:
+  build-spm:
+    name: Build & Test (SPM)
     runs-on: windows-2022
     timeout-minutes: 20
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Swift-WebBrowser
+      uses: actions/checkout@v4.1.1
 
     - name: Setup Visual Studio Development Environment
       uses: compnerd/gha-setup-vsdevenv@main
@@ -29,3 +31,27 @@ jobs:
 
     - name: Test
       run: swift test --verbose --skip-build
+
+  build-cmake:
+    name: Build (CMake)
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Swift-WebBrowser
+        uses: actions/checkout@v4.1.1
+
+      - name: Setup Visual Studio Development Environment
+        uses: compnerd/gha-setup-vsdevenv@main
+
+      - name: Install Swift
+        uses: compnerd/gha-setup-swift@main
+        with:
+          branch: swift-5.8-release
+          tag: 5.8-RELEASE
+
+      - name: CMake Configure
+        run: cmake -S . -B build -G Ninja
+
+      - name: CMake Build
+        run: cmake --build .\build
