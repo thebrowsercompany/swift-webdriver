@@ -1,0 +1,19 @@
+add_library(WebDriver
+  Capabilities.swift
+  Element.swift
+  ErrorResponse.swift
+  HTTPWebDriver.swift
+  Keys.swift
+  Location.swift
+  MouseButton.swift
+  Poll.swift
+  Request.swift
+  Requests.swift
+  ScreenOrientation.swift
+  Session.swift
+  TimeoutType.swift
+  TouchClickKind.swift
+  URLRequestExtensions.swift
+  WebDriver.swift
+  WebDriverStatus.swift
+  Window.swift)
