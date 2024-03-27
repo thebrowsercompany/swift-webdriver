@@ -571,6 +571,12 @@ public enum Requests {
             public var xOffset: Double
             public var yOffset: Double
             public var speed: Double
+
+            private enum CodingKeys: String, CodingKey {
+                case xOffset = "xoffset"
+                case yOffset = "yoffset"
+                case speed = "speed"
+            }
         }
     }
 
@@ -587,6 +593,11 @@ public enum Requests {
         public struct Body: Codable {
             public var xSpeed: Double
             public var ySpeed: Double
+
+            private enum CodingKeys: String, CodingKey {
+                case xSpeed = "xspeed"
+                case ySpeed = "yspeed"
+            }
         }
     }
 

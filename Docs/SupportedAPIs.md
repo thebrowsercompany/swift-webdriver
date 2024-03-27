@@ -53,7 +53,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/touch/click`                   | Supported    | `Element.touchClick()`|
 | POST   | `/session/:sessionId/touch/doubleclick`             | Supported    | `Element.doubleClick()`|
 | POST   | `/session/:sessionId/touch/down`                    | Supported    | `Session.touchDown()`|
-| POST   | `/session/:sessionId/touch/flick`                   | Supported    | `Session.flick()`, `Element.precisionFlick()`|
+| POST   | `/session/:sessionId/touch/flick`                   | Supported    | `Session.flick()`, `Element.flick()`|
 | POST   | `/session/:sessionId/touch/longclick`               | Supported    | Not implemented     |
 | POST   | `/session/:sessionId/touch/move`                    | Supported    | `Session.touchMove()`|
 | POST   | `/session/:sessionId/touch/scroll`                  | Supported    | `Session.touchScroll()`|

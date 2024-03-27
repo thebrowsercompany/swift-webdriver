@@ -86,7 +86,7 @@ public struct Element {
     }
 
     /// Double clicks an element by id.
-    public func doubleClick(element: String, retryTimeout: TimeInterval? = nil) throws {
+    public func doubleClick(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchDoubleClick(session: session.id, element: id)
         let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
@@ -107,7 +107,7 @@ public struct Element {
     ///   - xOffset: The x offset in pixels to flick by.
     ///   - yOffset: The y offset in pixels to flick by.
     ///   - speed: The speed in pixels per seconds.
-    public func flick(element: String, xOffset: Double, yOffset: Double, speed: Double, retryTimeout: TimeInterval? = nil) throws {
+    public func flick(xOffset: Double, yOffset: Double, speed: Double, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchFlickElement(session: session.id, element: id, xOffset: xOffset, yOffset: yOffset, speed: speed)
         let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
             do {
