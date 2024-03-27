@@ -288,6 +288,30 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try session.windowHandles == ["myWindow", "myWindow"])
     }
 
+
+    func testElementDoubleClick() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
+        mockWebDriver.expect(path: "session/mySession/touch/doubleclick", method: .post)
+        XCTAssertNotNil(try element.doubleClick())
+    }
+
+    func testElementFlick() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
+        mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
+        XCTAssertNotNil(try element.flick(xOffset: 5, yOffset: 20, speed: 2003))
+    }
+
+    func testSessionFlick() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
+        XCTAssertNotNil(try session.flick(xSpeed: 5, ySpeed: 20))
+    }
+
     func testSessionSource() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
