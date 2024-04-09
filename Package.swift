@@ -10,7 +10,8 @@ let package = Package(
     targets: [
         .target(
             name: "WebDriver",
-            path: "Sources/WebDriver"),
+            path: "Sources/WebDriver",
+            exclude: ["CMakeLists.txt"]),
         .target(
             name: "TestsCommon",
             path: "Tests/Common"),
@@ -30,7 +31,8 @@ package.targets += [
     .target(
         name: "WinAppDriver",
         dependencies: ["WebDriver"],
-        path: "Sources/WinAppDriver"),
+        path: "Sources/WinAppDriver",
+        exclude: ["CMakeLists.txt"]),
     .testTarget(
         name: "WinAppDriverTests",
         dependencies: ["TestsCommon", "WebDriver", "WinAppDriver"],
@@ -38,4 +40,3 @@ package.targets += [
         linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),
 ]
 #endif
-
