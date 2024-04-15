@@ -7,6 +7,9 @@ let package = Package(
     products: [
         .library(name: "WebDriver", targets: ["WebDriver"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-testing.git", branch: "main"),
+    ],
     targets: [
         .target(
             name: "WebDriver",
@@ -17,9 +20,12 @@ let package = Package(
             path: "Tests/Common"),
         .testTarget(
             name: "UnitTests",
-            dependencies: ["TestsCommon", "WebDriver"],
-            // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
-            linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"], .when(platforms: [.windows])) ]),
+            dependencies: [
+                "TestsCommon",
+                "WebDriver",
+                .product(name: "Testing", package: "swift-testing")
+            ]
+        ),
     ]
 )
 

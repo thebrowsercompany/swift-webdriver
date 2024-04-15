@@ -1,5 +1,6 @@
+import Foundation
+import Testing
 @testable import WebDriver
-import XCTest
 
 /// A mock WebDriver implementation which can be configured
 /// to expect certain requests and fail if they don't match.
@@ -16,7 +17,7 @@ class MockWebDriver: WebDriver {
 
     deinit {
         // We should have met all of our expectations.
-        XCTAssertEqual(expectations.count, 0)
+        #expect(expectations.count == 0)
     }
 
     /// Queues an expected request and specifies its response handler.
@@ -69,11 +70,11 @@ class MockWebDriver: WebDriver {
 
     @discardableResult
     func send<Req: Request>(_ request: Req) throws -> Req.Response {
-        XCTAssertNotEqual(expectations.count, 0)
+        #expect(expectations.count != 0)
 
         let expectation = expectations.remove(at: 0)
-        XCTAssertEqual(request.pathComponents.joined(separator: "/"), expectation.path)
-        XCTAssertEqual(request.method, expectation.method)
+        #expect(request.pathComponents.joined(separator: "/") == expectation.path)
+        #expect(request.method == expectation.method)
 
         let requestBody: Data? = Req.Body.self == CodableNone.self
             ? nil : try JSONEncoder().encode(request.body)
