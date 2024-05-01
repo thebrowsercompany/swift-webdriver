@@ -5,10 +5,14 @@ public struct Element {
     var webDriver: WebDriver { session.webDriver }
     public let session: Session
     public let id: String
+    public let foundUsing: String?
+    public let foundUsingValue: String?
 
-    public init(session: Session, id: String) {
+    public init(session: Session, id: String, foundUsing: String? = nil, foundUsingValue: String? = nil) {
         self.session = session
         self.id = id
+        self.foundUsing = foundUsing
+        self.foundUsingValue = foundUsingValue
     }
 
     /// The element's textual contents.
