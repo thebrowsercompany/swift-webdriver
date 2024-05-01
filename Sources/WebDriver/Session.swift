@@ -66,7 +66,7 @@ public class Session {
             }
         }
     }
-    
+
     public var location: Location {
         get throws {
             let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
@@ -175,7 +175,7 @@ public class Session {
             return PollResult(value: elementId, success: elementId != nil)
         }.value
 
-        return elementId.map { Element(session: self, id: $0) }
+        return elementId.map { Element(session: self, id: $0, foundUsing: using, foundUsingValue: value) }
     }
 
     /// Finds elements by id, starting from the root.
@@ -225,7 +225,7 @@ public class Session {
         return try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
             do {
                 // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
+                return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element, foundUsing: using, foundUsingValue: value) })
             } catch let error as ErrorResponse where error.status == .noSuchElement {
                 // Follow the WebDriver spec and keep polling if no elements are found
                 return PollResult.failure([])
@@ -344,7 +344,7 @@ public class Session {
             try webDriver.send(Requests.SessionSource(session: id)).value
         }
     }
- 
+
     /// - Returns: Current window handle
     public var windowHandle: String {
         get throws {
@@ -358,8 +358,8 @@ public class Session {
         try webDriver.send(Requests.SessionLocation.Post(session: id, location: location))
     }
 
-    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws { 
-        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude)) 
+    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws {
+        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude))
     }
 
     /// - Returns: Array of window handles
@@ -379,8 +379,7 @@ public class Session {
     }
 
     deinit {
-        do { try delete() }
-        catch let error as ErrorResponse {
+        do { try delete() } catch let error as ErrorResponse {
             assertionFailure("Error in Session.delete: \(error)")
         } catch {
             assertionFailure("Unexpected error in Session.delete: \(error)")

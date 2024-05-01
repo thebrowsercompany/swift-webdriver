@@ -51,7 +51,36 @@ class APIToRequestMappingTests: XCTestCase {
             XCTAssertEqual($0.value, "myElement.name")
             return ResponseWithValue(.init(element: "myElement"))
         }
-        XCTAssertNotNil(try session.findElement(byName: "myElement.name"))
+        let element = try session.findElement(byName: "myElement.name")
+        XCTAssertNotNil(element)
+        if let element {
+            XCTAssertEqual(element.foundUsing, "name")
+            XCTAssertEqual(element.foundUsingValue, "myElement.name")
+        }
+
+        mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Requests.SessionElement.self) {
+            XCTAssertEqual($0.using, "accessibility id")
+            XCTAssertEqual($0.value, "myElement2.accessibilityId")
+            return ResponseWithValue(.init(element: "myElement2"))
+        }
+        let element2 = try session.findElement(byAccessibilityId: "myElement2.accessibilityId")
+        XCTAssertNotNil(element2)
+        if let element2 {
+            XCTAssertEqual(element2.foundUsing, "accessibility id")
+            XCTAssertEqual(element2.foundUsingValue, "myElement2.accessibilityId")
+        }
+
+        mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Requests.SessionElement.self) {
+            XCTAssertEqual($0.using, "id")
+            XCTAssertEqual($0.value, "myElement3.Id")
+            return ResponseWithValue(.init(element: "myElement3"))
+        }
+        let element3 = try session.findElement(byId: "myElement3.Id")
+        XCTAssertNotNil(element3)
+        if let element3 {
+            XCTAssertEqual(element3.foundUsing, "id")
+            XCTAssertEqual(element3.foundUsingValue, "myElement3.Id")
+        }
 
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Requests.SessionActiveElement.self) {
             ResponseWithValue(.init(element: "myElement"))
@@ -97,7 +126,7 @@ class APIToRequestMappingTests: XCTestCase {
         }
         try session.buttonUp(button: .right)
     }
- 
+
     func testSessionOrientation() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
@@ -250,10 +279,10 @@ class APIToRequestMappingTests: XCTestCase {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let location = Location(latitude: 5, longitude: 20, altitude: 2003)
-        
+
         mockWebDriver.expect(path: "session/mySession/location", method: .post)
         try session.setLocation(location)
-        
+
         mockWebDriver.expect(path: "session/mySession/location", method: .get, type: Requests.SessionLocation.Get.self) {
             ResponseWithValue(.init(latitude: 5, longitude: 20, altitude: 2003))
         }
@@ -281,13 +310,12 @@ class APIToRequestMappingTests: XCTestCase {
 
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
-        
+
         mockWebDriver.expect(path: "session/mySession/window_handles", method: .get, type: Requests.SessionWindowHandles.self) {
             ResponseWithValue(.init(["myWindow", "myWindow"]))
         }
         XCTAssert(try session.windowHandles == ["myWindow", "myWindow"])
     }
-
 
     func testElementDoubleClick() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
