@@ -72,4 +72,8 @@ public class WinAppDriver: WebDriver {
     public func send<Req: Request>(_ request: Req) throws -> Req.Response {
         try httpWebDriver.send(request)
     }
+
+    public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
+        error == .winAppDriver_elementNotInteractable || httpWebDriver.isInconclusiveInteraction(error: error)
+    }
 }
