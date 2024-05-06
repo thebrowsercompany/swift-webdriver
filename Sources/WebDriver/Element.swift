@@ -56,49 +56,19 @@ public struct Element {
     /// Clicks this element.
     public func click(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.ElementClick(session: session.id, element: id)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
-            do {
-                // Immediately bubble most failures, only retry on element not interactable.
-                try webDriver.send(request)
-                return PollResult.success(nil as ErrorResponse?)
-            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return PollResult.failure(error)
-            }
-        }
-
-        if let notInteractableError = result.value { throw notInteractableError }
+        try session.sendInteraction(request, retryTimeout: retryTimeout)
     }
 
     /// Clicks this element via touch.
     public func touchClick(kind: TouchClickKind = .single, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchClick(session: session.id, kind: kind, element: id)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
-            do {
-                // Immediately bubble most failures, only retry on element not interactable.
-                try webDriver.send(request)
-                return PollResult.success(nil as ErrorResponse?)
-            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return PollResult.failure(error)
-            }
-        }
-
-        if let notInteractableError = result.value { throw notInteractableError }
+        try session.sendInteraction(request, retryTimeout: retryTimeout)
     }
 
     /// Double clicks an element by id.
     public func doubleClick(retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchDoubleClick(session: session.id, element: id)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
-            do {
-                // Immediately bubble most failures, only retry on element not interactable.
-                try webDriver.send(request)
-                return PollResult.success(nil as ErrorResponse?)
-            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return PollResult.failure(error)
-            }
-        }
-
-        if let notInteractableError = result.value { throw notInteractableError }
+        try session.sendInteraction(request, retryTimeout: retryTimeout)
     }
 
     /// - Parameters:
@@ -109,17 +79,7 @@ public struct Element {
     ///   - speed: The speed in pixels per seconds.
     public func flick(xOffset: Double, yOffset: Double, speed: Double, retryTimeout: TimeInterval? = nil) throws {
         let request = Requests.SessionTouchFlickElement(session: session.id, element: id, xOffset: xOffset, yOffset: yOffset, speed: speed)
-        let result = try poll(timeout: retryTimeout ?? session.defaultRetryTimeout) {
-            do {
-                // Immediately bubble most failures, only retry on element not interactable.
-                try webDriver.send(request)
-                return PollResult.success(nil as ErrorResponse?)
-            } catch let error as ErrorResponse where error.status == .winAppDriver_elementNotInteractable {
-                return PollResult.failure(error)
-            }
-        }
-
-        if let notInteractableError = result.value { throw notInteractableError }
+        try session.sendInteraction(request, retryTimeout: retryTimeout)
     }
 
     /// Finds an element by id, starting from this element.

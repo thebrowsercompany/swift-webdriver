@@ -371,11 +371,25 @@ public class Session {
     }
 
     /// Deletes the current session.
-
     public func delete() throws {
         guard shouldDelete else { return }
         try webDriver.send(Requests.SessionDelete(session: id))
         shouldDelete = false
+    }
+
+    /// Sends an interaction request, retrying until it is conclusive or the timeout elapses.
+    internal func sendInteraction<Req: Request>(_ request: Req, retryTimeout: TimeInterval? = nil) throws where Req.Response == CodableNone {
+        let result = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
+            do {
+                // Immediately bubble most failures, only retry if inconclusive.
+                try webDriver.send(request)
+                return PollResult.success(nil as ErrorResponse?)
+            } catch let error as ErrorResponse where webDriver.isInconclusiveInteraction(error: error.status) {
+                return PollResult.failure(error)
+            }
+        }
+
+        if let error = result.value { throw error }
     }
 
     deinit {
