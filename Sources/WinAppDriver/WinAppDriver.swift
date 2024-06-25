@@ -77,7 +77,6 @@ public class WinAppDriver: WebDriver {
 
                 // Also use the parent console to stop spurious new consoles from spawning.
                 launchOptions.spawnNewConsole = false
-
             }
 
             // Close our handles when the process has launched. The child process keeps a copy.

@@ -2,6 +2,10 @@ import struct Foundation.TimeInterval
 import WinSDK
 
 /// Options for launching a process.
+/// Note that not setting all of the stdoutHandle, stderrHandle, and stdinHandle
+/// fields will result in the process inheriting the parent's stdout, stderr or
+/// stdin handles, respectively. This may result in the process's output being
+/// written to the parent's console, even if `spawnNewConsole` is set to `true`.
 internal struct ProcessLaunchOptions {
     /// Spawn a new console for the process.
     public var spawnNewConsole: Bool = true
@@ -82,7 +86,7 @@ internal class Win32ProcessTree {
     private static func createProcessInJob(
         commandLine: String,
         jobHandle: HANDLE,
-        options: ProcessLaunchOptions = ProcessLaunchOptions()
+        options: ProcessLaunchOptions
     ) throws -> HANDLE {
         try commandLine.withCString(encodedAs: UTF16.self) { commandLine throws in
             var startupInfo = STARTUPINFOW()
@@ -92,23 +96,27 @@ internal class Win32ProcessTree {
             let creationFlags =
                 DWORD(CREATE_SUSPENDED) | DWORD(CREATE_NEW_PROCESS_GROUP)
                 | (options.spawnNewConsole ? DWORD(CREATE_NEW_CONSOLE) : 0)
+
+            // Populate the startup info struct with the handles to redirect.
+            // Note that these fields are unused if `STARTF_USESTDHANDLES` is
+            // not set.
             if let stdoutHandle = options.stdoutHandle {
                 startupInfo.hStdOutput = stdoutHandle
                 redirectStdHandle = true
             } else {
-                startupInfo.hStdOutput = INVALID_HANDLE_VALUE
+                startupInfo.hStdOutput = GetStdHandle(DWORD(STD_OUTPUT_HANDLE))
             }
             if let stderrHandle = options.stderrHandle {
                 startupInfo.hStdError = stderrHandle
                 redirectStdHandle = true
             } else {
-                startupInfo.hStdError = INVALID_HANDLE_VALUE
+                startupInfo.hStdError = GetStdHandle(DWORD(STD_ERROR_HANDLE))
             }
             if let stdinHandle = options.stdinHandle {
                 startupInfo.hStdInput = stdinHandle
                 redirectStdHandle = true
             } else {
-                startupInfo.hStdInput = INVALID_HANDLE_VALUE
+                startupInfo.hStdInput = GetStdHandle(DWORD(STD_INPUT_HANDLE))
             }
             if redirectStdHandle {
                 startupInfo.dwFlags |= DWORD(STARTF_USESTDHANDLES)
