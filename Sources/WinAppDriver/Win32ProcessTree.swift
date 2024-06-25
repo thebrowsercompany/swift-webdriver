@@ -1,18 +1,37 @@
 import struct Foundation.TimeInterval
 import WinSDK
 
+/// Options for launching a process.
+/// Note that not setting all of the stdoutHandle, stderrHandle, and stdinHandle
+/// fields will result in the process inheriting the parent's stdout, stderr or
+/// stdin handles, respectively. This may result in the process's output being
+/// written to the parent's console, even if `spawnNewConsole` is set to `true`.
+internal struct ProcessLaunchOptions {
+    /// Spawn a new console for the process.
+    public var spawnNewConsole: Bool = true
+    /// Redirect the process's stdout to the given handle.
+    public var stdoutHandle: HANDLE? = nil
+    /// Redirect the process's stderr to the given handle.
+    public var stderrHandle: HANDLE? = nil
+    /// Redirect the process's stdin to the given handle.
+    public var stdinHandle: HANDLE? = nil
+}
+
 /// Starts and tracks the lifetime of a process tree using Win32 APIs.
 internal class Win32ProcessTree {
     internal let jobHandle: HANDLE
     internal let handle: HANDLE
 
-    init(path: String, args: [String]) throws {
+    init(path: String, args: [String], options: ProcessLaunchOptions = ProcessLaunchOptions())
+        throws {
         // Use a job object to ensure that the process tree doesn't outlive us.
         jobHandle = try Self.createJobObject()
 
         let commandLine = buildCommandLineArgsString(args: [path] + args)
-        do { handle = try Self.createProcessInJob(commandLine: commandLine, jobHandle: jobHandle) }
-        catch {
+        do {
+            handle = try Self.createProcessInJob(
+                commandLine: commandLine, jobHandle: jobHandle, options: options)
+        } catch {
             CloseHandle(jobHandle)
             throw error
         }
@@ -64,10 +83,44 @@ internal class Win32ProcessTree {
         return jobHandle
     }
 
-    private static func createProcessInJob(commandLine: String, jobHandle: HANDLE) throws -> HANDLE {
+    private static func createProcessInJob(
+        commandLine: String,
+        jobHandle: HANDLE,
+        options: ProcessLaunchOptions
+    ) throws -> HANDLE {
         try commandLine.withCString(encodedAs: UTF16.self) { commandLine throws in
             var startupInfo = STARTUPINFOW()
             startupInfo.cb = DWORD(MemoryLayout<STARTUPINFOW>.size)
+            var redirectStdHandle = false
+
+            let creationFlags =
+                DWORD(CREATE_SUSPENDED) | DWORD(CREATE_NEW_PROCESS_GROUP)
+                | (options.spawnNewConsole ? DWORD(CREATE_NEW_CONSOLE) : 0)
+
+            // Populate the startup info struct with the handles to redirect.
+            // Note that these fields are unused if `STARTF_USESTDHANDLES` is
+            // not set.
+            if let stdoutHandle = options.stdoutHandle {
+                startupInfo.hStdOutput = stdoutHandle
+                redirectStdHandle = true
+            } else {
+                startupInfo.hStdOutput = GetStdHandle(DWORD(STD_OUTPUT_HANDLE))
+            }
+            if let stderrHandle = options.stderrHandle {
+                startupInfo.hStdError = stderrHandle
+                redirectStdHandle = true
+            } else {
+                startupInfo.hStdError = GetStdHandle(DWORD(STD_ERROR_HANDLE))
+            }
+            if let stdinHandle = options.stdinHandle {
+                startupInfo.hStdInput = stdinHandle
+                redirectStdHandle = true
+            } else {
+                startupInfo.hStdInput = GetStdHandle(DWORD(STD_INPUT_HANDLE))
+            }
+            if redirectStdHandle {
+                startupInfo.dwFlags |= DWORD(STARTF_USESTDHANDLES)
+            }
 
             var processInfo = PROCESS_INFORMATION()
             guard CreateProcessW(
@@ -75,8 +128,8 @@ internal class Win32ProcessTree {
                 UnsafeMutablePointer<WCHAR>(mutating: commandLine),
                 nil,
                 nil,
-                false,
-                DWORD(CREATE_NEW_CONSOLE) | DWORD(CREATE_SUSPENDED) | DWORD(CREATE_NEW_PROCESS_GROUP),
+                redirectStdHandle, // Inherit handles is necessary for redirects.
+                creationFlags,
                 nil,
                 nil,
                 &startupInfo,
