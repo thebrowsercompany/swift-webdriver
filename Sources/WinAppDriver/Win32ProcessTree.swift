@@ -124,16 +124,16 @@ internal class Win32ProcessTree {
 
             var processInfo = PROCESS_INFORMATION()
             guard CreateProcessW(
-                    nil,
-                    UnsafeMutablePointer<WCHAR>(mutating: commandLine),
-                    nil,
-                    nil,
-                    redirectStdHandle, // Inherit handles is necessary for redirects.
-                    creationFlags,
-                    nil,
-                    nil,
-                    &startupInfo,
-                    &processInfo
+                nil,
+                UnsafeMutablePointer<WCHAR>(mutating: commandLine),
+                nil,
+                nil,
+                redirectStdHandle, // Inherit handles is necessary for redirects.
+                creationFlags,
+                nil,
+                nil,
+                &startupInfo,
+                &processInfo
             ) else {
                 throw Win32Error.getLastError(apiName: "CreateProcessW")
             }
