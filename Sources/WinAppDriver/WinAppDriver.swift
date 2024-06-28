@@ -46,13 +46,24 @@ public class WinAppDriver: WebDriver {
         var childStdinHandle: HANDLE? = nil
         do {
             var launchOptions = ProcessLaunchOptions()
+
+            // Close our handles when the process has launched. The child process keeps a copy.
+            defer {
+                if let handle = launchOptions.stdoutHandle {
+                    CloseHandle(handle)
+                }
+                if let handle = launchOptions.stdinHandle {
+                    CloseHandle(handle)
+                }
+            }
+
             if let outputFile = outputFile {
                 // Open the output file for writing to the child stdout.
                 var securityAttributes = SECURITY_ATTRIBUTES()
                 securityAttributes.nLength = DWORD(MemoryLayout<SECURITY_ATTRIBUTES>.size)
                 securityAttributes.bInheritHandle = true
-                launchOptions.stdoutHandle = try outputFile.withCString(encodedAs: UTF16.self) {
-                    outputFile throws in
+                launchOptions.stdoutHandle = outputFile.withCString(encodedAs: UTF16.self) {
+                    outputFile in
                     CreateFileW(
                         UnsafeMutablePointer<WCHAR>(mutating: outputFile), DWORD(GENERIC_WRITE),
                         DWORD(FILE_SHARE_READ), &securityAttributes,
@@ -70,23 +81,12 @@ public class WinAppDriver: WebDriver {
                 // pipe here to keep stdin open until the child process is closed.
                 var childReadInputHandle: HANDLE?
                 if !CreatePipe(&childReadInputHandle, &childStdinHandle, &securityAttributes, 0) {
-                    CloseHandle(launchOptions.stdoutHandle)
                     throw Win32Error.getLastError(apiName: "CreatePipe")
                 }
                 launchOptions.stdinHandle = childReadInputHandle
 
                 // Also use the parent console to stop spurious new consoles from spawning.
                 launchOptions.spawnNewConsole = false
-            }
-
-            // Close our handles when the process has launched. The child process keeps a copy.
-            defer {
-                if let handle = launchOptions.stdoutHandle {
-                    CloseHandle(handle)
-                }
-                if let handle = launchOptions.stdinHandle {
-                    CloseHandle(handle)
-                }
             }
 
             processTree = try Win32ProcessTree(
