@@ -6,27 +6,45 @@ public class Session {
     public let webDriver: any WebDriver
     public let id: String
     public let capabilities: Capabilities
+    private var _implicitWaitTimeout: TimeInterval = 0
+    private var emulateImplicitWait: Bool = false // Set if the session doesn't support implicit waits.
     private var shouldDelete: Bool = true
-
-    public init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
-        self.webDriver = webDriver
-        let response = try webDriver.send(Requests.Session(
-            desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
-        self.id = response.sessionId
-        self.capabilities = response.value
-    }
 
     public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
         self.webDriver = webDriver
         self.id = existingId
         self.capabilities = capabilities
+        if let implicitWaitTimeoutInMilliseconds = capabilities.timeouts?.implicit {
+            self.implicitWaitTimeout = Double(implicitWaitTimeoutInMilliseconds) / 1000.0
+        }
         self.shouldDelete = owned
     }
 
-    /// A TimeInterval specifying max time to spend retrying operations.
-    public var defaultRetryTimeout: TimeInterval = 1.0 {
-        willSet { precondition(newValue >= 0) }
+    public convenience init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
+        let response = try webDriver.send(Requests.Session(
+            desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
+        self.init(webDriver: webDriver, existingId: response.sessionId, capabilities: response.value, owned: true)
     }
+
+    /// The amount of time the driver should implicitly wait when searching for elements.
+    /// This functionality is either implemented by the driver, or emulated by swift-webdriver as a fallback.
+    public var implicitWaitTimeout: TimeInterval {
+        get { _implicitWaitTimeout }
+        set {
+            if newValue == _implicitWaitTimeout { return }
+            if !emulateImplicitWait {
+                do {
+                    try setTimeout(type: TimeoutType.implicitWait, duration: newValue)
+                    emulateImplicitWait = true
+                } catch {}
+            }
+            _implicitWaitTimeout = newValue
+        }
+    }
+
+    /// The amount of time interactions should be retried before failing.
+    /// This functionality is emulated by swift-webdriver.
+    public var implicitInteractionRetryTimeout: TimeInterval = .zero
 
     /// The title of this session such as the tab or window text.
     public var title: String {
@@ -77,8 +95,7 @@ public class Session {
     public var orientation: ScreenOrientation {
         get throws {
             let response = try webDriver.send(Requests.SessionOrientation.Get(session: id))
-
-          return response.value
+            return response.value
         }
     }
 
@@ -86,6 +103,8 @@ public class Session {
     public func setTimeout(type: String, duration: TimeInterval) throws {
         try webDriver.send(
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
+        // Keep track of the implicit wait to know when we need to override it.
+        if type == TimeoutType.implicitWait { _implicitWaitTimeout = duration }
     }
 
     public func execute(script: String, args: [String] = [], async: Bool = false) throws {
@@ -119,122 +138,139 @@ public class Session {
 
     /// Finds an element by id, starting from the root.
     /// - Parameter byId: id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter wait: Optional value to override the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "id", value: id, retryTimeout: retryTimeout)
+    public func findElement(byId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Finds an element by name, starting from the root.
     /// - Parameter byName: name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
+    public func findElement(byName name: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "name", value: name, waitTimeout: waitTimeout)
     }
 
     /// Finds an element by accessibility id, starting from the root.
     /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
+    public func findElement(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "accessibility id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Finds an element by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
+    public func findElement(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "xpath", value: xpath, waitTimeout: waitTimeout)
     }
 
     /// Finds an element by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
+    public func findElement(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, using: "class name", value: className, waitTimeout: waitTimeout)
+    }
+
+    /// Overrides the implicit wait timeout during a block of code.
+    private func withImplicitWaitTimeout<Result>(_ value: TimeInterval?, _ block: () throws -> Result) rethrows -> Result {
+        if let value, value != _implicitWaitTimeout {
+            let previousValue = _implicitWaitTimeout
+            implicitWaitTimeout = value
+            defer { implicitWaitTimeout = previousValue }
+            return try block()
+        }
+        else {
+            return try block()
+        }
     }
 
     // Helper for findElement functions above.
-    internal func findElement(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
+    internal func findElement(startingAt element: Element?, using: String, value: String, waitTimeout: TimeInterval?) throws -> Element? {
         precondition(element == nil || element?.session === self)
 
-        let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
+        return try withImplicitWaitTimeout(waitTimeout) {
+            let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
 
-        let elementId = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
-            let elementId: String?
-            do {
-                // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                elementId = try webDriver.send(request).value.element
-            } catch let error as ErrorResponse where error.status == .noSuchElement {
-                elementId = nil
-            }
+            let elementId = try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
+                let elementId: String?
+                do {
+                    // Allow errors to bubble up unless they are specifically saying that the element was not found.
+                    elementId = try webDriver.send(request).value.element
+                } catch let error as ErrorResponse where error.status == .noSuchElement {
+                    elementId = nil
+                }
 
-            return PollResult(value: elementId, success: elementId != nil)
-        }.value
+                return PollResult(value: elementId, success: elementId != nil)
+            }.value
 
-        return elementId.map { Element(session: self, id: $0) }
+            return elementId.map { Element(session: self, id: $0) }
+        }
     }
 
     /// Finds elements by id, starting from the root.
     /// - Parameter byId: id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "id", value: id, retryTimeout: retryTimeout)
+    public func findElements(byId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, using: "id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Finds elements by name, starting from the root.
     /// - Parameter byName: name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byName name: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "name", value: name, retryTimeout: retryTimeout)
+    public func findElements(byName name: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, using: "name", value: name, waitTimeout: waitTimeout)
     }
 
     /// Finds elements by accessibility id, starting from the root.
     /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "accessibility id", value: id, retryTimeout: retryTimeout)
+    public func findElements(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, using: "accessibility id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Finds elements by xpath, starting from the root.
     /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "xpath", value: xpath, retryTimeout: retryTimeout)
+    public func findElements(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, using: "xpath", value: xpath, waitTimeout: waitTimeout)
     }
 
     /// Finds elements by class name, starting from the root.
     /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: Optional value to override the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "class name", value: className, retryTimeout: retryTimeout)
+    public func findElements(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, using: "class name", value: className, waitTimeout: waitTimeout)
     }
 
     // Helper for findElements functions above.
-    internal func findElements(startingAt element: Element?, using: String, value: String, retryTimeout: TimeInterval?) throws -> [Element] {
-        let request = Requests.SessionElements(session: id, element: element?.id, using: using, value: value)
+    internal func findElements(startingAt element: Element?, using: String, value: String, waitTimeout: TimeInterval?) throws -> [Element] {
+        try withImplicitWaitTimeout(waitTimeout) {
+            let request = Requests.SessionElements(session: id, element: element?.id, using: using, value: value)
 
-        return try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
-            do {
-                // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
-            } catch let error as ErrorResponse where error.status == .noSuchElement {
-                // Follow the WebDriver spec and keep polling if no elements are found
-                return PollResult.failure([])
-            }
-        }.value
+            return try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
+                do {
+                    // Allow errors to bubble up unless they are specifically saying that the element was not found.
+                    return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
+                } catch let error as ErrorResponse where error.status == .noSuchElement {
+                    // Follow the WebDriver spec and keep polling if no elements are found
+                    return PollResult.failure([])
+                }
+            }.value
+        }
     }
 
     /// - Parameters:
-    ///   - retryTimeout: Optional value to override defaultRetryTimeout.
+    ///   - waitTimeout: Optional value to override defaultRetryTimeout.
     ///   - xSpeed: The x speed in pixels per second.
     ///   - ySpeed: The y speed in pixels per second.
     public func flick(xSpeed: Double, ySpeed: Double) throws {
@@ -379,7 +415,7 @@ public class Session {
 
     /// Sends an interaction request, retrying until it is conclusive or the timeout elapses.
     internal func sendInteraction<Req: Request>(_ request: Req, retryTimeout: TimeInterval? = nil) throws where Req.Response == CodableNone {
-        let result = try poll(timeout: retryTimeout ?? defaultRetryTimeout) {
+        let result = try poll(timeout: retryTimeout ?? implicitInteractionRetryTimeout) {
             do {
                 // Immediately bubble most failures, only retry if inconclusive.
                 try webDriver.send(request)

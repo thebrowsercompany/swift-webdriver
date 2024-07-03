@@ -37,16 +37,16 @@ class TimeoutTests: XCTestCase {
         let session = try startApp()
 
         // Test library timeout implementation
-        session.defaultRetryTimeout = 1
+        session.implicitWaitTimeout = 1
         XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) > 0.5)
 
-        session.defaultRetryTimeout = 0
+        session.implicitWaitTimeout = 0
         XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) < 0.5)
     }
 
     public func testWebDriverImplicitWait() throws {
         let session = try startApp()
-        session.defaultRetryTimeout = 0
+        session.implicitWaitTimeout = 0
 
         try session.setTimeout(type: TimeoutType.implicitWait, duration: 1)
         XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) > 0.5)
