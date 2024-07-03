@@ -7,7 +7,7 @@ public class Session {
     public let id: String
     public let capabilities: Capabilities
     private var _implicitWaitTimeout: TimeInterval = 0
-    private var emulateImplicitWait: Bool = false // Set if the session doesn't support implicit waits.
+    internal var emulateImplicitWait: Bool = false // Set if the session doesn't support implicit waits.
     private var shouldDelete: Bool = true
 
     public init(webDriver: any WebDriver, existingId: String, capabilities: Capabilities = Capabilities(), owned: Bool = false) {
@@ -35,8 +35,9 @@ public class Session {
             if !emulateImplicitWait {
                 do {
                     try setTimeout(type: TimeoutType.implicitWait, duration: newValue)
+                } catch {
                     emulateImplicitWait = true
-                } catch {}
+                }
             }
             _implicitWaitTimeout = newValue
         }
