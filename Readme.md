@@ -57,6 +57,12 @@ The library has two logical layers:
 
 Where WebDriver endpoint-specific functionality is provided, such as for launching and using a WinAppDriver instance, the code is kept separate from generic WebDriver functionality as much as possible.
 
+## Timeouts
+For UI testing, it is often useful to support retrying some operations until a timeout elapses (to account for animations or asynchrony). `swift-webdriver` offers two such mechanisms:
+
+- **Implicit wait timeout**: A duration for which `findElement` operations will implicitly wait if they cannot immediately find the element being queried. This feature is built into the WebDriver protocol, but optionally implemented by drivers. For drivers that do not support it, the library emulates it by repeating the query until the timeout elapses. By spec, this timeout defaults to zero.
+- **Interaction retry timeout**: A duration for which `click`, `flick` and similar operations will retry until they result in a successful interaction (e.g. the button is not disabled). This feature is not part of the WebDriver protocol, but rather implemented by the library. This timeout defaults to zero.
+
 ## Contributing
 
 We welcome contributions for:
