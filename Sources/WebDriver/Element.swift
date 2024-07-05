@@ -72,7 +72,7 @@ public struct Element {
     }
 
     /// - Parameters:
-    ///   - retryTimeout: Optional value to override defaultRetryTimeout.
+    ///   - retryTimeout: The amount of time to retry the operation. Overrides the implicit interaction retry timeout.
     ///   - element: Element id to click
     ///   - xOffset: The x offset in pixels to flick by.
     ///   - yOffset: The y offset in pixels to flick by.
@@ -84,92 +84,92 @@ public struct Element {
 
     /// Finds an element by id, starting from this element.
     /// - Parameter byId: id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(using: "id", value: id, retryTimeout: retryTimeout)
+    public func findElement(byId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Search for an element by name, starting from this element.
     /// - Parameter byName: name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byName name: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(using: "name", value: name, retryTimeout: retryTimeout)
+    public func findElement(byName name: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "name", value: name, waitTimeout: waitTimeout)
     }
 
     /// Search for an element in the accessibility tree, starting from this element.
     /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(using: "accessibility id", value: id, retryTimeout: retryTimeout)
+    public func findElement(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "accessibility id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Search for an element by xpath, starting from this element.
     /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: a new instance of Element wrapping the found element, nil if not found.
-    public func findElement(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(using: "xpath", value: xpath, retryTimeout: retryTimeout)
+    public func findElement(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "xpath", value: xpath, waitTimeout: waitTimeout)
     }
 
     /// Search for an element by class name, starting from this element.
     /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(using: "class name", value: className, retryTimeout: retryTimeout)
+    public func findElement(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(using: "class name", value: className, waitTimeout: waitTimeout)
     }
 
     // Helper for findElement functions above.
-    private func findElement(using: String, value: String, retryTimeout: TimeInterval?) throws -> Element? {
-        try session.findElement(startingAt: self, using: using, value: value, retryTimeout: retryTimeout)
+    private func findElement(using: String, value: String, waitTimeout: TimeInterval?) throws -> Element? {
+        try session.findElement(startingAt: self, using: using, value: value, waitTimeout: waitTimeout)
     }
 
     /// Search for elements by id, starting from this element.
     /// - Parameter byId: id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(using: "id", value: id, retryTimeout: retryTimeout)
+    public func findElements(byId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(using: "id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Search for elements by name, starting from this element.
     /// - Parameter byName: name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byName name: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(using: "name", value: name, retryTimeout: retryTimeout)
+    public func findElements(byName name: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(using: "name", value: name, waitTimeout: waitTimeout)
     }
 
     /// Search for elements in the accessibility tree, starting from this element.
     /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byAccessibilityId id: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(using: "accessibility id", value: id, retryTimeout: retryTimeout)
+    public func findElements(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(using: "accessibility id", value: id, waitTimeout: waitTimeout)
     }
 
     /// Search for elements by xpath, starting from this element.
     /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byXPath xpath: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(using: "xpath", value: xpath, retryTimeout: retryTimeout)
+    public func findElements(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(using: "xpath", value: xpath, waitTimeout: waitTimeout)
     }
 
     /// Search for elements by class name, starting from this element.
     /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter retryTimeout: Optional value to override defaultRetryTimeout.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The elements that were found, if any.
-    public func findElements(byClassName className: String, retryTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(using: "class name", value: className, retryTimeout: retryTimeout)
+    public func findElements(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(using: "class name", value: className, waitTimeout: waitTimeout)
     }
 
     // Helper for findElements functions above.
-    private func findElements(using: String, value: String, retryTimeout: TimeInterval?) throws -> [Element] {
-        try session.findElements(startingAt: self, using: using, value: value, retryTimeout: retryTimeout)
+    private func findElements(using: String, value: String, waitTimeout: TimeInterval?) throws -> [Element] {
+        try session.findElements(startingAt: self, using: using, value: value, waitTimeout: waitTimeout)
     }
 
     /// Gets an attribute of this element.

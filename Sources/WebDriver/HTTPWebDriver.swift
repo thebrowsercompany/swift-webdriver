@@ -6,7 +6,7 @@ import FoundationNetworking
 public struct HTTPWebDriver: WebDriver {
     let rootURL: URL
 
-    public static let defaultTimeout: TimeInterval = 5 // seconds
+    public static let defaultRequestTimeout: TimeInterval = 5 // seconds
 
     public init(endpoint: URL) {
         rootURL = endpoint
@@ -36,7 +36,7 @@ public struct HTTPWebDriver: WebDriver {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = request.method.rawValue
         // TODO(#40): Setting timeoutInterval causes a crash when sending the request on the CI machines.
-        // urlRequest.timeoutInterval = Self.defaultTimeout
+        // urlRequest.timeoutInterval = Self.defaultRequestTimeout
 
         // Add the body if the Request type defines one
         if Req.Body.self != CodableNone.self {
