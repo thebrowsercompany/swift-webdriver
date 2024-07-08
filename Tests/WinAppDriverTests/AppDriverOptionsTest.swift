@@ -13,15 +13,12 @@ class AppDriverOptionsTest: XCTestCase {
 
     /// Tests that redirecting stdout to a file works.
     func testStdoutRedirectToFile() throws {
-        let outputFile = try {
-            // Start a new instance of msinfo32 and write the output to a file.
-            let outputFile = tempFileName()
-            let _ = try MSInfo32App(
-                winAppDriver: WinAppDriver.start(
-                    outputFile: outputFile
-                ))
-            return outputFile
-        }()
+        // Start a new instance of msinfo32 and write the output to a file.
+        let outputFile = tempFileName()
+        let _ = try MSInfo32App(
+            winAppDriver: WinAppDriver.start(
+                outputFile: outputFile
+            ))
 
         // Read the output file.
         let output = try String(contentsOfFile: outputFile, encoding: .utf16LittleEndian)
