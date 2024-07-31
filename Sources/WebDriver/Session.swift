@@ -302,7 +302,7 @@ public class Session {
             session: id, action: .buttonUp, button: button))
     }
 
-    /// Clicks one of the mouse buttons
+    /// Clicks one of the mouse buttons.
     /// - Parameter button: The button to be clicked.
     public func click(button: MouseButton = .left) throws {
         try webDriver.send(Requests.SessionButton(
@@ -356,33 +356,33 @@ public class Session {
         try webDriver.send(Requests.SessionKeys(session: id, value: value))
     }
 
-    /// Change focus to another window
-    /// - Parameter name: The window to change focus to
+    /// Change focus to another window.
+    /// - Parameter name: The window to change focus to.
     public func focus(window name: String) throws {
         try webDriver.send(Requests.SessionWindow.Post(session: id, name: name))
     }
 
-    /// Close selected window
-    /// - Parameter name: The selected window to close
+    /// Close selected window.
+    /// - Parameter name: The selected window to close.
     public func close(window name: String) throws {
         try webDriver.send(Requests.SessionWindow.Delete(session: id, name: name))
     }
 
     public func window(handle: String) throws -> Window { .init(session: self, handle: handle) }
 
-    /// - Parameter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    /// - Parameter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}.
     public func setOrientation(_ value: ScreenOrientation) throws {
         try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: value))
     }
 
-    /// Get the current page source
+    /// Get the current page source.
     public var source: String {
         get throws {
             try webDriver.send(Requests.SessionSource(session: id)).value
         }
     }
 
-    /// - Returns: Current window handle
+    /// - Returns: Current window handle.
     public var windowHandle: String {
         get throws {
             let response = try webDriver.send(Requests.SessionWindowHandle(session: id))
@@ -390,7 +390,7 @@ public class Session {
         }
     }
 
-    /// Set the current geolocation
+    /// Set the current geolocation.
     public func setLocation(_ location: Location) throws {
         try webDriver.send(Requests.SessionLocation.Post(session: id, location: location))
     }
@@ -399,7 +399,7 @@ public class Session {
         try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude))
     }
 
-    /// - Returns: Array of window handles
+    /// - Returns: Array of window handles.
     public var windowHandles: [String] {
         get throws {
             let response = try webDriver.send(Requests.SessionWindowHandles(session: id))
