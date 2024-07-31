@@ -85,7 +85,7 @@ public class Session {
             }
         }
     }
-    
+
     public var location: Location {
         get throws {
             let response = try webDriver.send(Requests.SessionLocation.Get(session: id))
@@ -370,7 +370,7 @@ public class Session {
 
     public func window(handle: String) throws -> Window { .init(session: self, handle: handle) }
 
-    /// - Prarmeter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
+    /// - Parameter: Orientation the window will flip to {LANDSCAPE|PORTRAIT}
     public func setOrientation(_ value: ScreenOrientation) throws {
         try webDriver.send(Requests.SessionOrientation.Post(session: id, orientation: value))
     }
@@ -381,7 +381,7 @@ public class Session {
             try webDriver.send(Requests.SessionSource(session: id)).value
         }
     }
- 
+
     /// - Returns: Current window handle
     public var windowHandle: String {
         get throws {
@@ -390,13 +390,13 @@ public class Session {
         }
     }
 
-    /// Set the current geolocation 
+    /// Set the current geolocation
     public func setLocation(_ location: Location) throws {
         try webDriver.send(Requests.SessionLocation.Post(session: id, location: location))
     }
 
-    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws { 
-        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude)) 
+    public func setLocation(latitude: Double, longitude: Double, altitude: Double) throws {
+        try setLocation(Location(latitude: latitude, longitude: longitude, altitude: altitude))
     }
 
     /// - Returns: Array of window handles
