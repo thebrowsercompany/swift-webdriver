@@ -137,44 +137,20 @@ public class Session {
         return data
     }
 
-    /// Finds an element by id, starting from the root.
-    /// - Parameter byId: id of the element to search for.
-    /// - Parameter wait: Optional value to override the implicit wait timeout.
+    /// Finds an element using a given locator, starting from the session root.
+    /// - Parameter locator: The locator strategy to use.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(byId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "id", value: id, waitTimeout: waitTimeout)
+    public func findElement(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> Element? {
+        try findElement(startingAt: nil, locator: locator, waitTimeout: waitTimeout)
     }
 
-    /// Finds an element by name, starting from the root.
-    /// - Parameter byName: name of the element to search for.
-    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
-    /// - Returns: The element that was found, if any.
-    public func findElement(byName name: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "name", value: name, waitTimeout: waitTimeout)
-    }
-
-    /// Finds an element by accessibility id, starting from the root.
-    /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
-    /// - Returns: The element that was found, if any.
-    public func findElement(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "accessibility id", value: id, waitTimeout: waitTimeout)
-    }
-
-    /// Finds an element by xpath, starting from the root.
-    /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
-    /// - Returns: The element that was found, if any.
-    public func findElement(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "xpath", value: xpath, waitTimeout: waitTimeout)
-    }
-
-    /// Finds an element by class name, starting from the root.
-    /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter waitTimeout: Optional value to override defaultRetryTimeout.
-    /// - Returns: The element that was found, if any.
-    public func findElement(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> Element? {
-        try findElement(startingAt: nil, using: "class name", value: className, waitTimeout: waitTimeout)
+    /// Finds elements by id, starting from the root.
+    /// - Parameter locator: The locator strategy to use.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
+    /// - Returns: The elements that were found, if any.
+    public func findElements(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> [Element] {
+        try findElements(startingAt: nil, locator: locator, waitTimeout: waitTimeout)
     }
 
     /// Overrides the implicit wait timeout during a block of code.
@@ -190,12 +166,12 @@ public class Session {
         }
     }
 
-    // Helper for findElement functions above.
-    internal func findElement(startingAt element: Element?, using: String, value: String, waitTimeout: TimeInterval?) throws -> Element? {
+    /// Common logic for `Session.findElement` and `Element.findElement`.
+    internal func findElement(startingAt element: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> Element? {
         precondition(element == nil || element?.session === self)
 
         return try withImplicitWaitTimeout(waitTimeout) {
-            let request = Requests.SessionElement(session: id, element: element?.id, using: using, value: value)
+            let request = Requests.SessionElement(session: id, element: element?.id, locator: locator)
 
             let elementId = try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
                 let elementId: String?
@@ -213,50 +189,10 @@ public class Session {
         }
     }
 
-    /// Finds elements by id, starting from the root.
-    /// - Parameter byId: id of the element to search for.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
-    public func findElements(byId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "id", value: id, waitTimeout: waitTimeout)
-    }
-
-    /// Finds elements by name, starting from the root.
-    /// - Parameter byName: name of the element to search for.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
-    public func findElements(byName name: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "name", value: name, waitTimeout: waitTimeout)
-    }
-
-    /// Finds elements by accessibility id, starting from the root.
-    /// - Parameter byAccessibilityId: accessibiilty id of the element to search for.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
-    public func findElements(byAccessibilityId id: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "accessibility id", value: id, waitTimeout: waitTimeout)
-    }
-
-    /// Finds elements by xpath, starting from the root.
-    /// - Parameter byXPath: xpath of the element to search for.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
-    public func findElements(byXPath xpath: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "xpath", value: xpath, waitTimeout: waitTimeout)
-    }
-
-    /// Finds elements by class name, starting from the root.
-    /// - Parameter byClassName: class name of the element to search for.
-    /// - Parameter waitTimeout: Optional value to override the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
-    public func findElements(byClassName className: String, waitTimeout: TimeInterval? = nil) throws -> [Element] {
-        try findElements(startingAt: nil, using: "class name", value: className, waitTimeout: waitTimeout)
-    }
-
-    // Helper for findElements functions above.
-    internal func findElements(startingAt element: Element?, using: String, value: String, waitTimeout: TimeInterval?) throws -> [Element] {
+    /// Common logic for `Session.findElements` and `Element.findElements`.
+    internal func findElements(startingAt element: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> [Element] {
         try withImplicitWaitTimeout(waitTimeout) {
-            let request = Requests.SessionElements(session: id, element: element?.id, using: using, value: value)
+            let request = Requests.SessionElements(session: id, element: element?.id, locator: locator)
 
             return try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
                 do {
