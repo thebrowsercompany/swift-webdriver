@@ -1,5 +1,6 @@
 add_library(WinAppDriver
   CommandLine.swift
+  ElementLocator+accessibilityId.swift
   ErrorResponse+WinAppDriver.swift
   ReexportWebDriver.swift
   Win32Error.swift

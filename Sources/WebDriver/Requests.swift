@@ -234,8 +234,7 @@ public enum Requests {
     public struct SessionElement: Request {
         public var session: String
         public var element: String? = nil
-        public var using: String
-        public var value: String
+        public var locator: ElementLocator
 
         public var pathComponents: [String] {
             if let element {
@@ -246,12 +245,7 @@ public enum Requests {
         }
 
         public var method: HTTPMethod { .post }
-        public var body: Body { .init(using: using, value: value) }
-
-        public struct Body: Codable {
-            var using: String
-            var value: String
-        }
+        public var body: ElementLocator { locator }
 
         public typealias Response = ResponseWithValue<ElementResponseValue>
     }
@@ -261,8 +255,7 @@ public enum Requests {
     public struct SessionElements: Request {
         public var session: String
         public var element: String? = nil
-        public var using: String
-        public var value: String
+        public var locator: ElementLocator
 
         public var pathComponents: [String] {
             if let element {
@@ -273,12 +266,7 @@ public enum Requests {
         }
 
         public var method: HTTPMethod { .post }
-        public var body: Body { .init(using: using, value: value) }
-
-        public struct Body: Codable {
-            var using: String
-            var value: String
-        }
+        public var body: ElementLocator { locator }
 
         public typealias Response = ResponseWithValueArray<ElementResponseValue>
     }

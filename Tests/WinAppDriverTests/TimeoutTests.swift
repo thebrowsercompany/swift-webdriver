@@ -38,10 +38,10 @@ class TimeoutTests: XCTestCase {
         let session = try startApp()
 
         session.implicitWaitTimeout = 1
-        XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) > 0.5)
+        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) > 0.5)
 
         session.implicitWaitTimeout = 0
-        XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) < 0.5)
+        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) < 0.5)
 
         XCTAssert(!session.emulateImplicitWait)
     }
@@ -52,9 +52,9 @@ class TimeoutTests: XCTestCase {
         // Test library timeout implementation
         session.emulateImplicitWait = true
         session.implicitWaitTimeout = 1
-        XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) > 0.5)
+        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) > 0.5)
 
         session.implicitWaitTimeout = 0
-        XCTAssert(try Self.time({ _ = try session.findElement(byAccessibilityId: "IdThatDoesNotExist") }) < 0.5)
+        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) < 0.5)
     }
 }

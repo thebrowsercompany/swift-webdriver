@@ -14,7 +14,7 @@ A `swift-webdriver` "Hello world" using `WinAppDriver` might look like this:
 let session = Session(
     webDriver: WinAppDriver.start(), // Requires WinAppDriver to be installed on the machine
     desiredCapabilities: WinAppDriver.Capabilities.startApp(name: "notepad.exe"))
-session.findElement(byName: "close")?.click()
+session.findElement(locator: .name("close"))?.click()
 ```
 
 To use `swift-webdriver` in your project, add a reference to it in your `Package.swift` file as follows:

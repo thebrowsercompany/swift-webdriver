@@ -20,7 +20,7 @@ class RequestsTests: XCTestCase {
     override class func tearDown() { _app = nil }
 
     func testCanGetChildElements() throws {
-        let children = try XCTUnwrap(app.listView.findElements(byXPath:"//ListItem"))
+        let children = try XCTUnwrap(app.listView.findElements(locator: .xpath("//ListItem")))
         XCTAssert(children.count > 0)
     }
 
