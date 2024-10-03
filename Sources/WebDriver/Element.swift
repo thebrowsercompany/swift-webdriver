@@ -98,6 +98,16 @@ public struct Element {
         try session.findElements(startingAt: self, locator: locator, waitTimeout: waitTimeout)
     }
 
+    /// Finds an element using a given locator, starting from this element, and throwing upon failure.
+    /// - Parameter locator: The locator strategy to use.
+    /// - Parameter description: A human-readable description of the element, included in thrown errors.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
+    /// - Returns: The element that was found.
+    @discardableResult // for use as an assertion
+    public func requireElement(locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
+        try session.requireElement(startingAt: self, locator: locator, description: description, waitTimeout: waitTimeout)
+    }
+
     /// Gets an attribute of this element.
     /// - Parameter name: the attribute name.
     /// - Returns: the attribute value string.

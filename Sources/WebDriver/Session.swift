@@ -153,6 +153,32 @@ public class Session {
         try findElements(startingAt: nil, locator: locator, waitTimeout: waitTimeout)
     }
 
+    /// Finds an element using a given locator, starting from the session root, and throwing upon failure.
+    /// - Parameter locator: The locator strategy to use.
+    /// - Parameter description: A human-readable description of the element, included in thrown errors.
+    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
+    /// - Returns: The element that was found.
+    @discardableResult // for use as an assertion
+    public func requireElement(locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
+        try requireElement(startingAt: nil, locator: locator, description: description, waitTimeout: waitTimeout)
+    }
+
+    internal func requireElement(startingAt subtreeRoot: Element?, locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
+        let element: Element?
+        do {
+            element = try findElement(startingAt: subtreeRoot, locator: locator, waitTimeout: waitTimeout)
+        } catch let error {
+            throw ElementNotFoundError(locator: locator, description: description, sourceError: error)
+        }
+
+        guard let element else {
+            let synthesizedResponse = ErrorResponse(status: .noSuchElement, value: .init(message: "Element not found"))
+            throw ElementNotFoundError(locator: locator, description: description, sourceError: synthesizedResponse)
+        }
+
+        return element
+    }
+
     /// Overrides the implicit wait timeout during a block of code.
     private func withImplicitWaitTimeout<Result>(_ value: TimeInterval?, _ block: () throws -> Result) rethrows -> Result {
         if let value, value != _implicitWaitTimeout {
@@ -167,11 +193,11 @@ public class Session {
     }
 
     /// Common logic for `Session.findElement` and `Element.findElement`.
-    internal func findElement(startingAt element: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> Element? {
-        precondition(element == nil || element?.session === self)
+    internal func findElement(startingAt subtreeRoot: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> Element? {
+        precondition(subtreeRoot == nil || subtreeRoot?.session === self)
 
         return try withImplicitWaitTimeout(waitTimeout) {
-            let request = Requests.SessionElement(session: id, element: element?.id, locator: locator)
+            let request = Requests.SessionElement(session: id, element: subtreeRoot?.id, locator: locator)
 
             let elementId = try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
                 let elementId: String?

@@ -13,28 +13,28 @@ class MSInfo32App {
     }
 
     private lazy var _maximizeButton = Result {
-        try XCTUnwrap(session.findElement(locator: .name("Maximize")), "Maximize button not found")
+        try session.requireElement(locator: .name("Maximize"), description: "Maximize window button")
     }
     var maximizeButton: Element {
         get throws { try _maximizeButton.get() }
     }
 
     private lazy var _systemSummaryTree = Result {
-        try XCTUnwrap(session.findElement(locator: .accessibilityId("201")), "System summary tree control not found")
+        try session.requireElement(locator: .accessibilityId("201"), description: "System summary tree control")
     }
     var systemSummaryTree: Element {
         get throws { try _systemSummaryTree.get() }
     }
 
     private lazy var _findWhatEditBox = Result {
-        try XCTUnwrap(session.findElement(locator: .accessibilityId("204")), "'Find what' edit box not found")
+        try session.requireElement(locator: .accessibilityId("204"), description: "'Find what' edit box")
     }
     var findWhatEditBox: Element {
         get throws { try _findWhatEditBox.get() }
     }
 
     private lazy var _searchSelectedCategoryOnlyCheckbox = Result {
-        try XCTUnwrap(session.findElement(locator: .accessibilityId("206")), "'Search selected category only' checkbox not found")
+        try session.requireElement(locator: .accessibilityId("206"), description: "'Search selected category only' checkbox")
     }
     var searchSelectedCategoryOnlyCheckbox: Element {
         get throws { try _searchSelectedCategoryOnlyCheckbox.get() }

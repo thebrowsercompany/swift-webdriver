@@ -38,7 +38,7 @@ public struct ErrorResponse: Codable, Error {
     }
 
     public struct Value: Codable {
-        public var error: String
+        public var error: String?
         public var message: String
         public var stacktrace: String?
     }
