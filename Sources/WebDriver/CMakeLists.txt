@@ -2,12 +2,12 @@ add_library(WebDriver
   Capabilities.swift
   Element.swift
   ElementLocator.swift
-  ElementNotFoundError.swift
   ErrorResponse.swift
   HTTPWebDriver.swift
   Keys.swift
   Location.swift
   MouseButton.swift
+  NoSuchElementError.swift
   Poll.swift
   Request.swift
   Requests.swift
