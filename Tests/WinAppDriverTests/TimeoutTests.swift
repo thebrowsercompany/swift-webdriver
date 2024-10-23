@@ -36,9 +36,11 @@ class TimeoutTests: XCTestCase {
 
     static func measureNoSuchElementTime(_ session: Session) -> Double {
         measureTime {
-            XCTAssertThrowsError({
+            do {
                 try session.findElement(locator: .accessibilityId("IdThatDoesNotExist"))
-            })
+                XCTFail("Expected a no such element error")
+            }
+            catch {}
         }
     }
 
