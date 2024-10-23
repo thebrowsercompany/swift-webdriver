@@ -51,7 +51,7 @@ class APIToRequestMappingTests: XCTestCase {
             XCTAssertEqual($0.value, "myElement.name")
             return ResponseWithValue(.init(element: "myElement"))
         }
-        try session.requireElement(locator: .name("myElement.name"))
+        try session.findElement(locator: .name("myElement.name"))
 
         mockWebDriver.expect(path: "session/mySession/element/active", method: .post, type: Requests.SessionActiveElement.self) {
             ResponseWithValue(.init(element: "myElement"))

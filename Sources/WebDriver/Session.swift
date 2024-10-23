@@ -141,42 +141,17 @@ public class Session {
     /// - Parameter locator: The locator strategy to use.
     /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> Element? {
+    @discardableResult // for use as an assertion
+    public func findElement(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> Element {
         try findElement(startingAt: nil, locator: locator, waitTimeout: waitTimeout)
     }
 
     /// Finds elements by id, starting from the root.
     /// - Parameter locator: The locator strategy to use.
     /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
+    /// - Returns: The elements that were found, or an empty array.
     public func findElements(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> [Element] {
         try findElements(startingAt: nil, locator: locator, waitTimeout: waitTimeout)
-    }
-
-    /// Finds an element using a given locator, starting from the session root, and throwing upon failure.
-    /// - Parameter locator: The locator strategy to use.
-    /// - Parameter description: A human-readable description of the element, included in thrown errors.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The element that was found.
-    @discardableResult // for use as an assertion
-    public func requireElement(locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
-        try requireElement(startingAt: nil, locator: locator, description: description, waitTimeout: waitTimeout)
-    }
-
-    internal func requireElement(startingAt subtreeRoot: Element?, locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
-        let element: Element?
-        do {
-            element = try findElement(startingAt: subtreeRoot, locator: locator, waitTimeout: waitTimeout)
-        } catch let error {
-            throw ElementNotFoundError(locator: locator, description: description, sourceError: error)
-        }
-
-        guard let element else {
-            let synthesizedResponse = ErrorResponse(status: .noSuchElement, value: .init(message: "Element not found"))
-            throw ElementNotFoundError(locator: locator, description: description, sourceError: synthesizedResponse)
-        }
-
-        return element
     }
 
     /// Overrides the implicit wait timeout during a block of code.
@@ -193,25 +168,26 @@ public class Session {
     }
 
     /// Common logic for `Session.findElement` and `Element.findElement`.
-    internal func findElement(startingAt subtreeRoot: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> Element? {
+    internal func findElement(startingAt subtreeRoot: Element?, locator: ElementLocator, waitTimeout: TimeInterval?) throws -> Element {
         precondition(subtreeRoot == nil || subtreeRoot?.session === self)
 
         return try withImplicitWaitTimeout(waitTimeout) {
             let request = Requests.SessionElement(session: id, element: subtreeRoot?.id, locator: locator)
 
-            let elementId = try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
-                let elementId: String?
-                do {
-                    // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                    elementId = try webDriver.send(request).value.element
-                } catch let error as ErrorResponse where error.status == .noSuchElement {
-                    elementId = nil
+            do {
+                return try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
+                    do {
+                        // Allow errors to bubble up unless they are specifically saying that the element was not found.
+                        let elementId = try webDriver.send(request).value.element
+                        return .success(Element(session: self, id: elementId))
+                    } catch let error as ErrorResponse where error.status == .noSuchElement {
+                        // Return instead of throwing to indicate that `poll` can retry as needed.
+                        return .failure(error)
+                    }
                 }
-
-                return PollResult(value: elementId, success: elementId != nil)
-            }.value
-
-            return elementId.map { Element(session: self, id: $0) }
+            } catch {
+                throw ElementNotFoundError(locator: locator, sourceError: error)
+            }
         }
     }
 
@@ -220,15 +196,20 @@ public class Session {
         try withImplicitWaitTimeout(waitTimeout) {
             let request = Requests.SessionElements(session: id, element: element?.id, locator: locator)
 
-            return try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
-                do {
-                    // Allow errors to bubble up unless they are specifically saying that the element was not found.
-                    return PollResult.success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
-                } catch let error as ErrorResponse where error.status == .noSuchElement {
-                    // Follow the WebDriver spec and keep polling if no elements are found
-                    return PollResult.failure([])
+            do {
+                return try poll(timeout: emulateImplicitWait ? (waitTimeout ?? _implicitWaitTimeout) : TimeInterval.zero) {
+                    do {
+                        // Allow errors to bubble up unless they are specifically saying that the element was not found.
+                        return .success(try webDriver.send(request).value.map { Element(session: self, id: $0.element) })
+                    } catch let error as ErrorResponse where error.status == .noSuchElement {
+                        // Follow the WebDriver spec and keep polling if no elements are found.
+                        // Return instead of throwing to indicate that `poll` can retry as needed.
+                        return .failure(error)
+                    }
                 }
-            }.value
+            } catch let error as ErrorResponse where error.status == .noSuchElement {
+                return []
+            }
         }
     }
 
@@ -378,17 +359,16 @@ public class Session {
 
     /// Sends an interaction request, retrying until it is conclusive or the timeout elapses.
     internal func sendInteraction<Req: Request>(_ request: Req, retryTimeout: TimeInterval? = nil) throws where Req.Response == CodableNone {
-        let result = try poll(timeout: retryTimeout ?? implicitInteractionRetryTimeout) {
+        try poll(timeout: retryTimeout ?? implicitInteractionRetryTimeout) {
             do {
                 // Immediately bubble most failures, only retry if inconclusive.
                 try webDriver.send(request)
-                return PollResult.success(nil as ErrorResponse?)
+                return .success(())
             } catch let error as ErrorResponse where webDriver.isInconclusiveInteraction(error: error.status) {
-                return PollResult.failure(error)
+                // Return instead of throwing to indicate that `poll` can retry as needed.
+                return .failure(error)
             }
         }
-
-        if let error = result.value { throw error }
     }
 
     deinit {

@@ -78,14 +78,15 @@ class RequestsTests: XCTestCase {
         // ☃: Unicode BMP character
         let str = "kKł☃"
         try app.findWhatEditBox.sendKeys(Keys.text(str, typingStrategy: .windowsKeyboardAgnostic))
+
         // Normally we should be able to read the text back immediately,
         // but the MSInfo32 "Find what" edit box seems to queue events
         // such that WinAppDriver returns before they are fully processed.
-        XCTAssertEqual(
-            try poll(timeout: 0.5) {
-                let text = try app.findWhatEditBox.text
-                return PollResult(value: text, success: text == str)
-            }.value, str)
+        struct UnexpectedText: Error { var text: String }
+        _ = try poll(timeout: 0.5) {
+            let text = try app.findWhatEditBox.text
+            return text == str ? .success(()) : .failure(UnexpectedText(text: text))
+        }
     }
 
     func testSendKeysWithAcceleratorsGivesFocus() throws {

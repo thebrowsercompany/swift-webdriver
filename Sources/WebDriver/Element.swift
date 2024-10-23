@@ -86,26 +86,17 @@ public struct Element {
     /// - Parameter locator: The locator strategy to use.
     /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
     /// - Returns: The element that was found, if any.
-    public func findElement(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> Element? {
+    @discardableResult // for use as an assertion
+    public func findElement(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> Element {
         try session.findElement(startingAt: self, locator: locator, waitTimeout: waitTimeout)
     }
 
     /// Search for elements using a given locator, starting from this element.
     /// - Parameter using: The locator strategy to use.
     /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The elements that were found, if any.
+    /// - Returns: The elements that were found, or an empty array.
     public func findElements(locator: ElementLocator, waitTimeout: TimeInterval? = nil) throws -> [Element] {
         try session.findElements(startingAt: self, locator: locator, waitTimeout: waitTimeout)
-    }
-
-    /// Finds an element using a given locator, starting from this element, and throwing upon failure.
-    /// - Parameter locator: The locator strategy to use.
-    /// - Parameter description: A human-readable description of the element, included in thrown errors.
-    /// - Parameter waitTimeout: The amount of time to wait for element existence. Overrides the implicit wait timeout.
-    /// - Returns: The element that was found.
-    @discardableResult // for use as an assertion
-    public func requireElement(locator: ElementLocator, description: String? = nil, waitTimeout: TimeInterval? = nil) throws -> Element {
-        try session.requireElement(startingAt: self, locator: locator, description: description, waitTimeout: waitTimeout)
     }
 
     /// Gets an attribute of this element.
