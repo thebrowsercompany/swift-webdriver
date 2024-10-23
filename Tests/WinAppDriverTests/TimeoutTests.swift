@@ -27,21 +27,29 @@ class TimeoutTests: XCTestCase {
         return try Session(webDriver: winAppDriver, desiredCapabilities: capabilities)
     }
 
-    static func time(_ callback: () throws -> Void) rethrows -> Double {
+    static func measureTime(_ callback: () throws -> Void) rethrows -> Double {
         let before = DispatchTime.now()
         try callback()
         let after = DispatchTime.now()
         return Double(after.uptimeNanoseconds - before.uptimeNanoseconds) / 1_000_000_000
     }
 
+    static func measureNoSuchElementTime(_ session: Session) -> Double {
+        measureTime {
+            XCTAssertThrowsError({
+                try session.findElement(locator: .accessibilityId("IdThatDoesNotExist"))
+            })
+        }
+    }
+
     public func testWebDriverImplicitWait() throws {
         let session = try startApp()
 
         session.implicitWaitTimeout = 1
-        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) > 0.5)
+        XCTAssertGreaterThan(Self.measureNoSuchElementTime(session), 0.5)
 
         session.implicitWaitTimeout = 0
-        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) < 0.5)
+        XCTAssertLessThan(Self.measureNoSuchElementTime(session), 0.5)
 
         XCTAssert(!session.emulateImplicitWait)
     }
@@ -52,9 +60,9 @@ class TimeoutTests: XCTestCase {
         // Test library timeout implementation
         session.emulateImplicitWait = true
         session.implicitWaitTimeout = 1
-        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) > 0.5)
+        XCTAssertGreaterThan(Self.measureNoSuchElementTime(session), 0.5)
 
         session.implicitWaitTimeout = 0
-        XCTAssert(try Self.time({ _ = try session.findElement(locator: .accessibilityId("IdThatDoesNotExist")) }) < 0.5)
+        XCTAssertLessThan(Self.measureNoSuchElementTime(session), 0.5)
     }
 }
