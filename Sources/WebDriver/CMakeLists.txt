@@ -7,6 +7,7 @@ add_library(WebDriver
   Keys.swift
   Location.swift
   MouseButton.swift
+  NoSuchElementError.swift
   Poll.swift
   Request.swift
   Requests.swift
