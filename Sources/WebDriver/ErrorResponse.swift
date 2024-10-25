@@ -1,6 +1,16 @@
-public struct ErrorResponse: Codable, Error {
+/// A response received when an error occurs when processing a request.
+public struct ErrorResponse: Codable, Error, CustomStringConvertible {
     public var status: Status
     public var value: Value
+
+    public var description: String {
+        var str = "Error \(status.rawValue)"
+        if let error = value.error {
+            str += " (\(error))"
+        }
+        str += ": \(value.message)"
+        return str
+    }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#response-status-codes
     public struct Status: Codable, Hashable, RawRepresentable {
