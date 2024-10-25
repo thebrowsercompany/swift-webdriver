@@ -1,5 +1,5 @@
 /// Thrown when findElement fails to locate an element.
-public struct ElementNotFoundError: Error, CustomStringConvertible {
+public struct NoSuchElementError: Error, CustomStringConvertible {
     /// The locator that was used to search for the element.
     public var locator: ElementLocator
 

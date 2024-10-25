@@ -186,7 +186,7 @@ public class Session {
                     }
                 }
             } catch {
-                throw ElementNotFoundError(locator: locator, sourceError: error)
+                throw NoSuchElementError(locator: locator, sourceError: error)
             }
         }
     }
