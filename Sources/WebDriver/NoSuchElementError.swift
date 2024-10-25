@@ -15,6 +15,6 @@ public struct NoSuchElementError: Error, CustomStringConvertible {
     public var errorResponse: ErrorResponse? { sourceError as? ErrorResponse }
 
     public var description: String {
-        "No such element [\(locator.using)=\(locator.value)]: \(sourceError)"
+        "No element found using locator [\(locator.using)=\(locator.value)]: \(sourceError)"
     }
 }
