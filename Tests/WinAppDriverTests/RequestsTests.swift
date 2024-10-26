@@ -24,10 +24,10 @@ class RequestsTests: XCTestCase {
         app = nil
     }
 
-    // func testCanGetChildElements() throws {
-    //     let children = try XCTUnwrap(app.listView.findElements(locator: .xpath("//ListItem")))
-    //     XCTAssert(children.count > 0)
-    // }
+    func testCanGetChildElements() throws {
+        let children = try XCTUnwrap(app.listView.findElements(locator: .xpath("//ListItem")))
+        XCTAssert(children.count > 0)
+    }
 
     func testStatusReportsWinAppDriverOnWindows() throws {
         let status = try XCTUnwrap(app.session.webDriver.status)
