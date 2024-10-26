@@ -4,20 +4,25 @@ import TestsCommon
 import XCTest
 
 class RequestsTests: XCTestCase {
-    static var _app: Result<MSInfo32App, any Error>!
-    var app: MSInfo32App! { get { try? Self._app.get() } }
+    static var winAppDriver: Result<WinAppDriver, any Error>!
 
     override class func setUp() {
-        _app = Result { try MSInfo32App(winAppDriver: WinAppDriver.start()) }
+        winAppDriver = Result { try WinAppDriver.start() }
     }
+
+    override class func tearDown() {
+        winAppDriver = nil
+    }
+
+    var app: MSInfo32App!
 
     override func setUpWithError() throws {
-        if case .failure(let error) = Self._app {
-            throw XCTSkip("Failed to start test app: \(error)")
-        }
+        app = try MSInfo32App(winAppDriver: Self.winAppDriver.get())
     }
 
-    override class func tearDown() { _app = nil }
+    override func tearDown() {
+        app = nil
+    }
 
     func testCanGetChildElements() throws {
         let children = try XCTUnwrap(app.listView.findElements(locator: .xpath("//ListItem")))
@@ -94,6 +99,39 @@ class RequestsTests: XCTestCase {
         try XCTAssert(Self.hasKeyboardFocus(app.findWhatEditBox))
         try app.session.sendKeys(Keys.tab)
         try XCTAssert(!Self.hasKeyboardFocus(app.findWhatEditBox))
+    }
+
+    func testSessionSendKeys_scopedModifiers() throws {
+        try app.findWhatEditBox.click()
+        try app.session.sendKeys(Keys.shift(Keys.a) + Keys.a)
+        XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
+    }
+
+    func testSessionSendKeys_autoReleasedModifiers() throws {
+        try app.findWhatEditBox.click()
+        try app.session.sendKeys(Keys.shiftModifier + Keys.a)
+        try app.session.sendKeys(Keys.a)
+        XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
+    }
+
+    func testSessionSendKeys_stickyModifiers() throws {
+        try app.findWhatEditBox.click()
+        try app.session.sendKeys(Keys.shiftModifier + Keys.a, releaseModifiers: false)
+        try app.session.sendKeys(Keys.a)
+        try app.session.sendKeys(.releaseModifiers)
+        try app.session.sendKeys(Keys.a)
+        XCTAssertEqual(try app.findWhatEditBox.text, "AAa")
+    }
+
+    func testElementSendKeys_scopedModifiers() throws {
+        try app.findWhatEditBox.sendKeys(Keys.shift(Keys.a) + Keys.a)
+        XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
+    }
+
+    func testElementSendKeys_autoReleasedModifiers() throws {
+        try app.findWhatEditBox.sendKeys(Keys.shiftModifier + Keys.a)
+        try app.findWhatEditBox.sendKeys(Keys.a)
+        XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
     }
 
     private static func hasKeyboardFocus(_ element: Element) throws -> Bool {
