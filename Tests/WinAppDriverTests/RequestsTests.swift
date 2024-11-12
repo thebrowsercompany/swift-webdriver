@@ -82,7 +82,7 @@ class RequestsTests: XCTestCase {
         // ł: Not typeable on a US Keyboard
         // ☃: Unicode BMP character
         let str = "kKł☃"
-        try app.findWhatEditBox.sendKeys(Keys.text(str, typingStrategy: .windowsKeyboardAgnostic))
+        try app.findWhatEditBox.sendKeys(.text(str, typingStrategy: .windowsKeyboardAgnostic))
 
         // Normally we should be able to read the text back immediately,
         // but the MSInfo32 "Find what" edit box seems to queue events
@@ -97,40 +97,40 @@ class RequestsTests: XCTestCase {
     func testSendKeysWithAcceleratorsGivesFocus() throws {
         try app.session.sendKeys(MSInfo32App.findWhatEditBoxAccelerator)
         try XCTAssert(Self.hasKeyboardFocus(app.findWhatEditBox))
-        try app.session.sendKeys(Keys.tab)
+        try app.session.sendKeys(.tab)
         try XCTAssert(!Self.hasKeyboardFocus(app.findWhatEditBox))
     }
 
     func testSessionSendKeys_scopedModifiers() throws {
         try app.findWhatEditBox.click()
-        try app.session.sendKeys(Keys.shift(Keys.a) + Keys.a)
+        try app.session.sendKeys(.sequence(.shift(.a), .a))
         XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
     }
 
     func testSessionSendKeys_autoReleasedModifiers() throws {
         try app.findWhatEditBox.click()
-        try app.session.sendKeys(Keys.shiftModifier + Keys.a)
-        try app.session.sendKeys(Keys.a)
+        try app.session.sendKeys(.sequence(.shiftModifier, .a))
+        try app.session.sendKeys(.a)
         XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
     }
 
     func testSessionSendKeys_stickyModifiers() throws {
         try app.findWhatEditBox.click()
-        try app.session.sendKeys(Keys.shiftModifier + Keys.a, releaseModifiers: false)
-        try app.session.sendKeys(Keys.a)
+        try app.session.sendKeys(.sequence(.shiftModifier, .a), releaseModifiers: false)
+        try app.session.sendKeys(.a)
         try app.session.sendKeys(.releaseModifiers)
-        try app.session.sendKeys(Keys.a)
+        try app.session.sendKeys(.a)
         XCTAssertEqual(try app.findWhatEditBox.text, "AAa")
     }
 
     func testElementSendKeys_scopedModifiers() throws {
-        try app.findWhatEditBox.sendKeys(Keys.shift(Keys.a) + Keys.a)
+        try app.findWhatEditBox.sendKeys(.sequence(.shift(.a), .a))
         XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
     }
 
     func testElementSendKeys_autoReleasedModifiers() throws {
-        try app.findWhatEditBox.sendKeys(Keys.shiftModifier + Keys.a)
-        try app.findWhatEditBox.sendKeys(Keys.a)
+        try app.findWhatEditBox.sendKeys(.sequence(.shiftModifier, .a))
+        try app.findWhatEditBox.sendKeys(.a)
         XCTAssertEqual(try app.findWhatEditBox.text, "Aa")
     }
 

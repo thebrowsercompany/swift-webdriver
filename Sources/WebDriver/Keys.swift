@@ -1,11 +1,23 @@
 /// Represents a sequence of WebDriver key events and characters.
 public struct Keys: RawRepresentable {
+    /// A string encoding the key sequence as defined by the WebDriver spec.
     public var rawValue: String
 
     public init(rawValue: String) { self.rawValue = rawValue }
 
-    public static func +(lhs: Self, rhs: Self) -> Self { Self(rawValue: lhs.rawValue + rhs.rawValue) }
+    /// Concatenates multiple key sequences into a single one.
+    public static func sequence(_ keys: [Self]) -> Self {
+        Self(rawValue: keys.map(\.rawValue).joined())
+    }
 
+    /// Concatenates multiple key sequences into a single one.
+    public static func sequence(_ keys: Self...) -> Self {
+        sequence(keys)
+    }
+}
+
+// MARK: Key constants
+extension Keys {
     public static let a = Self(rawValue: "a")
     public static let b = Self(rawValue: "b")
     public static let c = Self(rawValue: "c")
@@ -109,47 +121,30 @@ public struct Keys: RawRepresentable {
     public static let releaseModifiers = Keys(rawValue: "\u{E000}")
 }
 
+// MARK: Modifier sequences
 extension Keys {
     /// Wraps a keys sequence with holding and releasing the shift key.
     public static func shift(_ keys: Self) -> Self {
-        Self(rawValue: "\(shiftModifier.rawValue)\(keys.rawValue)\(shiftModifier.rawValue)")
+        sequence(shiftModifier, keys, shiftModifier)
     }
 
     /// Wraps a keys sequence with holding and releasing the control key.
     public static func control(_ keys: Self) -> Self {
-        Self(rawValue: "\(controlModifier.rawValue)\(keys.rawValue)\(controlModifier.rawValue)")
+        sequence(controlModifier, keys, controlModifier)
     }
 
     /// Wraps a keys sequence with holding and releasing the alt key.
     public static func alt(_ keys: Self) -> Self {
-        Self(rawValue: "\(altModifier.rawValue)\(keys.rawValue)\(altModifier.rawValue)")
+        sequence(altModifier, keys, altModifier)
     }
 
     /// Wraps a keys sequence with holding and releasing the meta key.
     public static func meta(_ keys: Self) -> Self {
-        Self(rawValue: "\(metaModifier.rawValue)\(keys.rawValue)\(metaModifier.rawValue)")
-    }
-
-    /// Wraps a keys sequence with holding and releasing modifier keys.
-    public static func combo(_ keys: Self, shift: Bool = false, control: Bool = false, alt: Bool = false, meta: Bool = false) -> Self {
-        var rawValue = ""
-
-        if shift { rawValue += shiftModifier.rawValue }
-        if control { rawValue += controlModifier.rawValue }
-        if alt { rawValue += altModifier.rawValue }
-        if meta { rawValue += metaModifier.rawValue }
-
-        rawValue += keys.rawValue
-
-        if meta { rawValue += metaModifier.rawValue }
-        if alt { rawValue += altModifier.rawValue }
-        if control { rawValue += controlModifier.rawValue }
-        if shift { rawValue += shiftModifier.rawValue }
-
-        return Self(rawValue: rawValue)
+        sequence(metaModifier, keys, metaModifier)
     }
 }
 
+// MARK: Text and typing
 extension Keys {
     public enum TypingStrategy {
         case assumeUSKeyboard

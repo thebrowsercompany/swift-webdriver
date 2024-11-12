@@ -108,13 +108,6 @@ public struct Element {
     }
 
     /// Sends key presses to this element.
-    /// - Parameter keys: An array of key sequences according to the WebDriver spec.
-    public func sendKeys(_ keys: [Keys]) throws {
-        try webDriver.send(Requests.ElementValue(
-            session: session.id, element: id, value: keys.map { $0.rawValue }))
-    }
-
-    /// Sends key presses to this element.
     /// - Parameter keys: A key sequence according to the WebDriver spec.
     public func sendKeys(_ keys: Keys) throws {
         try webDriver.send(Requests.ElementValue(
