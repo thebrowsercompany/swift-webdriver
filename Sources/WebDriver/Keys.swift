@@ -7,7 +7,7 @@ public struct Keys: RawRepresentable {
 
     /// Concatenates multiple key sequences into a single one.
     public static func sequence(_ keys: [Self]) -> Self {
-        Self(rawValue: keys.map(\.rawValue).joined())
+        Self(rawValue: keys.reduce("") { $0 + $1.rawValue })
     }
 
     /// Concatenates multiple key sequences into a single one.
