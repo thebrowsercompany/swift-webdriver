@@ -123,15 +123,15 @@ class APIToRequestMappingTests: XCTestCase {
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
 
-        let keys = [ Keys.a, Keys.b, Keys.c ]
+        let keys = Keys.sequence(.a, .b, .c)
         mockWebDriver.expect(path: "session/mySession/keys", method: .post, type: Requests.SessionKeys.self) {
-            XCTAssertEqual($0.value, keys.map { $0.rawValue })
+            XCTAssertEqual($0.value.first, keys.rawValue)
             return CodableNone()
         }
         try session.sendKeys(keys, releaseModifiers: false)
 
         mockWebDriver.expect(path: "session/mySession/element/myElement/value", method: .post, type: Requests.ElementValue.self) {
-            XCTAssertEqual($0.value, keys.map { $0.rawValue })
+            XCTAssertEqual($0.value.first, keys.rawValue)
             return CodableNone()
         }
         try element.sendKeys(keys)
