@@ -59,3 +59,13 @@ jobs:
       - name: CMake Build
         shell: pwsh
         run: cmake --build .\build
+
+  go-no-go: # Required status check
+    name: Go/No-Go
+    needs: [build-spm, build-cmake]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any required job failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
