@@ -60,8 +60,8 @@ jobs:
         shell: pwsh
         run: cmake --build .\build
 
-  go-no-go: # Required status check
-    name: Go/No-Go
+  merge-policy: # Required status check
+    name: Merge Policy
     needs: [build-spm, build-cmake]
     if: always()
     runs-on: ubuntu-latest
