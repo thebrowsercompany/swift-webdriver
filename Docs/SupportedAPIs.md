@@ -33,7 +33,7 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/element/:id/location_in_view`  | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/element/:id/name`              | Supported    | Not implemented     |
 | GET    | `/session/:sessionId/element/:id/screenshot`        | Supported    | Not implemented     |
-| GET    | `/session/:sessionId/element/:id/selected`          | Supported    | Not implemented     |
+| GET    | `/session/:sessionId/element/:id/selected`          | Supported    | `Element.selected`  |
 | GET    | `/session/:sessionId/element/:id/size`              | Supported    | `Element.size`      |
 | GET    | `/session/:sessionId/element/:id/text`              | Supported    | `Element.text`      |
 | POST   | `/session/:sessionId/element/:id/value`             | Supported    | `Element.sendKeys()`|

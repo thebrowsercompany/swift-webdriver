@@ -363,11 +363,6 @@ public class Session {
     }
 
     deinit {
-        do { try delete() }
-        catch let error as ErrorResponse {
-            assertionFailure("Error in Session.delete: \(error)")
-        } catch {
-            assertionFailure("Unexpected error in Session.delete: \(error)")
-        }
+        try? delete() // Call `delete` directly to handle errors.
     }
 }
