@@ -320,4 +320,12 @@ class APIToRequestMappingTests: XCTestCase {
         }
         XCTAssert(try session.source == "currentSource")
     }
+
+    func testSessionTimeouts() throws {
+        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        mockWebDriver.expect(path: "session/mySession/timeouts", method: .post)
+        try session.setTimeout(type: .implicitWait, duration: 5)
+        XCTAssert(session.implicitWaitTimeout == 5)
+    }
 }
