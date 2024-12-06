@@ -34,7 +34,7 @@ public class Session {
             if newValue == _implicitWaitTimeout { return }
             if !emulateImplicitWait {
                 do {
-                    try setTimeout(type: TimeoutType.implicitWait, duration: newValue)
+                    try setTimeout(type: .implicit, duration: newValue)
                 } catch {
                     emulateImplicitWait = true
                 }
@@ -101,11 +101,11 @@ public class Session {
     }
 
     /// Sets a a timeout value on this session.
-    public func setTimeout(type: String, duration: TimeInterval) throws {
+    public func setTimeout(type: TimeoutType, duration: TimeInterval) throws {
         try webDriver.send(
             Requests.SessionTimeouts(session: id, type: type, ms: duration * 1000))
         // Keep track of the implicit wait to know when we need to override it.
-        if type == TimeoutType.implicitWait { _implicitWaitTimeout = duration }
+        if type == .implicit { _implicitWaitTimeout = duration }
     }
 
     public func execute(script: String, args: [String] = [], async: Bool = false) throws {
@@ -363,11 +363,6 @@ public class Session {
     }
 
     deinit {
-        do { try delete() }
-        catch let error as ErrorResponse {
-            assertionFailure("Error in Session.delete: \(error)")
-        } catch {
-            assertionFailure("Unexpected error in Session.delete: \(error)")
-        }
+        try? delete() // Call `delete` directly to handle errors.
     }
 }
