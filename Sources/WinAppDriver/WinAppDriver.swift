@@ -18,9 +18,9 @@ public class WinAppDriver: WebDriver {
     public static let defaultStartWaitTime: TimeInterval = 1.0
 
     private let httpWebDriver: HTTPWebDriver
-    private let processTree: Win32ProcessTree?
+    private var processTree: Win32ProcessTree?
     /// The write end of a pipe that is connected to the child process's stdin.
-    private let childStdinHandle: HANDLE?
+    private var childStdinHandle: HANDLE?
 
     private init(
         httpWebDriver: HTTPWebDriver,
@@ -115,16 +115,7 @@ public class WinAppDriver: WebDriver {
     }
 
     deinit {
-        if let processTree {
-            do {
-                try processTree.terminate(waitTime: TimeInterval.infinity)
-            } catch {
-                assertionFailure("WinAppDriver did not terminate within the expected time: \(error).")
-            }
-        }
-        if let childStdinHandle {
-            CloseHandle(childStdinHandle)
-        }
+        try? close() // Call close() directly to handle errors. 
     }
 
     @discardableResult
@@ -134,5 +125,17 @@ public class WinAppDriver: WebDriver {
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
         error == .winAppDriver_elementNotInteractable || httpWebDriver.isInconclusiveInteraction(error: error)
+    }
+
+    public func close() throws {
+        if let childStdinHandle {
+            CloseHandle(childStdinHandle)
+            self.childStdinHandle = nil
+        }
+
+        if let processTree {
+            try processTree.terminate(waitTime: TimeInterval.infinity)
+            self.processTree = nil
+        }
     }
 }
