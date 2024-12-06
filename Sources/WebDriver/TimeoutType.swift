@@ -1,5 +1,5 @@
-public enum TimeoutType {
-    public static let script = "script"
-    public static let implicitWait = "implicit"
-    public static let pageLoad = "page load"
+public enum TimeoutType: String, Codable {
+    case script
+    case implicitWait
+    case pageLoad
 }

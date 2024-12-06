@@ -338,7 +338,7 @@ public enum Requests {
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidtimeouts
     public struct SessionTimeouts: Request {
         public var session: String
-        public var type: String
+        public var type: TimeoutType
         public var ms: Double
 
         public var pathComponents: [String] { ["session", session, "timeouts"] }
@@ -346,7 +346,7 @@ public enum Requests {
         public var body: Body { .init(type: type, ms: ms) }
 
         public struct Body: Codable {
-            public var type: String
+            public var type: TimeoutType
             public var ms: Double
         }
     }
