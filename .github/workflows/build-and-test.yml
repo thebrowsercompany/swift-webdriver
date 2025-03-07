@@ -25,8 +25,8 @@ jobs:
     - name: Install Swift
       uses: compnerd/gha-setup-swift@b6c5fc1ed5b5439ada8e7661985acb09ad8c3ba2 # main as of 2024-11-12
       with:
-        branch: swift-5.8-release
-        tag: 5.8-RELEASE
+        branch: swift-5.9-release
+        tag: 5.9-RELEASE
 
     - name: Build
       run: swift build --verbose --build-tests
@@ -49,8 +49,8 @@ jobs:
       - name: Install Swift
         uses: compnerd/gha-setup-swift@b6c5fc1ed5b5439ada8e7661985acb09ad8c3ba2 # main as of 2024-11-12
         with:
-          branch: swift-5.8-release
-          tag: 5.8-RELEASE
+          branch: swift-5.9-release
+          tag: 5.9-RELEASE
 
       - name: CMake Configure
         shell: pwsh
