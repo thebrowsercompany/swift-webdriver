@@ -190,6 +190,16 @@ class APIToRequestMappingTests: XCTestCase {
         XCTAssert(try element.enabled == true)
     }
 
+    func testElementSelected() throws {
+        let mockWebDriver = MockWebDriver()
+        let session = Session(webDriver: mockWebDriver, existingId: "mySession")
+        let element = Element(session: session, id: "myElement")
+        mockWebDriver.expect(path: "session/mySession/element/myElement/selected", method: .get) {
+            ResponseWithValue(true)
+        }
+        XCTAssert(try element.selected == true)
+    }
+
     func testWindowPosition() throws {
         let mockWebDriver: MockWebDriver = MockWebDriver()
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")

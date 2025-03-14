@@ -91,6 +91,18 @@ public enum Requests {
         }
     }
 
+    public struct ElementSelected: Request {
+        public var session: String
+        public var element: String
+        
+        public var pathComponents: [String] { ["session", session, "element", element, "selected"] }
+        public var method: HTTPMethod { .get }
+        
+        public struct Response: Codable {
+            public var value: Bool
+        }
+    }
+
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementidvalue
     public struct ElementValue: Request {
         public var session: String
