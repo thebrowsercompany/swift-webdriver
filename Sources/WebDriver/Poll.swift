@@ -5,7 +5,7 @@ import struct Dispatch.DispatchTime
 /// Calls a closure repeatedly with exponential backoff until it reports success or a timeout elapses.
 /// Thrown errors bubble up immediately, returned errors allow retries.
 /// - Returns: The successful value.
-internal func poll<Value>(
+public func poll<Value>(
         timeout: TimeInterval,
         initialPeriod: TimeInterval = 0.001,
         work: () throws -> Result<Value, Error>) throws -> Value {
@@ -33,7 +33,7 @@ internal func poll<Value>(
 
 /// Calls a closure repeatedly with exponential backoff until it reports success or a timeout elapses.
 /// - Returns: Whether the closure reported success within the expected time.
-internal func poll(
+public func poll(
         timeout: TimeInterval,
         initialPeriod: TimeInterval = 0.001,
         work: () throws -> Bool) throws -> Bool {
