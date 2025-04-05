@@ -1,5 +1,6 @@
 add_library(WebDriver
   Capabilities.swift
+  Capabilities+AppiumOptions.swift
   Element.swift
   ElementLocator.swift
   ErrorResponse.swift
