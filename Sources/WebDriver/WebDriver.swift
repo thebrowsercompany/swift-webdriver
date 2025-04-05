@@ -1,4 +1,9 @@
 public protocol WebDriver {
+    /// The protocol supported by the WebDriver server.
+    var wireProtocol: WireProtocol { get }
+
+    /// Sends a WebDriver request to the server and returns the response.
+    /// - Parameter request: The request to send.
     @discardableResult
     func send<Req: Request>(_ request: Req) throws -> Req.Response
 

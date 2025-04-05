@@ -8,6 +8,9 @@ open class Capabilities: Codable {
     public var takesScreenshot: Bool?
     public var nativeEvents: Bool?
 
+    // From https://appium.io/docs/en/2.0/guides/caps
+    public var appiumOptions: AppiumOptions?
+
     public init() {}
 
     // See https://www.w3.org/TR/webdriver1/#dfn-table-of-session-timeouts
@@ -24,6 +27,8 @@ open class Capabilities: Codable {
 
         case takesScreenshot
         case nativeEvents
+
+        case appiumOptions = "appium:options"
     }
 }
 

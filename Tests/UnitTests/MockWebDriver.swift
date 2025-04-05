@@ -12,7 +12,12 @@ class MockWebDriver: WebDriver {
         let handler: (Data?) throws -> Data?
     }
 
+    let wireProtocol: WireProtocol
     var expectations: [Expectation] = []
+
+    public init(wireProtocol: WireProtocol) {
+        self.wireProtocol = wireProtocol
+    }
 
     deinit {
         // We should have met all of our expectations.

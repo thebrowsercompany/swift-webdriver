@@ -21,9 +21,23 @@ public class Session {
     }
 
     public convenience init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws {
-        let response = try webDriver.send(Requests.Session(
+        let response = try webDriver.send(Requests.Session_Legacy(
             desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
-        self.init(webDriver: webDriver, existingId: response.sessionId, capabilities: response.value, owned: true)
+        self.init(
+            webDriver: webDriver,
+            existingId: response.sessionId,
+            capabilities: response.value,
+            owned: true)
+    }
+
+    public static func createW3C(webDriver: any WebDriver, alwaysMatch: Capabilities, firstMatch: [Capabilities] = []) throws -> Session {
+        let response = try webDriver.send(Requests.Session_W3C(
+            alwaysMatch: alwaysMatch, firstMatch: firstMatch))
+        return Session(
+            webDriver: webDriver,
+            existingId: response.value.sessionId,
+            capabilities: response.value.capabilities,
+            owned: true)
     }
 
     /// The amount of time the driver should implicitly wait when searching for elements.
