@@ -1,5 +1,6 @@
 add_library(WebDriver
   Capabilities.swift
+  Capabilities+AppiumOptions.swift
   Element.swift
   ElementLocator.swift
   ErrorResponse.swift
@@ -18,4 +19,5 @@ add_library(WebDriver
   URLRequestExtensions.swift
   WebDriver.swift
   WebDriverStatus.swift
-  Window.swift)
+  Window.swift
+  WireProtocol.swift)

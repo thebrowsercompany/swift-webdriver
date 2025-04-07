@@ -160,7 +160,7 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    public struct Session<Caps: Capabilities>: Request {
+    public struct Session_Legacy<Caps: Capabilities>: Request {
         public var desiredCapabilities: Caps
         public var requiredCapabilities: Caps?
 
@@ -181,6 +181,36 @@ public enum Requests {
         public struct Response: Codable {
             public var sessionId: String
             public var value: Caps
+        }
+    }
+
+    public struct Session_W3C<Caps: Capabilities>: Request {
+        public var alwaysMatch: Caps
+        public var firstMatch: [Caps]
+
+        public init(alwaysMatch: Caps, firstMatch: [Caps] = []) {
+            self.alwaysMatch = alwaysMatch
+            self.firstMatch = firstMatch
+        }
+
+        public var pathComponents: [String] { ["session"] }
+        public var method: HTTPMethod { .post }
+        public var body: Body { .init(capabilities: .init(alwaysMatch: alwaysMatch, firstMatch: firstMatch)) }
+
+        public struct Body: Codable {
+            public struct Capabilities: Codable {
+                public var alwaysMatch: Caps
+                public var firstMatch: [Caps]?
+            }
+
+            public var capabilities: Capabilities
+        }
+
+        public typealias Response = ResponseWithValue<ResponseValue>
+
+        public struct ResponseValue: Codable {
+            public var sessionId: String
+            public var capabilities: Caps
         }
     }
 

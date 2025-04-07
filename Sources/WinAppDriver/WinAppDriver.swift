@@ -32,7 +32,7 @@ public class WinAppDriver: WebDriver {
     }
 
     public static func attach(ip: String = defaultIp, port: Int = defaultPort) -> WinAppDriver {
-        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
         return WinAppDriver(httpWebDriver: httpWebDriver)
     }
 
@@ -96,7 +96,7 @@ public class WinAppDriver: WebDriver {
             throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
         }
 
-        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!)
+        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
 
         // Give WinAppDriver some time to start up
         if let waitTime {
@@ -117,6 +117,8 @@ public class WinAppDriver: WebDriver {
     deinit {
         try? close() // Call close() directly to handle errors. 
     }
+
+    public var wireProtocol: WireProtocol { .legacySelenium }
 
     @discardableResult
     public func send<Req: Request>(_ request: Req) throws -> Req.Response {

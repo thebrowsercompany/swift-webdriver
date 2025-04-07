@@ -7,11 +7,11 @@ class APIToRequestMappingTests: XCTestCase {
     private typealias ResponseWithValue = Requests.ResponseWithValue
 
     func testCreateSession() throws {
-        let mockWebDriver = MockWebDriver()
-        mockWebDriver.expect(path: "session", method: .post, type: Requests.Session.self) {
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
+        mockWebDriver.expect(path: "session", method: .post, type: Requests.Session_Legacy.self) {
             let capabilities = Capabilities()
             capabilities.platformName = "myPlatform"
-            return Requests.Session.Response(sessionId: "mySession", value: capabilities)
+            return Requests.Session_Legacy.Response(sessionId: "mySession", value: capabilities)
         }
         let session = try Session(webDriver: mockWebDriver, desiredCapabilities: Capabilities())
         XCTAssertEqual(session.id, "mySession")
@@ -22,7 +22,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionTitle() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/title", method: .get) {
             ResponseWithValue("mySession.title")
@@ -34,7 +34,7 @@ class APIToRequestMappingTests: XCTestCase {
         let base64TestImage: String =
             "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAHCAYAAAA1WQxeAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAAB2GAAAdhgFdohOBAAAABmJLR0QA/wD/AP+gvaeTAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIzLTA3LTEzVDIwOjAxOjQ1KzAwOjAwCWqxhgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMy0wNy0xM1QyMDowMTo0NSswMDowMHg3CToAAAC2SURBVBhXY/iPDG7c+///5y8oBwJQFRj4/P9f3QNhn78Appi+fP3LkNfxnIFh43oGBiE+BoYjZxkYHj5iYFi2goHhzVsGpoePfjBMrrzLUNT4jIEh2IaBQZCTgaF1EgODkiIDg4gwA9iKpILL/xnkL/xnkLzyv8UUaIVL2P//Xz5DrGAAgoPzVjDosRxmaG4UZxArjAAa/YGBYfdxkBTEhP37bv9/+eIDWAcYHDsHNOEbkPH/PwCcrZANcnx9SAAAAABJRU5ErkJggg=="
 
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/screenshot", method: .get) {
             ResponseWithValue(base64TestImage)
@@ -44,7 +44,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionFindElement() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/element", method: .post, type: Requests.SessionElement.self) {
             XCTAssertEqual($0.using, "name")
@@ -60,7 +60,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionMoveTo() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/moveto", method: .post, type: Requests.SessionMoveTo.self) {
@@ -73,7 +73,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionClick() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/click", method: .post, type: Requests.SessionButton.self) {
             XCTAssertEqual($0.button, .left)
@@ -83,7 +83,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionButton() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/buttondown", method: .post, type: Requests.SessionButton.self) {
             XCTAssertEqual($0.button, .right)
@@ -99,7 +99,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
  
     func testSessionOrientation() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/orientation", method: .post)
         try session.setOrientation(.portrait)
@@ -119,7 +119,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSendKeys() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
 
@@ -138,7 +138,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementText() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/text", method: .get) {
@@ -148,7 +148,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementAttribute() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/attribute/myAttribute.name", method: .get) {
@@ -158,7 +158,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementClick() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/click", method: .post)
@@ -166,7 +166,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementLocationAndSize() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/location", method: .get, type: Requests.ElementLocation.self) {
@@ -181,7 +181,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementEnabled() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/enabled", method: .get) {
@@ -191,7 +191,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementSelected() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/element/myElement/selected", method: .get) {
@@ -201,7 +201,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testWindowPosition() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/position", method: .post)
         try session.window(handle: "myWindow").setPosition(x: 9, y: 16)
@@ -213,21 +213,21 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionScript() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/execute", method: .post)
         XCTAssertNotNil(try session.execute(script: "return document.body", args: ["script"], async: false))
     }
 
     func testSessionScriptAsync() throws {
-        let mockWebDriver = MockWebDriver()
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/execute_async", method: .post)
         XCTAssertNotNil(try session.execute(script: "return document.body", args: ["script"], async: true))
     }
 
     func testSessionTouchScroll() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/scroll", method: .post)
@@ -235,7 +235,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testWindow() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window", method: .post)
         try session.focus(window: "myWindow")
@@ -245,7 +245,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testWindowHandleSize() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/size", method: .post)
         try session.window(handle: "myWindow").setSize(width: 500, height: 500)
@@ -257,7 +257,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testLocation() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let location = Location(latitude: 5, longitude: 20, altitude: 2003)
         
@@ -271,14 +271,14 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testMaximizeWindow() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session: Session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/window/myWindow/maximize", method: .post)
         try session.window(handle: "myWindow").maximize()
     }
 
     func testWindowHandle() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
 
         mockWebDriver.expect(path: "session/mySession/window_handle", method: .get, type: Requests.SessionWindowHandle.self) {
@@ -289,7 +289,7 @@ class APIToRequestMappingTests: XCTestCase {
 
     func testWindowHandles() throws {
 
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         
         mockWebDriver.expect(path: "session/mySession/window_handles", method: .get, type: Requests.SessionWindowHandles.self) {
@@ -300,7 +300,7 @@ class APIToRequestMappingTests: XCTestCase {
 
 
     func testElementDoubleClick() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/doubleclick", method: .post)
@@ -308,7 +308,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testElementFlick() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         let element = Element(session: session, id: "myElement")
         mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
@@ -316,14 +316,14 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionFlick() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/touch/flick", method: .post)
         XCTAssertNotNil(try session.flick(xSpeed: 5, ySpeed: 20))
     }
 
     func testSessionSource() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/source", method: .get, type: Requests.SessionSource.self) {
             ResponseWithValue("currentSource")
@@ -332,7 +332,7 @@ class APIToRequestMappingTests: XCTestCase {
     }
 
     func testSessionTimeouts() throws {
-        let mockWebDriver: MockWebDriver = MockWebDriver()
+        let mockWebDriver: MockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         let session = Session(webDriver: mockWebDriver, existingId: "mySession")
         mockWebDriver.expect(path: "session/mySession/timeouts", method: .post)
         try session.setTimeout(type: .implicitWait, duration: 5)

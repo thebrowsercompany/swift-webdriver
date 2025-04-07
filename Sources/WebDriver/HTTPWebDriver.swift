@@ -3,17 +3,18 @@ import Foundation
 import FoundationNetworking
 #endif
 
+/// A connection to a WebDriver server over HTTP.
 public struct HTTPWebDriver: WebDriver {
     let rootURL: URL
+    public let wireProtocol: WireProtocol
 
     public static let defaultRequestTimeout: TimeInterval = 5 // seconds
 
-    public init(endpoint: URL) {
+    public init(endpoint: URL, wireProtocol: WireProtocol) {
         rootURL = endpoint
+        self.wireProtocol = wireProtocol
     }
 
-    // Send a Request to the web driver local service
-    // TODO: consider making this function async/awaitable
     @discardableResult
     public func send<Req: Request>(_ request: Req) throws -> Req.Response {
         let urlRequest = try buildURLRequest(request)
