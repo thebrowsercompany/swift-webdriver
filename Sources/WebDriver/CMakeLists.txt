@@ -19,4 +19,5 @@ add_library(WebDriver
   URLRequestExtensions.swift
   WebDriver.swift
   WebDriverStatus.swift
-  Window.swift)
+  Window.swift
+  WireProtocol.swift)
