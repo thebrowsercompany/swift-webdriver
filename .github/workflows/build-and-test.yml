@@ -63,3 +63,13 @@ jobs:
       - name: CMake Build
         shell: pwsh
         run: cmake --build .\build
+
+  merge-policy: # Required status check
+    name: Merge Policy
+    needs: [build-spm, build-cmake]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any required job failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
