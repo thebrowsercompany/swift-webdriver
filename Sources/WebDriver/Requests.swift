@@ -663,11 +663,18 @@ public enum Requests {
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
-    public struct Status: Request {
+    public struct Status_Legacy: Request {
         public var pathComponents: [String] { ["status"] }
         public var method: HTTPMethod { .get }
 
         public typealias Response = WebDriverStatus
+    }
+
+    public struct Status_W3C: Request {
+        public var pathComponents: [String] { ["status"] }
+        public var method: HTTPMethod { .get }
+
+        public typealias Response = ResponseWithValue<WebDriverStatus>
     }
   
      // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidorientation

@@ -24,7 +24,7 @@ class TimeoutTests: XCTestCase {
         // Use a simple app in which we can expect queries to execute quickly
         let capabilities = WinAppDriver.Capabilities.startApp(
             name: "\(WindowsSystemPaths.system32)\\winver.exe")
-        return try Session(webDriver: winAppDriver, desiredCapabilities: capabilities)
+        return try Session(webDriver: winAppDriver, capabilities: capabilities)
     }
 
     static func measureTime(_ callback: () throws -> Void) rethrows -> Double {

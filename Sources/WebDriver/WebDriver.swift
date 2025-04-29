@@ -13,9 +13,14 @@ public protocol WebDriver {
 
 extension WebDriver {
     /// status - returns WinAppDriver status
-    /// Returns: an instance of the Status type
+    /// Returns: an instance of the WebDriverStatus type
     public var status: WebDriverStatus {
-        get throws { try send(Requests.Status()) }
+        get throws {
+            switch wireProtocol {
+                case .legacySelenium: try send(Requests.Status_Legacy())
+                case .w3c: try send(Requests.Status_W3C()).value
+            }
+        }
     }
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool { false }

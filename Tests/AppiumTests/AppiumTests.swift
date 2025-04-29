@@ -23,7 +23,7 @@ final class AppiumTests: XCTestCase {
         capabilities.platformName = "windows"
         capabilities.appiumOptions = appiumOptions
 
-        let session = try Session.createW3C(webDriver: webDriver, alwaysMatch: capabilities)
+        let session = try Session(webDriver: webDriver, capabilities: capabilities)
         try session.sendKeys(.alt(.f4))
     }
 #endif

@@ -13,12 +13,34 @@ class APIToRequestMappingTests: XCTestCase {
             capabilities.platformName = "myPlatform"
             return Requests.Session_Legacy.Response(sessionId: "mySession", value: capabilities)
         }
-        let session = try Session(webDriver: mockWebDriver, desiredCapabilities: Capabilities())
+        let session = try Session(webDriver: mockWebDriver, capabilities: Capabilities())
         XCTAssertEqual(session.id, "mySession")
         XCTAssertEqual(session.capabilities.platformName, "myPlatform")
 
         // Account for session deinitializer
         mockWebDriver.expect(path: "session/mySession", method: .delete)
+    }
+
+    func testStatus_legacy() throws {
+        let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
+        mockWebDriver.expect(path: "status", method: .get, type: Requests.Status_Legacy.self) {
+            var status = WebDriverStatus()
+            status.ready = true
+            return status
+        }
+
+        XCTAssertEqual(try mockWebDriver.status.ready, true)
+    }
+
+    func testStatus_w3c() throws {
+        let mockWebDriver = MockWebDriver(wireProtocol: .w3c)
+        mockWebDriver.expect(path: "status", method: .get, type: Requests.Status_W3C.self) {
+            var status = WebDriverStatus()
+            status.ready = true
+            return Requests.Status_W3C.Response(status)
+        }
+
+        XCTAssertEqual(try mockWebDriver.status.ready, true)
     }
 
     func testSessionTitle() throws {
