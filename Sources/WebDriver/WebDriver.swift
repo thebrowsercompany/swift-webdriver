@@ -17,8 +17,8 @@ extension WebDriver {
     public var status: WebDriverStatus {
         get throws {
             switch wireProtocol {
-                case .legacySelenium: try send(Requests.Status_Legacy())
-                case .w3c: try send(Requests.Status_W3C()).value
+                case .legacySelenium: return try send(Requests.Status_Legacy())
+                case .w3c: return try send(Requests.Status_W3C()).value
             }
         }
     }
