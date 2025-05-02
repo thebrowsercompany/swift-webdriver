@@ -21,7 +21,7 @@ class APIToRequestMappingTests: XCTestCase {
         mockWebDriver.expect(path: "session/mySession", method: .delete)
     }
 
-    func testStatus_legacy() throws {
+    func testStatus_legacySelenium() throws {
         let mockWebDriver = MockWebDriver(wireProtocol: .legacySelenium)
         mockWebDriver.expect(path: "status", method: .get, type: Requests.LegacySelenium.Status.self) {
             var status = WebDriverStatus()
