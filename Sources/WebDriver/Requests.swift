@@ -1,3 +1,4 @@
+/// Defines request and response types for the WebDriver protocol.
 public enum Requests {
     public struct ResponseWithValue<Value>: Codable where Value: Codable {
         public var value: Value
@@ -158,60 +159,6 @@ public enum Requests {
         public var method: HTTPMethod { .get }
 
         public typealias Response = ResponseWithValue<String>
-    }
-
-    public struct Session_Legacy<Caps: Capabilities>: Request {
-        public var desiredCapabilities: Caps
-        public var requiredCapabilities: Caps?
-
-        public init(desiredCapabilities: Caps, requiredCapabilities: Caps? = nil) {
-            self.requiredCapabilities = requiredCapabilities
-            self.desiredCapabilities = desiredCapabilities
-        }
-
-        public var pathComponents: [String] { ["session"] }
-        public var method: HTTPMethod { .post }
-        public var body: Body { .init(desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities) }
-
-        public struct Body: Codable {
-            public var desiredCapabilities: Caps
-            public var requiredCapabilities: Caps?
-        }
-
-        public struct Response: Codable {
-            public var sessionId: String
-            public var value: Caps
-        }
-    }
-
-    public struct Session_W3C<Caps: Capabilities>: Request {
-        public var alwaysMatch: Caps
-        public var firstMatch: [Caps]
-
-        public init(alwaysMatch: Caps, firstMatch: [Caps] = []) {
-            self.alwaysMatch = alwaysMatch
-            self.firstMatch = firstMatch
-        }
-
-        public var pathComponents: [String] { ["session"] }
-        public var method: HTTPMethod { .post }
-        public var body: Body { .init(capabilities: .init(alwaysMatch: alwaysMatch, firstMatch: firstMatch)) }
-
-        public struct Body: Codable {
-            public struct Capabilities: Codable {
-                public var alwaysMatch: Caps
-                public var firstMatch: [Caps]?
-            }
-
-            public var capabilities: Capabilities
-        }
-
-        public typealias Response = ResponseWithValue<ResponseValue>
-
-        public struct ResponseValue: Codable {
-            public var sessionId: String
-            public var capabilities: Caps
-        }
     }
 
     // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidelementactive
@@ -662,21 +609,6 @@ public enum Requests {
         public typealias Response = ResponseWithValue<String>
     }
 
-    // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#status
-    public struct Status_Legacy: Request {
-        public var pathComponents: [String] { ["status"] }
-        public var method: HTTPMethod { .get }
-
-        public typealias Response = WebDriverStatus
-    }
-
-    public struct Status_W3C: Request {
-        public var pathComponents: [String] { ["status"] }
-        public var method: HTTPMethod { .get }
-
-        public typealias Response = ResponseWithValue<WebDriverStatus>
-    }
-  
      // https://www.selenium.dev/documentation/legacy/json_wire_protocol/#sessionsessionidorientation
     public enum SessionOrientation {
         public struct Post: Request {

@@ -21,8 +21,8 @@ public final class Session {
     }
 
     /// Initializer for Legacy Selenium JSON Protocol
-    private convenience init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities?) throws {
-        let response = try webDriver.send(Requests.Session_Legacy(
+    fileprivate convenience init(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities?) throws {
+        let response = try webDriver.send(Requests.LegacySelenium.Session(
             desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities))
         self.init(
             webDriver: webDriver,
@@ -32,8 +32,8 @@ public final class Session {
     }
 
     /// Initializer for W3C Protocol
-    private convenience init(webDriver: any WebDriver, alwaysMatch: Capabilities, firstMatch: [Capabilities]) throws {
-        let response = try webDriver.send(Requests.Session_W3C(
+    fileprivate convenience init(webDriver: any WebDriver, alwaysMatch: Capabilities, firstMatch: [Capabilities]) throws {
+        let response = try webDriver.send(Requests.W3C.Session(
             alwaysMatch: alwaysMatch, firstMatch: firstMatch))
         self.init(
             webDriver: webDriver,
@@ -51,12 +51,16 @@ public final class Session {
         }
     }
 
-    public static func createLegacy(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws -> Session {
-        try Session(webDriver: webDriver, desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities)
+    public enum LegacySelenium {
+        public static func create(webDriver: any WebDriver, desiredCapabilities: Capabilities, requiredCapabilities: Capabilities? = nil) throws -> Session {
+            try Session(webDriver: webDriver, desiredCapabilities: desiredCapabilities, requiredCapabilities: requiredCapabilities)
+        }
     }
 
-    public static func createW3C(webDriver: any WebDriver, alwaysMatch: Capabilities, firstMatch: [Capabilities] = []) throws -> Session {
-        try Session(webDriver: webDriver, alwaysMatch: alwaysMatch, firstMatch: firstMatch)
+    public enum W3C {
+        public static func create(webDriver: any WebDriver, alwaysMatch: Capabilities, firstMatch: [Capabilities] = []) throws -> Session {
+            try Session(webDriver: webDriver, alwaysMatch: alwaysMatch, firstMatch: firstMatch)
+        }
     }
 
     /// The amount of time the driver should implicitly wait when searching for elements.

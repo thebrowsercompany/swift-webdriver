@@ -25,7 +25,7 @@ public struct HTTPWebDriver: WebDriver {
     public static func detectProtocol(serverURL: URL) throws -> WireProtocol {
         // The status request is the same for the Selenium Legacy JSON protocol and W3C,
         // but the response format is different.
-        let urlRequest = try Self.buildURLRequest(serverURL: serverURL, Requests.Status_Legacy())
+        let urlRequest = try Self.buildURLRequest(serverURL: serverURL, Requests.LegacySelenium.Status())
 
         // Send the request and decode result or error
         let (status, responseData) = try urlRequest.send()
@@ -33,9 +33,9 @@ public struct HTTPWebDriver: WebDriver {
             throw try JSONDecoder().decode(ErrorResponse.self, from: responseData)
         }
 
-        if let _ = try? JSONDecoder().decode(Requests.Status_Legacy.Response.self, from: responseData) {
+        if let _ = try? JSONDecoder().decode(Requests.LegacySelenium.Status.Response.self, from: responseData) {
             return .legacySelenium
-        } else if let _ = try? JSONDecoder().decode(Requests.Status_W3C.Response.self, from: responseData) {
+        } else if let _ = try? JSONDecoder().decode(Requests.LegacySelenium.Status.Response.self, from: responseData) {
             return .w3c
         } else {
             throw ProtocolDetectionError()
