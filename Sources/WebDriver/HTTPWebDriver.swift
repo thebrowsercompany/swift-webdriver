@@ -35,7 +35,7 @@ public struct HTTPWebDriver: WebDriver {
 
         if let _ = try? JSONDecoder().decode(Requests.LegacySelenium.Status.Response.self, from: responseData) {
             return .legacySelenium
-        } else if let _ = try? JSONDecoder().decode(Requests.LegacySelenium.Status.Response.self, from: responseData) {
+        } else if let _ = try? JSONDecoder().decode(Requests.W3C.Status.Response.self, from: responseData) {
             return .w3c
         } else {
             throw ProtocolDetectionError()
