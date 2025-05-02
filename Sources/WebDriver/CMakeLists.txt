@@ -12,6 +12,8 @@ add_library(WebDriver
   Poll.swift
   Request.swift
   Requests.swift
+  Requests+LegacySelenium.swift
+  Requests+W3C.swift
   ScreenOrientation.swift
   Session.swift
   TimeoutType.swift
