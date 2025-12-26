@@ -10,17 +10,21 @@ public struct Window {
     }
 
     public var position: (x: Double, y: Double) {
-        get throws {
-            let responseValue = try webDriver.send(Requests.WindowPosition.Get(
-                session: session.id, windowHandle: handle)).value
+        get async throws {
+            let responseValue = try await webDriver.send(
+                Requests.WindowPosition.Get(
+                    session: session.id, windowHandle: handle)
+            ).value
             return (responseValue.x, responseValue.y)
         }
     }
 
     public var size: (width: Double, height: Double) {
-        get throws {
-            let responseValue = try webDriver.send(Requests.WindowSize.Get(
-                session: session.id, windowHandle: handle)).value
+        get async throws {
+            let responseValue = try await webDriver.send(
+                Requests.WindowSize.Get(
+                    session: session.id, windowHandle: handle)
+            ).value
             return (responseValue.width, responseValue.height)
         }
     }
@@ -28,19 +32,22 @@ public struct Window {
     /// - Parameters:
     ///   - width: The new window width
     ///   - height: The new window height
-    public func setSize(width: Double, height: Double) throws {
-        try webDriver.send(Requests.WindowSize.Post(session: session.id, windowHandle: handle, width: width, height: height))
+    public func setSize(width: Double, height: Double) async throws {
+        try await webDriver.send(
+            Requests.WindowSize.Post(
+                session: session.id, windowHandle: handle, width: width, height: height))
     }
 
     /// - Parameters:
     ///   - x: Position in the top left corner of the x coordinate
     ///   - y: Position in the top left corner of the y coordinate
-    public func setPosition(x: Double, y: Double) throws {
-        try webDriver.send(Requests.WindowPosition.Post(session: session.id, windowHandle: handle, x: x, y: y))
+    public func setPosition(x: Double, y: Double) async throws {
+        try await webDriver.send(
+            Requests.WindowPosition.Post(session: session.id, windowHandle: handle, x: x, y: y))
     }
 
     /// Maximize specific window if :windowHandle is "current" the current window will be maximized
-    public func maximize() throws {
-        try webDriver.send(Requests.WindowMaximize(session: session.id, windowHandle: handle))
+    public func maximize() async throws {
+        try await webDriver.send(Requests.WindowMaximize(session: session.id, windowHandle: handle))
     }
 }

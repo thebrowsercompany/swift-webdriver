@@ -7,24 +7,26 @@ final class AppiumTests: XCTestCase {
 
     override func setUpWithError() throws {
         super.setUp()
-        appiumServerURL = ProcessInfo.processInfo.environment["APPIUM_SERVER_URL"].flatMap { URL(string: $0) }
+        appiumServerURL = ProcessInfo.processInfo.environment["APPIUM_SERVER_URL"].flatMap {
+            URL(string: $0)
+        }
         try XCTSkipIf(appiumServerURL == nil, "APPIUM_SERVER_URL environment variable is not set.")
     }
 
-#if os(Windows)
-    func testAppium() throws {
-        let webDriver = HTTPWebDriver(endpoint: appiumServerURL!, wireProtocol: .w3c)
+    #if os(Windows)
+        func testAppium() async throws {
+            let webDriver = HTTPWebDriver(endpoint: appiumServerURL!, wireProtocol: .w3c)
 
-        let appiumOptions = Capabilities.AppiumOptions()
-        appiumOptions.automationName = "windows"
-        appiumOptions.app = "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App"
+            let appiumOptions = Capabilities.AppiumOptions()
+            appiumOptions.automationName = "windows"
+            appiumOptions.app = "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App"
 
-        let capabilities = Capabilities()
-        capabilities.platformName = "windows"
-        capabilities.appiumOptions = appiumOptions
+            let capabilities = Capabilities()
+            capabilities.platformName = "windows"
+            capabilities.appiumOptions = appiumOptions
 
-        let session = try Session(webDriver: webDriver, capabilities: capabilities)
-        try session.sendKeys(.alt(.f4))
-    }
-#endif
+            let session = try await Session(webDriver: webDriver, capabilities: capabilities)
+            try await session.sendKeys(.alt(.f4))
+        }
+    #endif
 }

@@ -1,10 +1,10 @@
 /// A response received when an error occurs when processing a request.
 public struct ErrorResponse: Codable, Error, CustomStringConvertible {
-    public var status: Status
+    public var status: Status?
     public var value: Value
 
     public var description: String {
-        var str = "Error \(status.rawValue)"
+        var str = "Error \(status?.rawValue ?? -1)"
         if let error = value.error {
             str += " (\(error))"
         }

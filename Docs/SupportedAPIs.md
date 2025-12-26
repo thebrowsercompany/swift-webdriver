@@ -37,13 +37,14 @@ Contributions to expand support to unimplemented functionality are always welcom
 | GET    | `/session/:sessionId/element/:id/size`              | Supported    | `Element.size`      |
 | GET    | `/session/:sessionId/element/:id/text`              | Supported    | `Element.text`      |
 | POST   | `/session/:sessionId/element/:id/value`             | Supported    | `Element.sendKeys()`|
-| POST   | `/session/:sessionId/execute`                       | Not Supported| `Session.execute()` |
-| POST   | `/session/:sessionId/execute_async`                 | Not Supported| `Session.execute()` |
+| POST   | `/session/:sessionId/execute/sync`                  | Supported    | `Session.execute()` |
+| POST   | `/session/:sessionId/execute/async`                 | Supported    | `Session.execute()` |
 | POST   | `/session/:sessionId/forward`                       | Supported    | `Session.forward()` |
 | POST   | `/session/:sessionId/keys`                          | Supported    | `Session.sendKeys()`|
 | POST   | `/session/:sessionId/location`                      | Supported    | `Session.setLocation`|
 | GET    | `/session/:sessionId/location`                      | Supported    | `Session.location`|
 | POST   | `/session/:sessionId/moveto`                        | Supported    | `Session.moveTo()`  |
+| POST   | `/session/:sessionId/window/rect`                   | Supported    | `Session.setWindowRect()` |
 | GET    | `/session/:sessionId/orientation`                   | Supported    | `Session.orientation`|
 | POST   | `/session/:sessionId/refresh`                       | Not supported| `Session.refresh()` |
 | GET    | `/session/:sessionId/screenshot`                    | Supported    | `Session.screenshot()`|
@@ -70,5 +71,5 @@ Contributions to expand support to unimplemented functionality are always welcom
 | POST   | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Window.setPosition()`|
 | GET    | `/session/:sessionId/window/:windowHandle/position` | Supported    | `Window.position`|
 | POST   | `/session/:sessionId/window/:windowHandle/maximize` | Supported    | `Window.maximize()`|
-| GET    | `/session/:sessionId/window_handle`                 | Supported    | `Session.windowHandle`|
-| GET    | `/session/:sessionId/window_handles`                | Supported    | `Session.windowHandles`|
+| GET    | `/session/:sessionId/window`                        | Supported    | `Session.windowHandle`|
+| GET    | `/session/:sessionId/window/handles`                | Supported    | `Session.windowHandles`|

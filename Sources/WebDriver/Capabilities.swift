@@ -11,6 +11,10 @@ open class Capabilities: Codable {
     // From https://appium.io/docs/en/2.0/guides/caps
     public var appiumOptions: AppiumOptions?
 
+    public var msEdgeOptions: EdgeOptions?
+    public var chromeOptions: ChromeOptions?
+    public var firefoxOptions: FirefoxOptions?
+    
     public init() {}
 
     // See https://www.w3.org/TR/webdriver1/#dfn-table-of-session-timeouts
@@ -29,6 +33,10 @@ open class Capabilities: Codable {
         case nativeEvents
 
         case appiumOptions = "appium:options"
+
+        case msEdgeOptions = "ms:edgeOptions"
+        case chromeOptions = "goog:chromeOptions"
+        case firefoxOptions = "moz:firefoxOptions"
     }
 }
 

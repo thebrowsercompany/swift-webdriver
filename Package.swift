@@ -4,11 +4,15 @@ import PackageDescription
 
 let package = Package(
     name: "swift-webdriver",
+    platforms: [
+        .macOS(.v10_15)
+    ],
     products: [
-        .library(name: "WebDriver", targets: ["WebDriver"]),
-    ] + ifWindows([
-        .library(name: "WinAppDriver", targets: ["WinAppDriver"]),
-    ]),
+        .library(name: "WebDriver", targets: ["WebDriver"])
+    ]
+        + ifWindows([
+            .library(name: "WinAppDriver", targets: ["WinAppDriver"])
+        ]),
     targets: [
         .target(
             name: "WebDriver",
@@ -21,30 +25,33 @@ let package = Package(
             name: "UnitTests",
             dependencies: ["TestsCommon", "WebDriver"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
-            linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"], .when(platforms: [.windows])) ]),
-         .testTarget(
+            linkerSettings: [
+                .unsafeFlags(["-Xlinker", "-ignore:4217"], .when(platforms: [.windows]))
+            ]),
+        .testTarget(
             name: "AppiumTests",
             dependencies: ["TestsCommon", "WebDriver"],
             // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
-            linkerSettings: ifWindows([ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ])),
-    ] + ifWindows([
-        .target(
-            name: "WinAppDriver",
-            dependencies: ["WebDriver"],
-            path: "Sources/WinAppDriver",
-            exclude: ["CMakeLists.txt"]),
-        .testTarget(
-            name: "WinAppDriverTests",
-            dependencies: ["TestsCommon", "WebDriver", "WinAppDriver"],
-            // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
-            linkerSettings: [ .unsafeFlags(["-Xlinker", "-ignore:4217"]) ]),
-    ])
+            linkerSettings: ifWindows([.unsafeFlags(["-Xlinker", "-ignore:4217"])])),
+    ]
+        + ifWindows([
+            .target(
+                name: "WinAppDriver",
+                dependencies: ["WebDriver"],
+                path: "Sources/WinAppDriver",
+                exclude: ["CMakeLists.txt"]),
+            .testTarget(
+                name: "WinAppDriverTests",
+                dependencies: ["TestsCommon", "WebDriver", "WinAppDriver"],
+                // Ignore "LNK4217: locally defined symbol imported" spew due to SPM library support limitations
+                linkerSettings: [.unsafeFlags(["-Xlinker", "-ignore:4217"])]),
+        ])
 )
 
 func ifWindows<T>(_ values: [T]) -> [T] {
     #if os(Windows)
-    return values
+        return values
     #else
-    return []
+        return []
     #endif
 }

@@ -1,4 +1,3 @@
-
 import Foundation
 import WebDriver
 import WinSDK
@@ -25,14 +24,16 @@ public class WinAppDriver: WebDriver {
     private init(
         httpWebDriver: HTTPWebDriver,
         processTree: Win32ProcessTree? = nil,
-        childStdinHandle: HANDLE? = nil) {
+        childStdinHandle: HANDLE? = nil
+    ) {
         self.httpWebDriver = httpWebDriver
         self.processTree = processTree
         self.childStdinHandle = childStdinHandle
     }
 
     public static func attach(ip: String = defaultIp, port: Int = defaultPort) -> WinAppDriver {
-        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
+        let httpWebDriver = HTTPWebDriver(
+            endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
         return WinAppDriver(httpWebDriver: httpWebDriver)
     }
 
@@ -41,7 +42,8 @@ public class WinAppDriver: WebDriver {
         ip: String = defaultIp,
         port: Int = defaultPort,
         waitTime: TimeInterval? = defaultStartWaitTime,
-        outputFile: String? = nil) throws -> WinAppDriver {
+        outputFile: String? = nil
+    ) throws -> WinAppDriver {
         let processTree: Win32ProcessTree
         var childStdinHandle: HANDLE? = nil
         do {
@@ -93,10 +95,13 @@ public class WinAppDriver: WebDriver {
                 path: executablePath, args: [ip, String(port)], options: launchOptions)
         } catch let error as Win32Error {
             CloseHandle(childStdinHandle)
-            throw StartError(message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode).")
+            throw StartError(
+                message: "Call to Win32 \(error.apiName) failed with error code \(error.errorCode)."
+            )
         }
 
-        let httpWebDriver = HTTPWebDriver(endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
+        let httpWebDriver = HTTPWebDriver(
+            endpoint: URL(string: "http://\(ip):\(port)")!, wireProtocol: .legacySelenium)
 
         // Give WinAppDriver some time to start up
         if let waitTime {
@@ -104,7 +109,8 @@ public class WinAppDriver: WebDriver {
             Thread.sleep(forTimeInterval: waitTime)
 
             if let earlyExitCode = try? processTree.exitCode {
-                throw StartError(message: "WinAppDriver process exited early with error code \(earlyExitCode).")
+                throw StartError(
+                    message: "WinAppDriver process exited early with error code \(earlyExitCode).")
             }
         }
 
@@ -115,18 +121,19 @@ public class WinAppDriver: WebDriver {
     }
 
     deinit {
-        try? close() // Call close() directly to handle errors. 
+        try? close()  // Call close() directly to handle errors.
     }
 
     public var wireProtocol: WireProtocol { .legacySelenium }
 
     @discardableResult
-    public func send<Req: Request>(_ request: Req) throws -> Req.Response {
-        try httpWebDriver.send(request)
+    public func send<Req: Request>(_ request: Req) async throws -> Req.Response {
+        try await httpWebDriver.send(request)
     }
 
     public func isInconclusiveInteraction(error: ErrorResponse.Status) -> Bool {
-        error == .winAppDriver_elementNotInteractable || httpWebDriver.isInconclusiveInteraction(error: error)
+        error == .winAppDriver_elementNotInteractable
+            || httpWebDriver.isInconclusiveInteraction(error: error)
     }
 
     public func close() throws {

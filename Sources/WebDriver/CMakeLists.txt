@@ -16,7 +16,6 @@ add_library(WebDriver
   Requests+W3C.swift
   ScreenOrientation.swift
   Session.swift
-  TimeoutType.swift
   TouchClickKind.swift
   URLRequestExtensions.swift
   WebDriver.swift
