@@ -3,6 +3,9 @@
 This table shows a mapping between WebDriver commands, backend support (currently just WinAppDriver), and the
 swift-webdriver API that implements the given command.
 
+`GET /status` is implemented for both Selenium legacy JSON wire protocol and W3C WebDriver response shapes.
+`HTTPWebDriver.createWithDetectedProtocol(serverURL:)` uses that endpoint to detect which wire protocol an HTTP endpoint speaks before any session is created.
+
 Contributions to expand support to unimplemented functionality are always welcome.
 
 | Method | Command Path                                        | WinAppDriver | swift-webdriver API |
