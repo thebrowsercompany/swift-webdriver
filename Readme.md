@@ -40,6 +40,25 @@ Build and run tests using `swift build` and `swift test`, or use the [Swift exte
 
 For additional examples, refer to the `Tests\WebDriverTests` directory.
 
+### Protocol selection
+
+If you already know which wire protocol your endpoint speaks, construct the HTTP driver explicitly:
+
+```swift
+let webDriver = HTTPWebDriver(
+    endpoint: URL(string: "http://127.0.0.1:4723")!,
+    wireProtocol: .w3c)
+```
+
+If the endpoint may be either Selenium legacy JSON wire protocol or W3C WebDriver, let the library probe `GET /status` and choose the matching response shape:
+
+```swift
+let webDriver = try HTTPWebDriver.createWithDetectedProtocol(
+    serverURL: URL(string: "http://127.0.0.1:4723")!)
+```
+
+This only detects the protocol; it does not create a session. Appium endpoints are typically W3C, while older WinAppDriver setups may use the legacy Selenium response format.
+
 ### CMake
 
 To build with CMake, use the Ninja generator:
